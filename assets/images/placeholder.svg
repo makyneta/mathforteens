@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500" fill="none">
+  <rect width="400" height="500" fill="#FEF0EB" rx="16"/>
+  <text x="200" y="240" font-family="system-ui, sans-serif" font-size="80" text-anchor="middle" fill="#E85D3A">🧑‍🎓</text>
+  <text x="200" y="290" font-family="system-ui, sans-serif" font-size="14" text-anchor="middle" fill="#D04D2A" opacity="0.5">Foto do Tomás</text>
+</svg>
