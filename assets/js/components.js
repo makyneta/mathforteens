@@ -9,7 +9,8 @@ const headerHTML = `
       <nav id="nav" class="nav">
         <a href="index">Início</a>
         <a href="sobre">Sobre</a>
-        <a href="inscricoes">Inscrições</a>
+        <a href="servicos">Serviços</a>
+        <a href="videos">Vídeos</a>
         <a href="contacto">Contacto</a>
       </nav>
       <button id="mobileToggle" class="mobile-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -35,7 +36,7 @@ const footerHTML = `
         <img src="favicon.ico" alt="Math For Teens" width="28" height="28">
         Math For Teens
       </a>
-      <p class="footer-tagline">Preparação para exames nacionais e explicações online, por um jovem que obteve 100% no exame de Matemática.</p>
+      <p class="footer-tagline">Preparação para exames nacionais e explicações online.</p>
     </div>
     <div class="footer-links">
       <a href="politica-cookies">Política de Cookies</a>
@@ -51,7 +52,7 @@ const footerHTML = `
   </div>
   <div class="footer-bottom">
     <div class="footer-bottom-line"></div>
-    <a href="https://makyneta.github.io" target="_blank">Copyright © ${new Date().getFullYear()} Makyneta Unipessoal, Lda.</a>
+    <a href="https://makyneta.github.io" target="_blank">Copyright © 2024 - ${new Date().getFullYear()} Math For Teens.<br> Desenvolvido por Makyneta Unipessoal, Lda.</a>
   </div>
 </footer>
 `
