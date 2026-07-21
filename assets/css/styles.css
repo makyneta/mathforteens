@@ -434,7 +434,7 @@ p { overflow-wrap: break-word; }
 
 .hero {
   padding: calc(var(--header-h) + var(--space-4xl)) var(--space-lg) calc(var(--space-4xl) + 20px);
-  background: linear-gradient(160deg, var(--c-secondary) 0%, #232340 35%, #1e1e38 65%, var(--c-secondary) 100%);
+  background: linear-gradient(160deg, var(--c-secondary) 0%, #1A3D2E 35%, #1C3828 65%, var(--c-secondary) 100%);
   background-size: 200% 200%;
   animation: gradientShift 12s ease infinite;
   color: white;
@@ -1292,7 +1292,7 @@ p { overflow-wrap: break-word; }
 
 .about-hero {
   padding: calc(var(--header-h) + var(--space-3xl)) var(--space-lg) var(--space-3xl);
-  background: linear-gradient(160deg, var(--c-secondary) 0%, #232340 100%);
+  background: linear-gradient(160deg, var(--c-secondary) 0%, #1A3D2E 100%);
   color: white;
   position: relative;
   overflow: hidden;
@@ -1674,7 +1674,7 @@ p { overflow-wrap: break-word; }
   padding: calc(var(--header-h) + var(--space-3xl)) var(--space-lg) var(--space-3xl);
   text-align: center;
   overflow: hidden;
-  background: linear-gradient(160deg, var(--c-secondary) 0%, #252547 40%, #1B1B2F 100%);
+  background: linear-gradient(160deg, var(--c-secondary) 0%, #1E3A2B 40%, #1A3525 100%);
 }
 
 .insc-hero-symbols {
@@ -2890,7 +2890,7 @@ p { overflow-wrap: break-word; }
 .svc-hero {
   position: relative;
   padding: calc(var(--header-h) + var(--space-3xl)) var(--space-lg) var(--space-2xl);
-  background: linear-gradient(135deg, var(--c-secondary), #2a2a4a);
+  background: linear-gradient(135deg, var(--c-secondary), #223D2F);
   color: white;
   overflow: hidden;
   text-align: center;
@@ -3186,7 +3186,7 @@ p { overflow-wrap: break-word; }
 .vid-hero {
   position: relative;
   padding: calc(var(--header-h) + var(--space-4xl)) var(--space-lg) calc(var(--space-4xl) + 20px);
-  background: linear-gradient(160deg, var(--c-secondary) 0%, #1a1a36 30%, #22223e 60%, var(--c-secondary) 100%);
+  background: linear-gradient(160deg, var(--c-secondary) 0%, #1C3527 30%, #1E3A2B 60%, var(--c-secondary) 100%);
   background-size: 200% 200%;
   animation: gradientShift 12s ease infinite;
   color: white;
