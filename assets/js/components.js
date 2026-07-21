@@ -9,8 +9,8 @@ const headerHTML = `
       <nav id="nav" class="nav">
         <a href="index">Início</a>
         <a href="sobre">Sobre</a>
-        <a href="recursos">Recursos</a>
-        <a href="videos">Vídeos</a>
+        <a href="servicos">Serviços</a>
+        <a href="videoaulas">Videoaulas</a>
         <a href="contacto">Contacto</a>
       </nav>
       <button id="mobileToggle" class="mobile-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
