@@ -130,18 +130,9 @@
         <h2 class="section-title">O que dizem</h2>
         <p class="section-subtitle" style="margin:0 auto">De alunos e pais que já experimentaram.</p>
       </div>
-      <div class="testimonials-grid">
-        <div class="testimonial-card anim-fade-in">
-          <p class="testimonial-text">Graças às breves explicações que me deste aqui por mensagem tirei 96% a matemática!!</p>
-        </div>
-        <div class="testimonial-card anim-fade-in anim-fade-in-d1">
-          <p class="testimonial-text">Estou a seguir este canal para conseguir estudar melhor para o futuro. Vou para o 8 ano e tenho muitos problemas com matemática. Então agradeço-te a ti por teres este canal e ajudares pessoas com dificuldades. Obrigada Tomás</p>
-          <div class="testimonial-role">Aluno do 7.º ano</div>
-        </div>
-        <div class="testimonial-card anim-fade-in anim-fade-in-d2">
-          <p class="testimonial-text">Olá Tomás, bom dia! Tenho de dizer-lhe que a Camila gostou muito das explicações de matemática ontem. Disse que a professora não tinha explicado o que deu ontem. Também percebemos que é muito organizado e honesto no que faz. Muito obrigada!</p>
-          <div class="testimonial-role">Mãe de aluna</div>
-        </div>
+      <div id="homeTestimonials" class="testimonials-grid"></div>
+      <div style="text-align:center;margin-top:32px">
+        <a href="testemunhos" class="btn btn-secondary">Ver todos os testemunhos →</a>
       </div>
     </div>
   </section>
@@ -179,6 +170,26 @@
 
 
 <div id="footer"></div>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/supabase-config.js"></script>
+<script>
+(function() {
+  if (typeof supabase === 'undefined' || typeof SUPABASE_URL === 'undefined') return;
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  sb.from('testimonials').select('*').eq('active', true).order('order', { ascending: true }).limit(3).then(({ data }) => {
+    if (!data || !data.length) return;
+    const grid = document.getElementById('homeTestimonials');
+    if (!grid) return;
+    grid.innerHTML = data.map((t, i) => `
+      <div class="testimonial-card anim-fade-in${i > 0 ? ' anim-fade-in-d' + i : ''}">
+        <p class="testimonial-text">${t.content}</p>
+        ${t.author_role ? `<div class="testimonial-role">${t.author_role}</div>` : ''}
+      </div>
+    `).join('');
+  });
+})();
+</script>
 
 </body>
 </html>

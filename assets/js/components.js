@@ -11,6 +11,8 @@ const headerHTML = `
         <a href="sobre">Sobre</a>
         <a href="servicos">Serviços</a>
         <a href="videoaulas">Videoaulas</a>
+        <a href="loja">Loja</a>
+        <a href="testemunhos">Testemunhos</a>
         <a href="contacto">Contacto</a>
       </nav>
       <button id="mobileToggle" class="mobile-toggle" aria-label="Menu"><span></span><span></span><span></span></button>

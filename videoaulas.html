@@ -78,6 +78,9 @@
         <h3>Em breve!</h3>
         <p>Estamos a preparar aulas em vídeo para ti. Fica atento!</p>
       </div>
+      <div id="videosLoading" class="vid-loading">
+        <div class="admin-spinner" style="width:32px;height:32px;border-width:3px;border-color:var(--c-primary);border-top-color:transparent"></div>
+      </div>
     </div>
   </section>
 
@@ -111,16 +114,10 @@
 
 <div id="footer"></div>
 
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/supabase-config.js"></script>
 <script>
-const videos = [
-  {
-    url: "",
-    title: "",
-    topic: "",
-    desc: "",
-    pdf: ""
-  }
-];
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 function extractVideoId(url) {
   const match = url.match(/(?:v=|youtu\.be\/|embed\/|\/v\/)([a-zA-Z0-9_-]{11})/);
@@ -133,12 +130,30 @@ function getThumbnail(url, quality) {
   return `https://img.youtube.com/vi/${id}/${quality || 'maxresdefault'}.jpg`;
 }
 
-function renderVideos() {
+function esc(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+async function renderVideos() {
   const grid = document.getElementById("videosGrid");
   const featured = document.getElementById("featuredVideo");
   const empty = document.getElementById("videosEmpty");
+  const loading = document.getElementById("videosLoading");
 
-  const valid = videos.filter(v => v.url && !v.url.includes("EXEMPLE"));
+  const { data: videos, error } = await sb.from('videos').select('*').order('order', { ascending: true });
+
+  loading.style.display = "none";
+
+  if (error || !videos || !videos.length) {
+    grid.style.display = "none";
+    empty.style.display = "flex";
+    return;
+  }
+
+  const valid = videos.filter(v => v.youtube_url);
 
   if (!valid.length) {
     grid.style.display = "none";
@@ -146,8 +161,7 @@ function renderVideos() {
     return;
   }
 
-  const pdfCount = valid.filter(v => v.pdf && v.pdf.trim()).length;
-
+  const pdfCount = valid.filter(v => v.pdf_url && v.pdf_url.trim()).length;
   const countVideoEl = document.querySelector('[data-videocount]');
   const countPdfEl = document.querySelector('[data-pdfcount]');
   if (countVideoEl) countVideoEl.textContent = valid.length;
@@ -155,14 +169,14 @@ function renderVideos() {
 
   if (valid.length > 0) {
     const v = valid[0];
-    const hasPdf = v.pdf && v.pdf.trim();
+    const hasPdf = v.pdf_url && v.pdf_url.trim();
     featured.style.display = "block";
     featured.innerHTML = `
       <div class="vid-featured anim-fade-in">
         <div class="vid-featured-media">
-          <a href="${v.url}" target="_blank" rel="noopener" class="vid-featured-thumb">
-            <img src="${getThumbnail(v.url, 'maxresdefault')}" alt="${v.title}" loading="eager"
-              onerror="this.onerror=null;this.src='${getThumbnail(v.url, 'hqdefault')}'">
+          <a href="${esc(v.youtube_url)}" target="_blank" rel="noopener" class="vid-featured-thumb">
+            <img src="${getThumbnail(v.youtube_url, 'maxresdefault')}" alt="${esc(v.title)}" loading="eager"
+              onerror="this.onerror=null;this.src='${getThumbnail(v.youtube_url, 'hqdefault')}'">
             <div class="vid-featured-play">
               <div class="vid-play-circle">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="9.5,7 9.5,17 17,12"/></svg>
@@ -175,20 +189,20 @@ function renderVideos() {
           </a>
         </div>
         <div class="vid-featured-body">
-          ${v.topic ? `<span class="vid-topic-tag">${v.topic}</span>` : ''}
-          <h2 class="vid-featured-title">${v.title}</h2>
-          ${v.desc ? `<p class="vid-featured-desc">${v.desc}</p>` : ''}
+          ${v.topic ? `<span class="vid-topic-tag">${esc(v.topic)}</span>` : ''}
+          <h2 class="vid-featured-title">${esc(v.title)}</h2>
+          ${v.description ? `<p class="vid-featured-desc">${esc(v.description)}</p>` : ''}
           <div class="vid-featured-actions">
-            <a href="${v.url}" target="_blank" rel="noopener" class="btn btn-primary">
+            <a href="${esc(v.youtube_url)}" target="_blank" rel="noopener" class="btn btn-primary">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5,3 19,12 5,21"/></svg>
               Assistir no YouTube
             </a>
             ${hasPdf ? `
-            <a href="${v.pdf}" target="_blank" rel="noopener" class="btn btn-secondary">
+            <a href="${esc(v.pdf_url)}" target="_blank" rel="noopener" class="btn btn-secondary">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
               Ver PDF
             </a>
-            <a href="${v.pdf}" download class="btn btn-outline-dark">
+            <a href="${esc(v.pdf_url)}" download class="btn btn-outline-dark">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               Descarregar
             </a>` : ''}
@@ -201,35 +215,35 @@ function renderVideos() {
   if (rest.length) {
     grid.style.display = "grid";
     grid.innerHTML = rest.map((v, i) => {
-      const hasPdf = v.pdf && v.pdf.trim();
+      const hasPdf = v.pdf_url && v.pdf_url.trim();
       return `
         <div class="vid-card anim-fade-in" style="transition-delay:${(i % 6) * 0.08}s">
-          <a href="${v.url}" target="_blank" rel="noopener" class="vid-card-thumb">
-            <img src="${getThumbnail(v.url, 'hqdefault')}" alt="${v.title}" loading="lazy"
-              onerror="this.onerror=null;this.src='${getThumbnail(v.url, 'sddefault')}'">
+          <a href="${esc(v.youtube_url)}" target="_blank" rel="noopener" class="vid-card-thumb">
+            <img src="${getThumbnail(v.youtube_url, 'hqdefault')}" alt="${esc(v.title)}" loading="lazy"
+              onerror="this.onerror=null;this.src='${getThumbnail(v.youtube_url, 'sddefault')}'">
             <div class="vid-card-overlay"></div>
             <div class="vid-card-play">
               <div class="vid-play-btn">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="9.5,7 9.5,17 17,12"/></svg>
               </div>
             </div>
-            ${v.topic ? `<span class="vid-card-topic">${v.topic}</span>` : ''}
+            ${v.topic ? `<span class="vid-card-topic">${esc(v.topic)}</span>` : ''}
           </a>
           <div class="vid-card-body">
-            <h3 class="vid-card-title">${v.title}</h3>
-            ${v.desc ? `<p class="vid-card-desc">${v.desc}</p>` : ''}
+            <h3 class="vid-card-title">${esc(v.title)}</h3>
+            ${v.description ? `<p class="vid-card-desc">${esc(v.description)}</p>` : ''}
             <div class="vid-card-actions">
-              <a href="${v.url}" target="_blank" rel="noopener" class="vid-action-yt">
+              <a href="${esc(v.youtube_url)}" target="_blank" rel="noopener" class="vid-action-yt">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5,3 19,12 5,21"/></svg>
                 YouTube
               </a>
               ${hasPdf ? `
               <span class="vid-action-sep"></span>
-              <a href="${v.pdf}" target="_blank" rel="noopener" class="vid-action-pdf">
+              <a href="${esc(v.pdf_url)}" target="_blank" rel="noopener" class="vid-action-pdf">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                 Ver PDF
               </a>
-              <a href="${v.pdf}" download class="vid-action-dl">
+              <a href="${esc(v.pdf_url)}" download class="vid-action-dl">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 Download
               </a>` : ''}

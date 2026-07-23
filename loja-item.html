@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Produto — Math For Teens</title>
+<meta name="author" content="Makyneta Unipessoal, Lda.">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="stylesheet" href="assets/css/reset.css">
+<link rel="stylesheet" href="assets/css/styles.css">
+<script defer src="assets/js/chatbot.js"></script>
+<script defer src="assets/js/components.js"></script>
+<script defer src="assets/js/main.js"></script>
+</head>
+<body>
+
+<div id="header"></div>
+
+<main>
+
+  <section class="section" style="padding-top: calc(var(--header-h) + 48px)">
+    <div class="section-inner">
+      <div id="productLoading" class="vid-loading" style="padding:80px 0">
+        <div class="admin-spinner" style="width:32px;height:32px;border-width:3px;border-color:var(--c-primary);border-top-color:transparent"></div>
+      </div>
+      <div id="productContent" style="display:none">
+        <div class="product-detail">
+          <div class="product-detail-image" id="productImage"></div>
+          <div class="product-detail-info">
+            <span class="product-detail-category" id="productCategory"></span>
+            <h1 class="product-detail-title" id="productTitle"></h1>
+            <p class="product-detail-desc" id="productDesc"></p>
+            <div class="product-detail-price" id="productPrice"></div>
+            <div class="product-detail-actions" id="productActions"></div>
+          </div>
+        </div>
+        <div class="product-detail-full" id="productLongDesc"></div>
+      </div>
+      <div id="productNotFound" class="vid-empty" style="display:none">
+        <div class="vid-empty-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
+        <h3>Produto não encontrado</h3>
+        <p>Este produto não existe ou foi removido.</p>
+        <a href="loja.html" class="btn btn-primary" style="margin-top:16px">Voltar à Loja</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<button id="chatbotToggle" class="chatbot-toggle" aria-label="Chat">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+</button>
+
+<div id="chatbotWindow" class="chatbot-window">
+  <div class="chatbot-header">
+    <div class="chatbot-avatar">M</div>
+    <div class="chatbot-header-info"><h3>Math For Teens</h3><p>Online • Resposta rápida</p></div>
+  </div>
+  <div id="chatbotMsgs" class="chatbot-messages">
+    <div class="chatbot-msg bot">Olá! 👋 Precisas de ajuda com este produto?</div>
+  </div>
+  <div class="chatbot-input-area">
+    <input id="chatbotInput" class="chatbot-input" type="text" placeholder="Escreve a tua pergunta..." autocomplete="off">
+    <button id="chatbotSend" class="chatbot-send" aria-label="Enviar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<div id="footer"></div>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/supabase-config.js"></script>
+<script>
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const categoryLabels = { livro: 'Livros', resumo: 'Resumos', ficha: 'Fichas', curso: 'Cursos', outro: 'Outros' };
+const categoryIcons = { livro: '📖', resumo: '📝', ficha: '📋', curso: '🎓', outro: '📦' };
+
+function esc(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function nl2br(str) {
+  return esc(str).replace(/\n/g, '<br>');
+}
+
+async function loadProduct() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  const slug = params.get('slug');
+
+  if (!id && !slug) {
+    document.getElementById('productLoading').style.display = 'none';
+    document.getElementById('productNotFound').style.display = 'flex';
+    return;
+  }
+
+  let query = sb.from('products').select('*').eq('active', true);
+  if (id) query = query.eq('id', id);
+  else query = query.eq('slug', slug);
+
+  const { data, error } = await query.single();
+
+  document.getElementById('productLoading').style.display = 'none';
+
+  if (error || !data) {
+    document.getElementById('productNotFound').style.display = 'flex';
+    return;
+  }
+
+  document.title = data.name + ' — Math For Teens';
+
+  document.getElementById('productImage').innerHTML = data.image_url
+    ? `<img src="${esc(data.image_url)}" alt="${esc(data.name)}" onerror="this.parentElement.innerHTML='<div class=\\'shop-card-placeholder\\' style=\\'font-size:4rem;height:300px\\'>${categoryIcons[data.category] || '📦'}</div>'">`
+    : `<div class="shop-card-placeholder" style="font-size:4rem;height:300px">${categoryIcons[data.category] || '📦'}</div>`;
+
+  document.getElementById('productCategory').textContent = (categoryIcons[data.category] || '📦') + ' ' + (categoryLabels[data.category] || data.category);
+  document.getElementById('productTitle').textContent = data.name;
+  document.getElementById('productDesc').textContent = data.description || '';
+
+  let priceHtml = `<span class="product-price-main">${data.price.toFixed(2)}€</span>`;
+  if (data.original_price) {
+    const discount = Math.round((1 - data.price / data.original_price) * 100);
+    priceHtml += `<span class="product-price-original">${data.original_price.toFixed(2)}€</span>`;
+    priceHtml += `<span class="product-price-badge">-${discount}%</span>`;
+  }
+  document.getElementById('productPrice').innerHTML = priceHtml;
+
+  let actionsHtml = '';
+  if (data.download_url) {
+    actionsHtml += `<a href="${esc(data.download_url)}" target="_blank" rel="noopener" class="btn btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Descarregar
+    </a>`;
+  }
+  if (data.external_url) {
+    actionsHtml += `<a href="${esc(data.external_url)}" target="_blank" rel="noopener" class="btn btn-secondary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Comprar
+    </a>`;
+  }
+  if (!actionsHtml) {
+    actionsHtml = `<a href="https://wa.me/351910256373?text=Olá!%20Tenho%20interesse%20no%20produto:%20${encodeURIComponent(data.name)}" target="_blank" class="btn btn-whatsapp">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Contactar sobre este produto
+    </a>`;
+  }
+  document.getElementById('productActions').innerHTML = actionsHtml;
+
+  if (data.long_description) {
+    document.getElementById('productLongDesc').innerHTML = `
+      <div class="section" style="background:var(--c-white)">
+        <div class="section-inner">
+          <h2 class="section-title" style="text-align:left;margin-bottom:16px">Descrição</h2>
+          <div class="product-long-desc">${nl2br(data.long_description)}</div>
+        </div>
+      </div>`;
+  }
+
+  document.getElementById('productContent').style.display = 'block';
+}
+
+document.addEventListener('DOMContentLoaded', loadProduct);
+</script>
+
+</body>
+</html>
