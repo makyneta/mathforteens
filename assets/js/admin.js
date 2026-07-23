@@ -113,25 +113,77 @@ async function loadProducts() {
 }
 
 // ============================================
-// UPLOAD PDF TO SUPABASE STORAGE
+// UPLOAD PDF TO GITHUB
 // ============================================
+let githubToken = null;
+
+async function getGithubToken() {
+  if (githubToken) return githubToken;
+  const { data } = await db.from('site_config').select('value').eq('key', 'github_token').single();
+  githubToken = data?.value || null;
+  return githubToken;
+}
+
+async function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 async function uploadPdf(file) {
+  const token = await getGithubToken();
+  if (!token) throw new Error('Token GitHub não configurado. Vai a Supabase > site_config e adiciona github_token.');
+
   if (!file) return null;
   const ext = file.name.split('.').pop();
-  const filename = Date.now() + '-' + Math.random().toString(36).substring(2, 8) + '.' + ext;
-  const path = 'videos/' + filename;
+  const cleanName = file.name.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9-_]/g, '_').toLowerCase();
+  const filename = cleanName + '-' + Date.now().toString(36) + '.' + ext;
+  const path = GITHUB_PDF_PATH + '/' + filename;
 
-  const { error } = await db.storage.from('pdfs').upload(path, file);
-  if (error) throw error;
+  const content = await fileToBase64(file);
 
-  const { data } = db.storage.from('pdfs').getPublicUrl(path);
-  return data.publicUrl;
+  const res = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + path, {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'token ' + token,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ message: 'Upload PDF: ' + file.name, content })
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || 'Erro ao enviar para GitHub');
+  }
+
+  return GITHUB_PDF_BASE_URL + '/' + filename;
 }
 
 async function deletePdf(url) {
-  if (!url) return;
-  const path = url.split('/pdfs/')[1];
-  if (path) await db.storage.from('pdfs').remove([path]);
+  if (!url || !url.includes(GITHUB_PDF_PATH)) return;
+  const token = await getGithubToken();
+  if (!token) return;
+
+  const filename = url.split('/').pop();
+  const path = GITHUB_PDF_PATH + '/' + filename;
+
+  const getRes = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + path, {
+    headers: { 'Authorization': 'token ' + token }
+  });
+  if (!getRes.ok) return;
+  const fileData = await getRes.json();
+
+  await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + path, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': 'token ' + token,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ message: 'Delete PDF: ' + filename, sha: fileData.sha })
+  });
 }
 
 // ============================================
