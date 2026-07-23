@@ -2,12 +2,11 @@
 // Math For Teens — Admin Panel
 // ============================================
 
-let supabase;
+let db;
 try {
-  const client = window.supabase;
-  if (!client) throw new Error('Supabase library not loaded');
-  if (!client.createClient) throw new Error('createClient not found');
-  supabase = client.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  if (!window.supabase) throw new Error('Supabase library not loaded');
+  if (!window.supabase.createClient) throw new Error('createClient not found');
+  db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 } catch(e) {
   console.error('Supabase init error:', e);
   document.getElementById('loginError').textContent = 'Erro ao ligar ao servidor: ' + e.message;
@@ -33,7 +32,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
   btn.disabled = true;
   errorEl.style.display = 'none';
 
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await db.auth.signInWithPassword({ email, password });
 
   if (error) {
     errorEl.textContent = error.message;
@@ -49,14 +48,14 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
 document.getElementById('logoutBtn').addEventListener('click', async (e) => {
   e.preventDefault();
-  await supabase.auth.signOut();
+  await db.auth.signOut();
   currentUser = null;
   document.getElementById('adminApp').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
 });
 
 // Check existing session
-supabase.auth.getSession().then(({ data: { session } }) => {
+db.auth.getSession().then(({ data: { session } }) => {
   if (session) {
     currentUser = session.user;
     showAdmin();
@@ -97,19 +96,19 @@ async function loadAll() {
 }
 
 async function loadVideos() {
-  const { data, error } = await supabase.from('videos').select('*').order('order', { ascending: true });
+  const { data, error } = await db.from('videos').select('*').order('order', { ascending: true });
   if (error) { showToast('Erro ao carregar vídeos', 'error'); return; }
   renderVideos(data || []);
 }
 
 async function loadTestimonials() {
-  const { data, error } = await supabase.from('testimonials').select('*').order('order', { ascending: true });
+  const { data, error } = await db.from('testimonials').select('*').order('order', { ascending: true });
   if (error) { showToast('Erro ao carregar testemunhos', 'error'); return; }
   renderTestimonials(data || []);
 }
 
 async function loadProducts() {
-  const { data, error } = await supabase.from('products').select('*').order('order', { ascending: true });
+  const { data, error } = await db.from('products').select('*').order('order', { ascending: true });
   if (error) { showToast('Erro ao carregar produtos', 'error'); return; }
   renderProducts(data || []);
 }
@@ -235,7 +234,7 @@ async function openModal(type, id) {
 
   let data = null;
   if (id) {
-    const { data: row } = await supabase.from(type === 'video' ? 'videos' : type + 's').select('*').eq('id', id).single();
+    const { data: row } = await db.from(type === 'video' ? 'videos' : type + 's').select('*').eq('id', id).single();
     data = row;
   }
 
@@ -301,9 +300,9 @@ async function saveItem() {
   let result;
 
   if (editingId) {
-    result = await supabase.from(table).update(obj).eq('id', editingId);
+    result = await db.from(table).update(obj).eq('id', editingId);
   } else {
-    result = await supabase.from(table).insert(obj);
+    result = await db.from(table).insert(obj);
   }
 
   if (result.error) {
@@ -320,7 +319,7 @@ async function saveItem() {
 
 async function deleteItem(table, id) {
   if (!confirm('Tem certeza que queres apagar este item?')) return;
-  const { error } = await supabase.from(table).delete().eq('id', id);
+  const { error } = await db.from(table).delete().eq('id', id);
   if (error) { showToast('Erro ao apagar: ' + error.message, 'error'); return; }
   showToast('Apagado com sucesso!', 'success');
   loadAll();
