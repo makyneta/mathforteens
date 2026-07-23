@@ -4,11 +4,13 @@
 
 let supabase;
 try {
-  const client = window.supabase || window.supabaseClient;
+  const client = window.supabase;
+  if (!client) throw new Error('Supabase library not loaded');
+  if (!client.createClient) throw new Error('createClient not found');
   supabase = client.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 } catch(e) {
   console.error('Supabase init error:', e);
-  document.getElementById('loginError').textContent = 'Erro ao ligar ao servidor. Recarrega a página.';
+  document.getElementById('loginError').textContent = 'Erro ao ligar ao servidor: ' + e.message;
   document.getElementById('loginError').style.display = 'block';
 }
 
