@@ -22,7 +22,7 @@ let editingType = null;
 // ============================================
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  if (!supabase) return;
+  if (!db) return;
   const email = document.getElementById('loginEmail').value;
   const password = document.getElementById('loginPassword').value;
   const btn = document.getElementById('loginBtn');
@@ -54,7 +54,6 @@ document.getElementById('logoutBtn').addEventListener('click', async (e) => {
   document.getElementById('loginScreen').style.display = 'flex';
 });
 
-// Check existing session
 db.auth.getSession().then(({ data: { session } }) => {
   if (session) {
     currentUser = session.user;
@@ -114,6 +113,28 @@ async function loadProducts() {
 }
 
 // ============================================
+// UPLOAD PDF TO SUPABASE STORAGE
+// ============================================
+async function uploadPdf(file) {
+  if (!file) return null;
+  const ext = file.name.split('.').pop();
+  const filename = Date.now() + '-' + Math.random().toString(36).substring(2, 8) + '.' + ext;
+  const path = 'videos/' + filename;
+
+  const { error } = await db.storage.from('pdfs').upload(path, file);
+  if (error) throw error;
+
+  const { data } = db.storage.from('pdfs').getPublicUrl(path);
+  return data.publicUrl;
+}
+
+async function deletePdf(url) {
+  if (!url) return;
+  const path = url.split('/pdfs/')[1];
+  if (path) await db.storage.from('pdfs').remove([path]);
+}
+
+// ============================================
 // RENDER LISTS
 // ============================================
 function renderVideos(items) {
@@ -124,14 +145,17 @@ function renderVideos(items) {
   list.innerHTML = items.map(v => {
     const id = extractVideoId(v.youtube_url);
     const thumb = id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : '';
+    const badges = [];
+    if (v.featured) badges.push('<span class="admin-badge active">Destaque</span>');
+    if (v.draft) badges.push('<span class="admin-badge inactive">Rascunho</span>');
     return `
       <div class="admin-list-item">
         ${thumb ? `<img src="${thumb}" class="admin-list-thumb" alt="${v.title}" onerror="this.style.display='none'">` : ''}
         <div class="admin-list-info">
           <h4>${esc(v.title)}</h4>
-          <p>${v.topic ? esc(v.topic) + ' · ' : ''}${esc(v.youtube_url)}</p>
+          <p>${v.topic ? esc(v.topic) + ' · ' : ''}${v.pdf_url ? '📎 PDF anexado' : 'Sem PDF'}</p>
         </div>
-        ${v.featured ? '<span class="admin-badge active">Destaque</span>' : ''}
+        ${badges.join(' ')}
         <div class="admin-list-actions">
           <button class="admin-action-btn" onclick="openModal('video','${v.id}')">Editar</button>
           <button class="admin-action-btn danger" onclick="deleteItem('videos','${v.id}')">Apagar</button>
@@ -182,80 +206,114 @@ function renderProducts(items) {
 // ============================================
 // MODAL / FORMS
 // ============================================
-const forms = {
-  video: {
-    title: 'Vídeo YouTube',
-    fields: [
-      { name: 'title', label: 'Título', type: 'text', required: true },
-      { name: 'youtube_url', label: 'URL do YouTube', type: 'url', required: true, placeholder: 'https://www.youtube.com/watch?v=...' },
-      { name: 'topic', label: 'Tópico', type: 'text', placeholder: 'Ex: Derivadas' },
-      { name: 'description', label: 'Descrição', type: 'textarea' },
-      { name: 'pdf_url', label: 'URL do PDF (opcional)', type: 'url', placeholder: 'https://...' },
-      { name: 'order', label: 'Ordem', type: 'number', value: 0 },
-      { name: 'featured', label: 'Vídeo de destaque', type: 'checkbox' }
-    ]
-  },
-  testimonial: {
-    title: 'Testemunho',
-    fields: [
-      { name: 'author_name', label: 'Nome do autor', type: 'text', required: true },
-      { name: 'author_role', label: 'Cargo/Função', type: 'text', placeholder: 'Ex: Aluno do 10.º ano' },
-      { name: 'content', label: 'Testemunho', type: 'textarea', required: true },
-      { name: 'rating', label: 'Avaliação (1-5)', type: 'number', value: 5, min: 1, max: 5 },
-      { name: 'order', label: 'Ordem', type: 'number', value: 0 },
-      { name: 'active', label: 'Ativo', type: 'checkbox', defaultChecked: true }
-    ]
-  },
-  product: {
-    title: 'Produto da Loja',
-    fields: [
-      { name: 'name', label: 'Nome', type: 'text', required: true },
-      { name: 'slug', label: 'Slug (URL)', type: 'text', required: true, placeholder: 'nome-do-produto' },
-      { name: 'category', label: 'Categoria', type: 'select', options: ['livro', 'resumo', 'ficha', 'curso', 'outro'], required: true },
-      { name: 'description', label: 'Descrição curta', type: 'text' },
-      { name: 'long_description', label: 'Descrição longa', type: 'textarea' },
-      { name: 'price', label: 'Preço (€)', type: 'number', required: true, step: '0.01' },
-      { name: 'original_price', label: 'Preço original (€, opcional)', type: 'number', step: '0.01' },
-      { name: 'image_url', label: 'URL da imagem', type: 'url', placeholder: 'https://...' },
-      { name: 'download_url', label: 'URL de download (PDF)', type: 'url' },
-      { name: 'external_url', label: 'Link externo (compra)', type: 'url' },
-      { name: 'order', label: 'Ordem', type: 'number', value: 0 },
-      { name: 'featured', label: 'Produto em destaque', type: 'checkbox' },
-      { name: 'active', label: 'Ativo', type: 'checkbox', defaultChecked: true }
-    ]
-  }
-};
+function getVideoFormHtml(data) {
+  const v = data || {};
+  const hasPdf = v.pdf_url && v.pdf_url.trim();
+  return `
+    <div class="admin-field"><label>Título *</label><input type="text" id="field_title" value="${esc(v.title || '')}" required></div>
+    <div class="admin-field"><label>URL do YouTube *</label><input type="url" id="field_youtube_url" value="${esc(v.youtube_url || '')}" required placeholder="https://www.youtube.com/watch?v=..."></div>
+    <div class="admin-field"><label>Tópico</label><input type="text" id="field_topic" value="${esc(v.topic || '')}" placeholder="Ex: Derivadas"></div>
+    <div class="admin-field"><label>Descrição</label><textarea id="field_description" placeholder="Descrição da aula...">${esc(v.description || '')}</textarea></div>
+    <div class="admin-field">
+      <label>PDF da aula</label>
+      <div class="admin-pdf-upload">
+        <input type="file" id="field_pdf_file" accept=".pdf" style="display:none" onchange="handlePdfPreview(this)">
+        <button type="button" class="btn btn-secondary admin-btn-full" onclick="document.getElementById('field_pdf_file').click()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          ${hasPdf ? 'Substituir PDF' : 'Carregar PDF'}
+        </button>
+        <div id="pdfPreview" class="admin-pdf-preview">
+          ${hasPdf ? `<div class="admin-pdf-file"><a href="${esc(v.pdf_url)}" target="_blank">📄 PDF atual</a><button type="button" class="admin-action-btn danger" onclick="removePdf()">Remover</button></div>` : ''}
+        </div>
+      </div>
+    </div>
+    <div class="admin-field-row">
+      <div class="admin-field"><label>Ordem</label><input type="number" id="field_order" value="${v.order || 0}"></div>
+      <div style="display:flex;flex-direction:column;gap:12px;padding-top:24px">
+        <div class="admin-check-row"><input type="checkbox" id="field_featured" ${v.featured ? 'checked' : ''}><label for="field_featured">Destaque</label></div>
+        <div class="admin-check-row"><input type="checkbox" id="field_draft" ${v.draft ? 'checked' : ''}><label for="field_draft">Rascunho (não publicar)</label></div>
+      </div>
+    </div>`;
+}
+
+function getTestimonialFormHtml(data) {
+  const t = data || {};
+  return `
+    <div class="admin-field"><label>Nome do autor *</label><input type="text" id="field_author_name" value="${esc(t.author_name || '')}" required></div>
+    <div class="admin-field"><label>Cargo/Função</label><input type="text" id="field_author_role" value="${esc(t.author_role || '')}" placeholder="Ex: Aluno do 10.º ano"></div>
+    <div class="admin-field"><label>Testemunho *</label><textarea id="field_content" required placeholder="Escreve o testemunho...">${esc(t.content || '')}</textarea></div>
+    <div class="admin-field-row">
+      <div class="admin-field"><label>Avaliação (1-5)</label><input type="number" id="field_rating" value="${t.rating || 5}" min="1" max="5"></div>
+      <div class="admin-field"><label>Ordem</label><input type="number" id="field_order" value="${t.order || 0}"></div>
+    </div>
+    <div class="admin-check-row"><input type="checkbox" id="field_active" ${t.active !== false ? 'checked' : ''}><label for="field_active">Ativo</label></div>`;
+}
+
+function getProductFormHtml(data) {
+  const p = data || {};
+  return `
+    <div class="admin-field"><label>Nome *</label><input type="text" id="field_name" value="${esc(p.name || '')}" required></div>
+    <div class="admin-field"><label>Slug (URL) *</label><input type="text" id="field_slug" value="${esc(p.slug || '')}" required placeholder="nome-do-produto"></div>
+    <div class="admin-field"><label>Categoria *</label><select id="field_category" required>
+      ${['livro','resumo','ficha','curso','outro'].map(c => `<option value="${c}" ${p.category === c ? 'selected' : ''}>${c}</option>`).join('')}
+    </select></div>
+    <div class="admin-field"><label>Descrição curta</label><input type="text" id="field_description" value="${esc(p.description || '')}"></div>
+    <div class="admin-field"><label>Descrição longa</label><textarea id="field_long_description">${esc(p.long_description || '')}</textarea></div>
+    <div class="admin-field-row">
+      <div class="admin-field"><label>Preço (€) *</label><input type="number" id="field_price" value="${p.price || ''}" step="0.01" required></div>
+      <div class="admin-field"><label>Preço original (€)</label><input type="number" id="field_original_price" value="${p.original_price || ''}" step="0.01"></div>
+    </div>
+    <div class="admin-field"><label>URL da imagem</label><input type="url" id="field_image_url" value="${esc(p.image_url || '')}" placeholder="https://..."></div>
+    <div class="admin-field"><label>Link externo (compra)</label><input type="url" id="field_external_url" value="${esc(p.external_url || '')}"></div>
+    <div class="admin-field-row">
+      <div class="admin-field"><label>Ordem</label><input type="number" id="field_order" value="${p.order || 0}"></div>
+      <div style="display:flex;flex-direction:column;gap:12px;padding-top:24px">
+        <div class="admin-check-row"><input type="checkbox" id="field_featured" ${p.featured ? 'checked' : ''}><label for="field_featured">Destaque</label></div>
+        <div class="admin-check-row"><input type="checkbox" id="field_active" ${p.active !== false ? 'checked' : ''}><label for="field_active">Ativo</label></div>
+      </div>
+    </div>`;
+}
+
+let pendingPdfFile = null;
+let removePdfFlag = false;
+
+function handlePdfPreview(input) {
+  const file = input.files[0];
+  if (!file) return;
+  pendingPdfFile = file;
+  removePdfFlag = false;
+  document.getElementById('pdfPreview').innerHTML = `<div class="admin-pdf-file"><span>📄 ${esc(file.name)} (${(file.size / 1024).toFixed(0)} KB)</span><button type="button" class="admin-action-btn danger" onclick="removePdf()">Remover</button></div>`;
+}
+
+function removePdf() {
+  pendingPdfFile = null;
+  removePdfFlag = true;
+  document.getElementById('pdfPreview').innerHTML = '';
+  document.getElementById('field_pdf_file').value = '';
+}
 
 async function openModal(type, id) {
   editingType = type;
   editingId = id || null;
-  const form = forms[type];
-  document.getElementById('modalTitle').textContent = id ? 'Editar ' + form.title : 'Adicionar ' + form.title;
+  pendingPdfFile = null;
+  removePdfFlag = false;
 
   let data = null;
   if (id) {
-    const { data: row } = await db.from(type === 'video' ? 'videos' : type + 's').select('*').eq('id', id).single();
+    const table = type === 'video' ? 'videos' : type + 's';
+    const { data: row } = await db.from(table).select('*').eq('id', id).single();
     data = row;
   }
 
+  const titles = { video: 'Vídeo YouTube', testimonial: 'Testemunho', product: 'Produto da Loja' };
+  document.getElementById('modalTitle').textContent = id ? 'Editar ' + titles[type] : 'Adicionar ' + titles[type];
+
   const formEl = document.getElementById('modalForm');
-  formEl.innerHTML = form.fields.map(f => {
-    const val = data ? (data[f.name] ?? '') : (f.value ?? (f.defaultChecked ? '' : ''));
-    if (f.type === 'checkbox') {
-      const checked = data ? !!data[f.name] : !!f.defaultChecked;
-      return `<div class="admin-check-row"><input type="checkbox" id="field_${f.name}" name="${f.name}" ${checked ? 'checked' : ''}><label for="field_${f.name}">${f.label}</label></div>`;
-    }
-    if (f.type === 'select') {
-      return `<div class="admin-field"><label for="field_${f.name}">${f.label}</label><select id="field_${f.name}" name="${f.name}" ${f.required ? 'required' : ''}>${f.options.map(o => `<option value="${o}" ${val === o ? 'selected' : ''}>${o}</option>`).join('')}</select></div>`;
-    }
-    if (f.type === 'textarea') {
-      return `<div class="admin-field"><label for="field_${f.name}">${f.label}</label><textarea id="field_${f.name}" name="${f.name}" ${f.required ? 'required' : ''} placeholder="${f.placeholder || ''}">${esc(val)}</textarea></div>`;
-    }
-    return `<div class="admin-field"><label for="field_${f.name}">${f.label}</label><input type="${f.type}" id="field_${f.name}" name="${f.name}" value="${esc(val)}" ${f.required ? 'required' : ''} ${f.placeholder ? 'placeholder="' + f.placeholder + '"' : ''} ${f.step ? 'step="' + f.step + '"' : ''} ${f.min !== undefined ? 'min="' + f.min + '"' : ''} ${f.max !== undefined ? 'max="' + f.max + '"' : ''}></div>`;
-  }).join('');
+  if (type === 'video') formEl.innerHTML = getVideoFormHtml(data);
+  else if (type === 'testimonial') formEl.innerHTML = getTestimonialFormHtml(data);
+  else if (type === 'product') formEl.innerHTML = getProductFormHtml(data);
 
   formEl.innerHTML += `<div class="admin-modal-footer"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button><button type="submit" class="btn btn-primary" id="modalSubmitBtn">Guardar</button></div>`;
-
   formEl.onsubmit = (e) => { e.preventDefault(); saveItem(); };
   document.getElementById('modal').style.display = 'flex';
 }
@@ -264,6 +322,8 @@ function closeModal() {
   document.getElementById('modal').style.display = 'none';
   editingId = null;
   editingType = null;
+  pendingPdfFile = null;
+  removePdfFlag = false;
 }
 
 // ============================================
@@ -274,31 +334,63 @@ async function saveItem() {
   btn.innerHTML = '<span class="admin-spinner"></span>';
   btn.disabled = true;
 
-  const formEl = document.getElementById('modalForm');
-  const formData = new FormData(formEl);
   const obj = {};
 
-  // Get all fields from the form definition
-  const fieldDefs = forms[editingType].fields;
-  fieldDefs.forEach(f => {
-    if (f.type === 'checkbox') {
-      obj[f.name] = document.getElementById('field_' + f.name).checked;
-    } else if (f.type === 'number') {
-      const val = formData.get(f.name);
-      obj[f.name] = val === '' || val === null ? null : parseFloat(val);
-    } else {
-      obj[f.name] = formData.get(f.name) || '';
-    }
-  });
+  if (editingType === 'video') {
+    obj.title = document.getElementById('field_title').value;
+    obj.youtube_url = document.getElementById('field_youtube_url').value;
+    obj.topic = document.getElementById('field_topic').value;
+    obj.description = document.getElementById('field_description').value;
+    obj.order = parseInt(document.getElementById('field_order').value) || 0;
+    obj.featured = document.getElementById('field_featured').checked;
+    obj.draft = document.getElementById('field_draft').checked;
 
-  // Auto-generate slug for products
-  if (editingType === 'product' && obj.name && !editingId) {
-    obj.slug = obj.slug || obj.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    // Handle PDF
+    if (removePdfFlag && !pendingPdfFile) {
+      if (editingId && obj.pdf_url !== undefined) {
+        const old = await db.from('videos').select('pdf_url').eq('id', editingId).single();
+        if (old.data?.pdf_url) await deletePdf(old.data.pdf_url);
+      }
+      obj.pdf_url = null;
+    } else if (pendingPdfFile) {
+      try {
+        if (editingId) {
+          const old = await db.from('videos').select('pdf_url').eq('id', editingId).single();
+          if (old.data?.pdf_url) await deletePdf(old.data.pdf_url);
+        }
+        obj.pdf_url = await uploadPdf(pendingPdfFile);
+      } catch(e) {
+        showToast('Erro ao upload PDF: ' + e.message, 'error');
+        btn.innerHTML = 'Guardar';
+        btn.disabled = false;
+        return;
+      }
+    }
+  } else if (editingType === 'testimonial') {
+    obj.author_name = document.getElementById('field_author_name').value;
+    obj.author_role = document.getElementById('field_author_role').value;
+    obj.content = document.getElementById('field_content').value;
+    obj.rating = parseInt(document.getElementById('field_rating').value) || 5;
+    obj.order = parseInt(document.getElementById('field_order').value) || 0;
+    obj.active = document.getElementById('field_active').checked;
+  } else if (editingType === 'product') {
+    obj.name = document.getElementById('field_name').value;
+    obj.slug = document.getElementById('field_slug').value;
+    obj.category = document.getElementById('field_category').value;
+    obj.description = document.getElementById('field_description').value;
+    obj.long_description = document.getElementById('field_long_description').value;
+    obj.price = parseFloat(document.getElementById('field_price').value) || 0;
+    const opVal = document.getElementById('field_original_price').value;
+    obj.original_price = opVal ? parseFloat(opVal) : null;
+    obj.image_url = document.getElementById('field_image_url').value;
+    obj.external_url = document.getElementById('field_external_url').value;
+    obj.order = parseInt(document.getElementById('field_order').value) || 0;
+    obj.featured = document.getElementById('field_featured').checked;
+    obj.active = document.getElementById('field_active').checked;
   }
 
   const table = editingType === 'video' ? 'videos' : editingType + 's';
   let result;
-
   if (editingId) {
     result = await db.from(table).update(obj).eq('id', editingId);
   } else {
@@ -319,6 +411,12 @@ async function saveItem() {
 
 async function deleteItem(table, id) {
   if (!confirm('Tem certeza que queres apagar este item?')) return;
+
+  if (table === 'videos') {
+    const { data } = await db.from('videos').select('pdf_url').eq('id', id).single();
+    if (data?.pdf_url) await deletePdf(data.pdf_url);
+  }
+
   const { error } = await db.from(table).delete().eq('id', id);
   if (error) { showToast('Erro ao apagar: ' + error.message, 'error'); return; }
   showToast('Apagado com sucesso!', 'success');

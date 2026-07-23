@@ -153,7 +153,7 @@ async function renderVideos() {
     return;
   }
 
-  const valid = videos.filter(v => v.youtube_url);
+  const valid = videos.filter(v => v.youtube_url && !v.draft);
 
   if (!valid.length) {
     grid.style.display = "none";
@@ -200,11 +200,7 @@ async function renderVideos() {
             ${hasPdf ? `
             <a href="${esc(v.pdf_url)}" target="_blank" rel="noopener" class="btn btn-secondary">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Ver PDF
-            </a>
-            <a href="${esc(v.pdf_url)}" download class="btn btn-outline-dark">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Descarregar
+              PDF
             </a>` : ''}
           </div>
         </div>
@@ -241,11 +237,7 @@ async function renderVideos() {
               <span class="vid-action-sep"></span>
               <a href="${esc(v.pdf_url)}" target="_blank" rel="noopener" class="vid-action-pdf">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                Ver PDF
-              </a>
-              <a href="${esc(v.pdf_url)}" download class="vid-action-dl">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Download
+                PDF
               </a>` : ''}
             </div>
           </div>
