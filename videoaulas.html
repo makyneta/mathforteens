@@ -13,6 +13,27 @@
 <script defer src="assets/js/components.js"></script>
 <script defer src="assets/js/main.js"></script>
 <style>
+/* ── Smaller Hero (scoped override) ───────── */
+.vid-hero {
+  padding: calc(var(--header-h) + 40px) var(--space-lg) 60px;
+}
+.vid-hero h1 {
+  font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+}
+.vid-hero p {
+  font-size: 0.9rem;
+  margin-bottom: var(--space-lg);
+}
+.vid-hero-stats {
+  gap: var(--space-xl);
+}
+.vid-hero-stat-icon {
+  display: none;
+}
+.vid-hero-shape {
+  height: 48px;
+}
+
 /* ── Loading / Error ──────────────────────── */
 .va-loading {
   display: flex;
