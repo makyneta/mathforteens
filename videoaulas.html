@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Videoaulas — Math For Teens</title>
-<meta name="description" content="Videoaulas de Matemática do Math For Teens. Assiste as aulas no YouTube e descarrega os PDFs correspondentes.">
+<meta name="description" content="Videoaulas de Matemática do Math For Teens. Assiste as aulas no YouTube e descarrega os PDFs.">
 <meta name="author" content="Makyneta Unipessoal, Lda.">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="stylesheet" href="assets/css/reset.css">
@@ -12,24 +12,418 @@
 <script defer src="assets/js/chatbot.js"></script>
 <script defer src="assets/js/components.js"></script>
 <script defer src="assets/js/main.js"></script>
+<style>
+/* ── Video Page Scoped Styles ───────────────── */
+.va-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 0;
+}
+.va-loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--c-border);
+  border-top-color: var(--c-primary);
+  border-radius: 50%;
+  animation: va-spin 0.8s linear infinite;
+}
+@keyframes va-spin { to { transform: rotate(360deg); } }
+
+.va-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+  font-size: 0.88rem;
+}
+.va-bc-link {
+  color: var(--c-text-3);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.va-bc-link:hover { color: var(--c-primary); }
+.va-bc-sep { color: var(--c-text-3); }
+.va-bc-current { color: var(--c-text); font-weight: 600; }
+
+.va-folder-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.va-folder {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 26px;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  width: 100%;
+}
+.va-folder:hover {
+  border-color: var(--c-primary);
+  box-shadow: 0 4px 20px rgba(200,150,12,0.1);
+  transform: translateY(-2px);
+}
+.va-folder-icon {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--c-bg, #f8f6f3);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+.va-folder-grade {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 1rem;
+  flex-shrink: 0;
+  background: var(--c-white);
+}
+.va-folder-body { flex: 1; min-width: 0; }
+.va-folder-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+.va-folder-meta {
+  font-size: 0.82rem;
+  color: var(--c-text-3);
+}
+.va-folder-arrow {
+  color: var(--c-text-3);
+  flex-shrink: 0;
+  transition: transform 0.2s, color 0.2s;
+}
+.va-folder:hover .va-folder-arrow {
+  transform: translateX(4px);
+  color: var(--c-primary);
+}
+
+.va-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 80px 24px;
+  text-align: center;
+}
+.va-empty-icon { color: var(--c-text-3); opacity: 0.4; }
+.va-empty h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--c-text);
+}
+.va-empty p {
+  font-size: 0.9rem;
+  color: var(--c-text-3);
+  max-width: 340px;
+}
+
+/* ── Video Cards (visible by default, no anim-fade-in) ──── */
+.va-featured {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 0;
+  background: var(--c-white);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--c-border-light);
+  margin-bottom: 40px;
+  transition: box-shadow 0.4s var(--ease-out);
+}
+.va-featured:hover {
+  box-shadow: 0 20px 60px rgba(0,0,0,0.07);
+}
+.va-featured-media { position: relative; }
+.va-featured-thumb {
+  display: block;
+  position: relative;
+  aspect-ratio: 16/10;
+  overflow: hidden;
+  background: var(--c-secondary);
+}
+.va-featured-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s var(--ease-out);
+}
+.va-featured:hover .va-featured-thumb img {
+  transform: scale(1.04);
+}
+.va-featured-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.4) 100%);
+}
+.va-play-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--c-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 32px rgba(200,150,12,0.45);
+  transition: transform 0.35s var(--ease-out), box-shadow 0.35s;
+  padding-left: 3px;
+}
+.va-featured:hover .va-play-circle {
+  transform: scale(1.1);
+  box-shadow: 0 12px 40px rgba(200,150,12,0.55);
+}
+.va-featured-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 99px;
+  background: linear-gradient(135deg, var(--c-accent), var(--c-accent-dark));
+  color: var(--c-secondary);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  box-shadow: 0 4px 12px rgba(212,98,138,0.35);
+}
+.va-featured-body {
+  padding: 32px 32px 32px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.va-topic-tag {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: var(--c-primary-light);
+  color: var(--c-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+}
+.va-featured-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.5vw, 1.7rem);
+  font-weight: 800;
+  color: var(--c-secondary);
+  line-height: 1.15;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+.va-featured-desc {
+  font-size: 0.92rem;
+  color: var(--c-text-secondary, #666);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.va-featured-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.va-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.va-card {
+  background: var(--c-white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--c-border-light);
+  transition: transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
+}
+.va-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.08);
+}
+.va-card-thumb {
+  position: relative;
+  aspect-ratio: 16/9;
+  display: block;
+  overflow: hidden;
+  background: var(--c-secondary);
+}
+.va-card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s var(--ease-out);
+}
+.va-card:hover .va-card-thumb img {
+  transform: scale(1.06);
+}
+.va-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.35) 100%);
+  pointer-events: none;
+}
+.va-card-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.va-play-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(200,150,12,0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(200,150,12,0.4);
+  transition: transform 0.35s var(--ease-out);
+  padding-left: 2px;
+  opacity: 0.85;
+}
+.va-card:hover .va-play-btn {
+  transform: scale(1.15);
+  opacity: 1;
+}
+.va-card-topic {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.va-card-body { padding: 16px 18px 18px; }
+.va-card-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--c-secondary);
+  line-height: 1.3;
+  margin-bottom: 6px;
+  transition: color 0.3s;
+}
+.va-card:hover .va-card-title { color: var(--c-primary); }
+.va-card-desc {
+  font-size: 0.82rem;
+  color: var(--c-text-3);
+  line-height: 1.55;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.va-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.va-action-yt,
+.va-action-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+.va-action-yt {
+  background: rgba(200,150,12,0.08);
+  color: var(--c-primary);
+}
+.va-action-yt:hover { background: rgba(200,150,12,0.18); }
+.va-action-pdf {
+  background: rgba(212,98,138,0.08);
+  color: var(--c-accent);
+}
+.va-action-pdf:hover { background: rgba(212,98,138,0.18); }
+.va-action-sep {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--c-border);
+}
+
+.va-error {
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--c-text-3);
+}
+
+/* ── Responsive ──── */
+@media (max-width: 768px) {
+  .va-featured {
+    grid-template-columns: 1fr;
+  }
+  .va-featured-body {
+    padding: 24px;
+  }
+  .va-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .va-grid {
+    grid-template-columns: 1fr;
+  }
+  .va-folder {
+    padding: 16px 18px;
+    gap: 14px;
+  }
+  .va-folder-icon,
+  .va-folder-grade {
+    width: 44px;
+    height: 44px;
+  }
+}
+</style>
 </head>
 <body>
 
 <div id="header"></div>
 
 <main>
-
   <section class="vid-hero">
     <div class="vid-hero-glow vid-hero-glow-1"></div>
     <div class="vid-hero-glow vid-hero-glow-2"></div>
     <div class="vid-hero-grid"></div>
     <div class="vid-hero-symbols">
-      <span>∑</span>
-      <span>∫</span>
-      <span>π</span>
-      <span>√</span>
-      <span>∞</span>
-      <span>Δ</span>
+      <span>∑</span><span>∫</span><span>π</span><span>√</span><span>∞</span><span>Δ</span>
     </div>
     <div class="vid-hero-content">
       <div class="vid-hero-badge">
@@ -40,23 +434,17 @@
       <p>Aulas gravadas por Tomás Correia.<br>Assiste no YouTube e descarrega os materiais PDF.</p>
       <div class="vid-hero-stats">
         <div class="vid-hero-stat">
-          <span class="vid-hero-stat-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5,3 19,12 5,21"/></svg>
-          </span>
+          <span class="vid-hero-stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5,3 19,12 5,21"/></svg></span>
           <span class="vid-hero-stat-value" id="totalCount">0</span>
           <span class="vid-hero-stat-label">Vídeos</span>
         </div>
         <div class="vid-hero-stat">
-          <span class="vid-hero-stat-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          </span>
+          <span class="vid-hero-stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
           <span class="vid-hero-stat-value" id="pdfCount">0</span>
           <span class="vid-hero-stat-label">PDFs</span>
         </div>
         <div class="vid-hero-stat">
-          <span class="vid-hero-stat-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
-          </span>
+          <span class="vid-hero-stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></span>
           <span class="vid-hero-stat-value">Grátis</span>
           <span class="vid-hero-stat-label">100% gratuito</span>
         </div>
@@ -69,44 +457,35 @@
 
   <section class="section">
     <div class="section-inner">
-
-      <div id="breadcrumb" class="folder-breadcrumb" style="display:none">
-        <a href="#" onclick="navigateTo('root');return false" class="folder-bc-link">Videoaulas</a>
-      </div>
-
-      <div id="folderGrid" class="folder-grid"></div>
-
-      <div id="featuredVideo" style="display:none"></div>
-      <div id="videosGrid" class="vid-grid" style="display:none"></div>
-
-      <div id="videosEmpty" class="vid-empty" style="display:none">
-        <div class="vid-empty-icon">
+      <div id="vaBreadcrumb" class="va-breadcrumb" style="display:none"></div>
+      <div id="vaFolders" class="va-folder-grid"></div>
+      <div id="vaFeatured" style="display:none"></div>
+      <div id="vaGrid" class="va-grid" style="display:none"></div>
+      <div id="vaEmpty" class="va-empty" style="display:none">
+        <div class="va-empty-icon">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5,3 19,12 5,21"/></svg>
         </div>
         <h3>Em breve!</h3>
         <p>Estamos a preparar aulas para esta disciplina. Fica atento!</p>
       </div>
-
-      <div id="videosLoading" class="vid-loading">
-        <div class="admin-spinner" style="width:32px;height:32px;border-width:3px;border-color:var(--c-primary);border-top-color:transparent"></div>
+      <div id="vaLoading" class="va-loading">
+        <div class="va-loading-spinner"></div>
       </div>
-
+      <div id="vaError" class="va-error" style="display:none"></div>
     </div>
   </section>
-
 </main>
 
 <button id="chatbotToggle" class="chatbot-toggle" aria-label="Chat">
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
 </button>
-
 <div id="chatbotWindow" class="chatbot-window">
   <div class="chatbot-header">
     <div class="chatbot-avatar">M</div>
-    <div class="chatbot-header-info"><h3>Math For Teens</h3><p>Online • Resposta rápida</p></div>
+    <div class="chatbot-header-info"><h3>Math For Teens</h3><p>Online · Resposta rápida</p></div>
   </div>
   <div id="chatbotMsgs" class="chatbot-messages">
-    <div class="chatbot-msg bot">Olá! 👋 Pergunta-me o que quiseres saber sobre os nossos vídeos!</div>
+    <div class="chatbot-msg bot">Olá! Pergunta-me o que quiseres saber sobre os nossos vídeos!</div>
     <div class="chatbot-options">
       <button class="chatbot-option" onclick="this.parentElement.remove();handleUserInput('Cursos e Preços')">Cursos e Preços</button>
       <button class="chatbot-option" onclick="this.parentElement.remove();handleUserInput('Como Comprar')">Como Comprar</button>
@@ -127,271 +506,244 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="assets/js/supabase-config.js"></script>
 <script>
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+(function() {
+  const loading = document.getElementById('vaLoading');
+  const errorDiv = document.getElementById('vaError');
+  const foldersEl = document.getElementById('vaFolders');
+  const breadcrumbEl = document.getElementById('vaBreadcrumb');
+  const featuredEl = document.getElementById('vaFeatured');
+  const gridEl = document.getElementById('vaGrid');
+  const emptyEl = document.getElementById('vaEmpty');
 
-const SUBJECT_CONFIG = {
-  'Matemática': {
-    icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>',
-    color: '#C8960C',
-    grades: ['7.º Ano', '8.º Ano', '9.º Ano']
-  },
-  'Matemática A': {
-    icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
-    color: '#D4628A',
-    grades: ['10.º Ano', '11.º Ano', '12.º Ano']
-  },
-  'Matemática B': {
-    icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>',
-    color: '#3D2B1F',
-    grades: ['10.º Ano', '11.º Ano']
-  }
-};
-
-const GRADE_ICONS = {
-  '7.º Ano': '7', '8.º Ano': '8', '9.º Ano': '9',
-  '10.º Ano': '10', '11.º Ano': '11', '12.º Ano': '12'
-};
-
-let allVideos = [];
-let currentView = 'root';
-let currentSubject = null;
-
-function extractVideoId(url) {
-  const match = url.match(/(?:v=|youtu\.be\/|embed\/|\/v\/)([a-zA-Z0-9_-]{11})/);
-  return match ? match[1] : null;
-}
-
-function getThumbnail(url, quality) {
-  const id = extractVideoId(url);
-  if (!id) return "assets/images/placeholder.svg";
-  return `https://img.youtube.com/vi/${id}/${quality || 'maxresdefault'}.jpg`;
-}
-
-function esc(str) {
-  if (!str) return '';
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
-async function loadVideos() {
-  const loading = document.getElementById('videosLoading');
-  const { data, error } = await sb.from('videos').select('*').order('order', { ascending: true });
-  loading.style.display = 'none';
-
-  if (error || !data) return;
-  allVideos = data.filter(v => v.youtube_url && !v.draft);
-
-  document.getElementById('totalCount').textContent = allVideos.length;
-  document.getElementById('pdfCount').textContent = allVideos.filter(v => v.pdf_url).length;
-
-  navigateTo('root');
-}
-
-function navigateTo(view, param) {
-  currentView = view;
-  currentSubject = param || null;
-
-  const folderGrid = document.getElementById('folderGrid');
-  const featured = document.getElementById('featuredVideo');
-  const grid = document.getElementById('videosGrid');
-  const empty = document.getElementById('videosEmpty');
-  const breadcrumb = document.getElementById('breadcrumb');
-
-  folderGrid.style.display = 'none';
-  featured.style.display = 'none';
-  grid.style.display = 'none';
-  empty.style.display = 'none';
-  breadcrumb.style.display = 'none';
-
-  if (view === 'root') {
-    renderSubjects();
-  } else if (view === 'grades') {
-    renderGrades(param);
-  } else if (view === 'videos') {
-    renderVideos(param);
-  }
-}
-
-function renderSubjects() {
-  const folderGrid = document.getElementById('folderGrid');
-  const breadcrumb = document.getElementById('breadcrumb');
-
-  const subjects = Object.entries(SUBJECT_CONFIG);
-  folderGrid.innerHTML = subjects.map(([name, config]) => {
-    const count = allVideos.filter(v => v.subject === name).length;
-    return `
-      <button class="folder-card" onclick="navigateTo('grades', '${name}')">
-        <div class="folder-card-icon" style="color:${config.color}">${config.icon}</div>
-        <div class="folder-card-info">
-          <h3 class="folder-card-title">${name}</h3>
-          <p class="folder-card-meta">${config.grades.length} anos escolares · ${count} aulas</p>
-        </div>
-        <div class="folder-card-arrow">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-      </button>`;
-  }).join('');
-
-  folderGrid.style.display = 'flex';
-  folderGrid.className = 'folder-grid folder-grid-subjects';
-}
-
-function renderGrades(subject) {
-  const folderGrid = document.getElementById('folderGrid');
-  const breadcrumb = document.getElementById('breadcrumb');
-  const config = SUBJECT_CONFIG[subject];
-  if (!config) return navigateTo('root');
-
-  breadcrumb.style.display = 'flex';
-  breadcrumb.innerHTML = `
-    <a href="#" onclick="navigateTo('root');return false" class="folder-bc-link">Videoaulas</a>
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-    <span class="folder-bc-current">${subject}</span>`;
-
-  folderGrid.innerHTML = config.grades.map(grade => {
-    const count = allVideos.filter(v => v.subject === subject && v.grade === grade).length;
-    return `
-      <button class="folder-card" onclick="navigateTo('videos', '${subject}|${grade}')">
-        <div class="folder-card-grade" style="border-color:${config.color}">
-          <span>${GRADE_ICONS[grade] || grade}</span>
-        </div>
-        <div class="folder-card-info">
-          <h3 class="folder-card-title">${grade}</h3>
-          <p class="folder-card-meta">${count} aula${count !== 1 ? 's' : ''}</p>
-        </div>
-        <div class="folder-card-arrow">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-      </button>`;
-  }).join('');
-
-  folderGrid.style.display = 'flex';
-  folderGrid.className = 'folder-grid folder-grid-grades';
-}
-
-function renderVideos(params) {
-  const folderGrid = document.getElementById('folderGrid');
-  const featured = document.getElementById('featuredVideo');
-  const grid = document.getElementById('videosGrid');
-  const empty = document.getElementById('videosEmpty');
-  const breadcrumb = document.getElementById('breadcrumb');
-
-  const [subject, grade] = params.split('|');
-  const config = SUBJECT_CONFIG[subject];
-
-  breadcrumb.style.display = 'flex';
-  breadcrumb.innerHTML = `
-    <a href="#" onclick="navigateTo('root');return false" class="folder-bc-link">Videoaulas</a>
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-    <a href="#" onclick="navigateTo('grades','${subject}');return false" class="folder-bc-link">${subject}</a>
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-    <span class="folder-bc-current">${grade}</span>`;
-
-  const videos = allVideos.filter(v => v.subject === subject && v.grade === grade);
-
-  if (!videos.length) {
-    empty.style.display = 'flex';
+  if (!window.supabase) {
+    loading.style.display = 'none';
+    errorDiv.style.display = 'block';
+    errorDiv.textContent = 'Erro ao carregar. Verifica a tua ligação à internet.';
     return;
   }
 
-  if (videos.length > 0) {
-    const v = videos[0];
-    const hasPdf = v.pdf_url && v.pdf_url.trim();
-    featured.style.display = 'block';
-    featured.innerHTML = `
-      <div class="vid-featured anim-fade-in">
-        <div class="vid-featured-media">
-          <a href="${esc(v.youtube_url)}" target="_blank" rel="noopener" class="vid-featured-thumb">
-            <img src="${getThumbnail(v.youtube_url, 'maxresdefault')}" alt="${esc(v.title)}" loading="eager"
-              onerror="this.onerror=null;this.src='${getThumbnail(v.youtube_url, 'hqdefault')}'">
-            <div class="vid-featured-play">
-              <div class="vid-play-circle">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="9.5,7 9.5,17 17,12"/></svg>
-              </div>
-            </div>
-            <div class="vid-featured-badge">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-              Destaque
-            </div>
-          </a>
-        </div>
-        <div class="vid-featured-body">
-          ${v.topic ? `<span class="vid-topic-tag">${esc(v.topic)}</span>` : ''}
-          <h2 class="vid-featured-title">${esc(v.title)}</h2>
-          ${v.description ? `<p class="vid-featured-desc">${esc(v.description)}</p>` : ''}
-          <div class="vid-featured-actions">
-            <a href="${esc(v.youtube_url)}" target="_blank" rel="noopener" class="btn btn-primary">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5,3 19,12 5,21"/></svg>
-              Assistir no YouTube
-            </a>
-            ${hasPdf ? `
-            <a href="${esc(v.pdf_url)}" target="_blank" rel="noopener" class="btn btn-secondary">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              PDF
-            </a>` : ''}
-          </div>
-        </div>
-      </div>`;
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const SUBJECTS = {
+    'Matemática': {
+      color: '#C8960C',
+      grades: ['7.º Ano', '8.º Ano', '9.º Ano'],
+      icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>'
+    },
+    'Matemática A': {
+      color: '#D4628A',
+      grades: ['10.º Ano', '11.º Ano', '12.º Ano'],
+      icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>'
+    },
+    'Matemática B': {
+      color: '#3D2B1F',
+      grades: ['10.º Ano', '11.º Ano'],
+      icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>'
+    }
+  };
+
+  const GRADE_NUM = {
+    '7.º Ano': '7', '8.º Ano': '8', '9.º Ano': '9',
+    '10.º Ano': '10', '11.º Ano': '11', '12.º Ano': '12'
+  };
+
+  let videos = [];
+  let view = 'subjects';
+
+  function ytId(url) {
+    if (!url) return null;
+    var m = url.match(/(?:v=|youtu\.be\/|embed\/|\/v\/)([a-zA-Z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }
+  function thumb(url, q) {
+    var id = ytId(url);
+    return id ? 'https://img.youtube.com/vi/' + id + '/' + (q || 'hqdefault') + '.jpg' : '';
+  }
+  function h(s) {
+    if (!s) return '';
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
   }
 
-  const rest = videos.slice(1);
-  if (rest.length) {
-    grid.style.display = 'grid';
-    grid.innerHTML = rest.map((v, i) => {
-      const hasPdf = v.pdf_url && v.pdf_url.trim();
-      return `
-        <div class="vid-card anim-fade-in" style="transition-delay:${(i % 6) * 0.08}s">
-          <a href="${esc(v.youtube_url)}" target="_blank" rel="noopener" class="vid-card-thumb">
-            <img src="${getThumbnail(v.youtube_url, 'hqdefault')}" alt="${esc(v.title)}" loading="lazy"
-              onerror="this.onerror=null;this.src='${getThumbnail(v.youtube_url, 'sddefault')}'">
-            <div class="vid-card-overlay"></div>
-            <div class="vid-card-play">
-              <div class="vid-play-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="9.5,7 9.5,17 17,12"/></svg>
-              </div>
-            </div>
-            ${v.topic ? `<span class="vid-card-topic">${esc(v.topic)}</span>` : ''}
-          </a>
-          <div class="vid-card-body">
-            <h3 class="vid-card-title">${esc(v.title)}</h3>
-            ${v.description ? `<p class="vid-card-desc">${esc(v.description)}</p>` : ''}
-            <div class="vid-card-actions">
-              <a href="${esc(v.youtube_url)}" target="_blank" rel="noopener" class="vid-action-yt">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5,3 19,12 5,21"/></svg>
-                YouTube
-              </a>
-              ${hasPdf ? `
-              <span class="vid-action-sep"></span>
-              <a href="${esc(v.pdf_url)}" target="_blank" rel="noopener" class="vid-action-pdf">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                PDF
-              </a>` : ''}
-            </div>
-          </div>
-        </div>`;
-    }).join('');
+  function hideAll() {
+    foldersEl.style.display = 'none';
+    featuredEl.style.display = 'none';
+    gridEl.style.display = 'none';
+    emptyEl.style.display = 'none';
+    breadcrumbEl.style.display = 'none';
   }
-}
 
-document.addEventListener('DOMContentLoaded', async () => {
-  await loadVideos();
-  reinitAnimations();
-});
+  function showSubjects() {
+    view = 'subjects';
+    hideAll();
+    breadcrumbEl.style.display = 'none';
 
-function reinitAnimations() {
-  const els = document.querySelectorAll('.anim-fade-in:not(.visible), .anim-up:not(.visible)');
-  if (!els.length) return;
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        obs.unobserve(entry.target);
+    var html = '';
+    var keys = Object.keys(SUBJECTS);
+    for (var i = 0; i < keys.length; i++) {
+      var name = keys[i];
+      var cfg = SUBJECTS[name];
+      var count = 0;
+      for (var j = 0; j < videos.length; j++) {
+        if (videos[j].subject === name) count++;
       }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-  els.forEach(el => obs.observe(el));
-}
+      html += '<button class="va-folder" onclick="window._vaGo(\'grades\',\'' + h(name) + '\')">' +
+        '<div class="va-folder-icon" style="color:' + cfg.color + '">' + cfg.icon + '</div>' +
+        '<div class="va-folder-body">' +
+        '<div class="va-folder-title">' + h(name) + '</div>' +
+        '<div class="va-folder-meta">' + cfg.grades.length + ' anos escolares · ' + count + ' aulas</div>' +
+        '</div>' +
+        '<div class="va-folder-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>' +
+        '</button>';
+    }
+    foldersEl.innerHTML = html;
+    foldersEl.style.display = 'flex';
+  }
+
+  function showGrades(subject) {
+    view = 'grades';
+    hideAll();
+    var cfg = SUBJECTS[subject];
+    if (!cfg) return showSubjects();
+
+    breadcrumbEl.innerHTML =
+      '<a href="#" class="va-bc-link" onclick="window._vaGo(\'subjects\');return false">Videoaulas</a>' +
+      '<span class="va-bc-sep"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></span>' +
+      '<span class="va-bc-current">' + h(subject) + '</span>';
+    breadcrumbEl.style.display = 'flex';
+
+    var html = '';
+    for (var i = 0; i < cfg.grades.length; i++) {
+      var grade = cfg.grades[i];
+      var count = 0;
+      for (var j = 0; j < videos.length; j++) {
+        if (videos[j].subject === subject && videos[j].grade === grade) count++;
+      }
+      html += '<button class="va-folder" onclick="window._vaGo(\'videos\',\'' + h(subject) + '|' + h(grade) + '\')">' +
+        '<div class="va-folder-grade" style="border-color:' + cfg.color + '">' + (GRADE_NUM[grade] || grade) + '</div>' +
+        '<div class="va-folder-body">' +
+        '<div class="va-folder-title">' + h(grade) + '</div>' +
+        '<div class="va-folder-meta">' + count + ' aula' + (count !== 1 ? 's' : '') + '</div>' +
+        '</div>' +
+        '<div class="va-folder-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>' +
+        '</button>';
+    }
+    foldersEl.innerHTML = html;
+    foldersEl.style.display = 'flex';
+  }
+
+  function showVideos(params) {
+    view = 'videos';
+    hideAll();
+    var parts = params.split('|');
+    var subject = parts[0];
+    var grade = parts[1];
+    var cfg = SUBJECTS[subject];
+
+    breadcrumbEl.innerHTML =
+      '<a href="#" class="va-bc-link" onclick="window._vaGo(\'subjects\');return false">Videoaulas</a>' +
+      '<span class="va-bc-sep"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></span>' +
+      '<a href="#" class="va-bc-link" onclick="window._vaGo(\'grades\',\'' + h(subject) + '\');return false">' + h(subject) + '</a>' +
+      '<span class="va-bc-sep"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></span>' +
+      '<span class="va-bc-current">' + h(grade) + '</span>';
+    breadcrumbEl.style.display = 'flex';
+
+    var list = [];
+    for (var i = 0; i < videos.length; i++) {
+      if (videos[i].subject === subject && videos[i].grade === grade) list.push(videos[i]);
+    }
+
+    if (!list.length) {
+      emptyEl.style.display = 'flex';
+      return;
+    }
+
+    var first = list[0];
+    var hasPdf = first.pdf_url && first.pdf_url.trim();
+    featuredEl.innerHTML =
+      '<div class="va-featured">' +
+      '<div class="va-featured-media">' +
+      '<a href="' + h(first.youtube_url) + '" target="_blank" rel="noopener" class="va-featured-thumb">' +
+      '<img src="' + thumb(first.youtube_url, 'maxresdefault') + '" alt="' + h(first.title) + '" loading="eager" onerror="this.onerror=null;this.src=\'' + thumb(first.youtube_url, 'hqdefault') + '\'">' +
+      '<div class="va-featured-play"><div class="va-play-circle"><svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="9.5,7 9.5,17 17,12"/></svg></div></div>' +
+      '</a></div>' +
+      '<div class="va-featured-body">' +
+      (first.topic ? '<span class="va-topic-tag">' + h(first.topic) + '</span>' : '') +
+      '<h2 class="va-featured-title">' + h(first.title) + '</h2>' +
+      (first.description ? '<p class="va-featured-desc">' + h(first.description) + '</p>' : '') +
+      '<div class="va-featured-actions">' +
+      '<a href="' + h(first.youtube_url) + '" target="_blank" rel="noopener" class="btn btn-primary">' +
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5,3 19,12 5,21"/></svg> Assistir no YouTube</a>' +
+      (hasPdf ? '<a href="' + h(first.pdf_url) + '" target="_blank" rel="noopener" class="btn btn-secondary">' +
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> PDF</a>' : '') +
+      '</div></div></div>';
+    featuredEl.style.display = 'block';
+
+    var rest = list.slice(1);
+    if (rest.length) {
+      var cards = '';
+      for (var k = 0; k < rest.length; k++) {
+        var v = rest[k];
+        var hp = v.pdf_url && v.pdf_url.trim();
+        cards += '<div class="va-card">' +
+          '<a href="' + h(v.youtube_url) + '" target="_blank" rel="noopener" class="va-card-thumb">' +
+          '<img src="' + thumb(v.youtube_url, 'hqdefault') + '" alt="' + h(v.title) + '" loading="lazy" onerror="this.onerror=null;this.src=\'' + thumb(v.youtube_url, 'sddefault') + '\'">' +
+          '<div class="va-card-overlay"></div>' +
+          '<div class="va-card-play"><div class="va-play-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="9.5,7 9.5,17 17,12"/></svg></div></div>' +
+          (v.topic ? '<span class="va-card-topic">' + h(v.topic) + '</span>' : '') +
+          '</a>' +
+          '<div class="va-card-body">' +
+          '<h3 class="va-card-title">' + h(v.title) + '</h3>' +
+          (v.description ? '<p class="va-card-desc">' + h(v.description) + '</p>' : '') +
+          '<div class="va-card-actions">' +
+          '<a href="' + h(v.youtube_url) + '" target="_blank" rel="noopener" class="va-action-yt">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5,3 19,12 5,21"/></svg> YouTube</a>' +
+          (hp ? '<span class="va-action-sep"></span><a href="' + h(v.pdf_url) + '" target="_blank" rel="noopener" class="va-action-pdf">' +
+          '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> PDF</a>' : '') +
+          '</div></div></div>';
+      }
+      gridEl.innerHTML = cards;
+      gridEl.style.display = 'grid';
+    }
+  }
+
+  window._vaGo = function(target, param) {
+    if (target === 'subjects') showSubjects();
+    else if (target === 'grades') showGrades(param);
+    else if (target === 'videos') showVideos(param);
+  };
+
+  async function init() {
+    try {
+      var result = await db.from('videos').select('*').order('order', { ascending: true });
+      loading.style.display = 'none';
+
+      if (result.error) {
+        errorDiv.style.display = 'block';
+        errorDiv.textContent = 'Erro ao carregar vídeos. Tenta novamente.';
+        return;
+      }
+
+      videos = (result.data || []).filter(function(v) { return v.youtube_url && !v.draft; });
+
+      document.getElementById('totalCount').textContent = videos.length;
+      document.getElementById('pdfCount').textContent = videos.filter(function(v) { return v.pdf_url; }).length;
+
+      showSubjects();
+    } catch(e) {
+      loading.style.display = 'none';
+      errorDiv.style.display = 'block';
+      errorDiv.textContent = 'Erro ao carregar. Verifica a tua ligação à internet.';
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
 </script>
 
 </body>
