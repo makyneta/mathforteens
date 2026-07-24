@@ -43,14 +43,14 @@
           <span class="vid-hero-stat-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5,3 19,12 5,21"/></svg>
           </span>
-          <span class="vid-hero-stat-value" data-contar="0" data-videocount>0</span>
+          <span class="vid-hero-stat-value" id="totalCount">0</span>
           <span class="vid-hero-stat-label">Vídeos</span>
         </div>
         <div class="vid-hero-stat">
           <span class="vid-hero-stat-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           </span>
-          <span class="vid-hero-stat-value" data-contar="0" data-pdfcount>0</span>
+          <span class="vid-hero-stat-value" id="pdfCount">0</span>
           <span class="vid-hero-stat-label">PDFs</span>
         </div>
         <div class="vid-hero-stat">
@@ -69,18 +69,28 @@
 
   <section class="section">
     <div class="section-inner">
+
+      <div id="breadcrumb" class="folder-breadcrumb" style="display:none">
+        <a href="#" onclick="navigateTo('root');return false" class="folder-bc-link">Videoaulas</a>
+      </div>
+
+      <div id="folderGrid" class="folder-grid"></div>
+
       <div id="featuredVideo" style="display:none"></div>
-      <div id="videosGrid" class="vid-grid"></div>
+      <div id="videosGrid" class="vid-grid" style="display:none"></div>
+
       <div id="videosEmpty" class="vid-empty" style="display:none">
         <div class="vid-empty-icon">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5,3 19,12 5,21"/></svg>
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5,3 19,12 5,21"/></svg>
         </div>
         <h3>Em breve!</h3>
-        <p>Estamos a preparar aulas em vídeo para ti. Fica atento!</p>
+        <p>Estamos a preparar aulas para esta disciplina. Fica atento!</p>
       </div>
+
       <div id="videosLoading" class="vid-loading">
         <div class="admin-spinner" style="width:32px;height:32px;border-width:3px;border-color:var(--c-primary);border-top-color:transparent"></div>
       </div>
+
     </div>
   </section>
 
@@ -119,6 +129,33 @@
 <script>
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+const SUBJECT_CONFIG = {
+  'Matemática': {
+    icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>',
+    color: '#C8960C',
+    grades: ['7.º Ano', '8.º Ano', '9.º Ano']
+  },
+  'Matemática A': {
+    icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
+    color: '#D4628A',
+    grades: ['10.º Ano', '11.º Ano', '12.º Ano']
+  },
+  'Matemática B': {
+    icon: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>',
+    color: '#3D2B1F',
+    grades: ['10.º Ano', '11.º Ano']
+  }
+};
+
+const GRADE_ICONS = {
+  '7.º Ano': '7', '8.º Ano': '8', '9.º Ano': '9',
+  '10.º Ano': '10', '11.º Ano': '11', '12.º Ano': '12'
+};
+
+let allVideos = [];
+let currentView = 'root';
+let currentSubject = null;
+
 function extractVideoId(url) {
   const match = url.match(/(?:v=|youtu\.be\/|embed\/|\/v\/)([a-zA-Z0-9_-]{11})/);
   return match ? match[1] : null;
@@ -137,40 +174,131 @@ function esc(str) {
   return div.innerHTML;
 }
 
-async function renderVideos() {
-  const grid = document.getElementById("videosGrid");
-  const featured = document.getElementById("featuredVideo");
-  const empty = document.getElementById("videosEmpty");
-  const loading = document.getElementById("videosLoading");
+async function loadVideos() {
+  const loading = document.getElementById('videosLoading');
+  const { data, error } = await sb.from('videos').select('*').order('order', { ascending: true });
+  loading.style.display = 'none';
 
-  const { data: videos, error } = await sb.from('videos').select('*').order('order', { ascending: true });
+  if (error || !data) return;
+  allVideos = data.filter(v => v.youtube_url && !v.draft);
 
-  loading.style.display = "none";
+  document.getElementById('totalCount').textContent = allVideos.length;
+  document.getElementById('pdfCount').textContent = allVideos.filter(v => v.pdf_url).length;
 
-  if (error || !videos || !videos.length) {
-    grid.style.display = "none";
-    empty.style.display = "flex";
+  navigateTo('root');
+}
+
+function navigateTo(view, param) {
+  currentView = view;
+  currentSubject = param || null;
+
+  const folderGrid = document.getElementById('folderGrid');
+  const featured = document.getElementById('featuredVideo');
+  const grid = document.getElementById('videosGrid');
+  const empty = document.getElementById('videosEmpty');
+  const breadcrumb = document.getElementById('breadcrumb');
+
+  folderGrid.style.display = 'none';
+  featured.style.display = 'none';
+  grid.style.display = 'none';
+  empty.style.display = 'none';
+  breadcrumb.style.display = 'none';
+
+  if (view === 'root') {
+    renderSubjects();
+  } else if (view === 'grades') {
+    renderGrades(param);
+  } else if (view === 'videos') {
+    renderVideos(param);
+  }
+}
+
+function renderSubjects() {
+  const folderGrid = document.getElementById('folderGrid');
+  const breadcrumb = document.getElementById('breadcrumb');
+
+  const subjects = Object.entries(SUBJECT_CONFIG);
+  folderGrid.innerHTML = subjects.map(([name, config]) => {
+    const count = allVideos.filter(v => v.subject === name).length;
+    return `
+      <button class="folder-card" onclick="navigateTo('grades', '${name}')">
+        <div class="folder-card-icon" style="color:${config.color}">${config.icon}</div>
+        <div class="folder-card-info">
+          <h3 class="folder-card-title">${name}</h3>
+          <p class="folder-card-meta">${config.grades.length} anos escolares · ${count} aulas</p>
+        </div>
+        <div class="folder-card-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </button>`;
+  }).join('');
+
+  folderGrid.style.display = 'flex';
+  folderGrid.className = 'folder-grid folder-grid-subjects';
+}
+
+function renderGrades(subject) {
+  const folderGrid = document.getElementById('folderGrid');
+  const breadcrumb = document.getElementById('breadcrumb');
+  const config = SUBJECT_CONFIG[subject];
+  if (!config) return navigateTo('root');
+
+  breadcrumb.style.display = 'flex';
+  breadcrumb.innerHTML = `
+    <a href="#" onclick="navigateTo('root');return false" class="folder-bc-link">Videoaulas</a>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    <span class="folder-bc-current">${subject}</span>`;
+
+  folderGrid.innerHTML = config.grades.map(grade => {
+    const count = allVideos.filter(v => v.subject === subject && v.grade === grade).length;
+    return `
+      <button class="folder-card" onclick="navigateTo('videos', '${subject}|${grade}')">
+        <div class="folder-card-grade" style="border-color:${config.color}">
+          <span>${GRADE_ICONS[grade] || grade}</span>
+        </div>
+        <div class="folder-card-info">
+          <h3 class="folder-card-title">${grade}</h3>
+          <p class="folder-card-meta">${count} aula${count !== 1 ? 's' : ''}</p>
+        </div>
+        <div class="folder-card-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </button>`;
+  }).join('');
+
+  folderGrid.style.display = 'flex';
+  folderGrid.className = 'folder-grid folder-grid-grades';
+}
+
+function renderVideos(params) {
+  const folderGrid = document.getElementById('folderGrid');
+  const featured = document.getElementById('featuredVideo');
+  const grid = document.getElementById('videosGrid');
+  const empty = document.getElementById('videosEmpty');
+  const breadcrumb = document.getElementById('breadcrumb');
+
+  const [subject, grade] = params.split('|');
+  const config = SUBJECT_CONFIG[subject];
+
+  breadcrumb.style.display = 'flex';
+  breadcrumb.innerHTML = `
+    <a href="#" onclick="navigateTo('root');return false" class="folder-bc-link">Videoaulas</a>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    <a href="#" onclick="navigateTo('grades','${subject}');return false" class="folder-bc-link">${subject}</a>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    <span class="folder-bc-current">${grade}</span>`;
+
+  const videos = allVideos.filter(v => v.subject === subject && v.grade === grade);
+
+  if (!videos.length) {
+    empty.style.display = 'flex';
     return;
   }
 
-  const valid = videos.filter(v => v.youtube_url && !v.draft);
-
-  if (!valid.length) {
-    grid.style.display = "none";
-    empty.style.display = "flex";
-    return;
-  }
-
-  const pdfCount = valid.filter(v => v.pdf_url && v.pdf_url.trim()).length;
-  const countVideoEl = document.querySelector('[data-videocount]');
-  const countPdfEl = document.querySelector('[data-pdfcount]');
-  if (countVideoEl) countVideoEl.textContent = valid.length;
-  if (countPdfEl) countPdfEl.textContent = pdfCount;
-
-  if (valid.length > 0) {
-    const v = valid[0];
+  if (videos.length > 0) {
+    const v = videos[0];
     const hasPdf = v.pdf_url && v.pdf_url.trim();
-    featured.style.display = "block";
+    featured.style.display = 'block';
     featured.innerHTML = `
       <div class="vid-featured anim-fade-in">
         <div class="vid-featured-media">
@@ -194,12 +322,12 @@ async function renderVideos() {
           ${v.description ? `<p class="vid-featured-desc">${esc(v.description)}</p>` : ''}
           <div class="vid-featured-actions">
             <a href="${esc(v.youtube_url)}" target="_blank" rel="noopener" class="btn btn-primary">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5,3 19,12 5,21"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5,3 19,12 5,21"/></svg>
               Assistir no YouTube
             </a>
             ${hasPdf ? `
             <a href="${esc(v.pdf_url)}" target="_blank" rel="noopener" class="btn btn-secondary">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
               PDF
             </a>` : ''}
           </div>
@@ -207,9 +335,9 @@ async function renderVideos() {
       </div>`;
   }
 
-  const rest = valid.slice(1);
+  const rest = videos.slice(1);
   if (rest.length) {
-    grid.style.display = "grid";
+    grid.style.display = 'grid';
     grid.innerHTML = rest.map((v, i) => {
       const hasPdf = v.pdf_url && v.pdf_url.trim();
       return `
@@ -230,24 +358,24 @@ async function renderVideos() {
             ${v.description ? `<p class="vid-card-desc">${esc(v.description)}</p>` : ''}
             <div class="vid-card-actions">
               <a href="${esc(v.youtube_url)}" target="_blank" rel="noopener" class="vid-action-yt">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5,3 19,12 5,21"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5,3 19,12 5,21"/></svg>
                 YouTube
               </a>
               ${hasPdf ? `
               <span class="vid-action-sep"></span>
               <a href="${esc(v.pdf_url)}" target="_blank" rel="noopener" class="vid-action-pdf">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                 PDF
               </a>` : ''}
             </div>
           </div>
         </div>`;
-    }).join("");
+    }).join('');
   }
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-  await renderVideos();
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadVideos();
   if (typeof initAnimations === 'function') initAnimations();
 });
 </script>

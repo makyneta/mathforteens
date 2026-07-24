@@ -4222,6 +4222,150 @@ p { overflow-wrap: break-word; }
 }
 
 /* ═══════════════════════════════════════════
+   FOLDER NAVIGATION
+   ═══════════════════════════════════════════ */
+
+.folder-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 32px;
+  font-size: 0.9rem;
+}
+
+.folder-bc-link {
+  color: var(--c-text-2);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.folder-bc-link:hover {
+  color: var(--c-primary);
+}
+
+.folder-bc-current {
+  color: var(--c-text);
+  font-weight: 600;
+}
+
+.folder-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 48px;
+}
+
+.folder-grid-subjects .folder-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 28px;
+  background: var(--c-bg-2);
+  border: 1px solid var(--c-border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+}
+
+.folder-grid-subjects .folder-card:hover {
+  border-color: var(--c-primary);
+  background: var(--c-bg-3);
+  transform: translateY(-2px);
+}
+
+.folder-grid-grades .folder-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 24px;
+  background: var(--c-bg-2);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+}
+
+.folder-grid-grades .folder-card:hover {
+  border-color: var(--c-primary);
+  background: var(--c-bg-3);
+  transform: translateY(-2px);
+}
+
+.folder-card-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--c-bg-1);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.folder-card-grade {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--c-text);
+  flex-shrink: 0;
+  background: var(--c-bg-1);
+}
+
+.folder-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.folder-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--c-text);
+}
+
+.folder-card-meta {
+  font-size: 0.85rem;
+  color: var(--c-text-3);
+}
+
+.folder-card-arrow {
+  color: var(--c-text-3);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.folder-card:hover .folder-card-arrow {
+  transform: translateX(4px);
+  color: var(--c-primary);
+}
+
+@media (max-width: 600px) {
+  .folder-grid-subjects .folder-card,
+  .folder-grid-grades .folder-card {
+    padding: 16px 18px;
+    gap: 14px;
+  }
+
+  .folder-card-icon,
+  .folder-card-grade {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ═══════════════════════════════════════════
    RESPONSIVE — Shop & Testimonials
    ═══════════════════════════════════════════ */
 

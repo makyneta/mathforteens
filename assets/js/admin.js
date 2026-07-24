@@ -205,7 +205,7 @@ function renderVideos(items) {
         ${thumb ? `<img src="${thumb}" class="admin-list-thumb" alt="${v.title}" onerror="this.style.display='none'">` : ''}
         <div class="admin-list-info">
           <h4>${esc(v.title)}</h4>
-          <p>${v.topic ? esc(v.topic) + ' · ' : ''}${v.pdf_url ? '📎 PDF anexado' : 'Sem PDF'}</p>
+          <p>${esc(v.subject || 'Matemática')} · ${esc(v.grade || '')}${v.topic ? ' · ' + esc(v.topic) : ''}${v.pdf_url ? ' · 📎 PDF' : ''}</p>
         </div>
         ${badges.join(' ')}
         <div class="admin-list-actions">
@@ -261,7 +261,25 @@ function renderProducts(items) {
 function getVideoFormHtml(data) {
   const v = data || {};
   const hasPdf = v.pdf_url && v.pdf_url.trim();
+  const subjects = ['Matemática', 'Matemática A', 'Matemática B'];
+  const gradesBySubject = {
+    'Matemática': ['7.º Ano', '8.º Ano', '9.º Ano'],
+    'Matemática A': ['10.º Ano', '11.º Ano', '12.º Ano'],
+    'Matemática B': ['10.º Ano', '11.º Ano']
+  };
+  const currentSubject = v.subject || 'Matemática';
+  const currentGrade = v.grade || '7.º Ano';
+  const availableGrades = gradesBySubject[currentSubject] || gradesBySubject['Matemática'];
+
   return `
+    <div class="admin-field-row">
+      <div class="admin-field"><label>Disciplina *</label><select id="field_subject" required onchange="updateGradeOptions()">
+        ${subjects.map(s => `<option value="${s}" ${currentSubject === s ? 'selected' : ''}>${s}</option>`).join('')}
+      </select></div>
+      <div class="admin-field"><label>AnoEscolar *</label><select id="field_grade" required>
+        ${availableGrades.map(g => `<option value="${g}" ${currentGrade === g ? 'selected' : ''}>${g}</option>`).join('')}
+      </select></div>
+    </div>
     <div class="admin-field"><label>Título *</label><input type="text" id="field_title" value="${esc(v.title || '')}" required></div>
     <div class="admin-field"><label>URL do YouTube *</label><input type="url" id="field_youtube_url" value="${esc(v.youtube_url || '')}" required placeholder="https://www.youtube.com/watch?v=..."></div>
     <div class="admin-field"><label>Tópico</label><input type="text" id="field_topic" value="${esc(v.topic || '')}" placeholder="Ex: Derivadas"></div>
@@ -286,6 +304,19 @@ function getVideoFormHtml(data) {
         <div class="admin-check-row"><input type="checkbox" id="field_draft" ${v.draft ? 'checked' : ''}><label for="field_draft">Rascunho (não publicar)</label></div>
       </div>
     </div>`;
+}
+
+function updateGradeOptions() {
+  const gradesBySubject = {
+    'Matemática': ['7.º Ano', '8.º Ano', '9.º Ano'],
+    'Matemática A': ['10.º Ano', '11.º Ano', '12.º Ano'],
+    'Matemática B': ['10.º Ano', '11.º Ano']
+  };
+  const subject = document.getElementById('field_subject').value;
+  const gradeSelect = document.getElementById('field_grade');
+  const currentGrade = gradeSelect.value;
+  const grades = gradesBySubject[subject] || [];
+  gradeSelect.innerHTML = grades.map(g => `<option value="${g}" ${currentGrade === g ? 'selected' : ''}>${g}</option>`).join('');
 }
 
 function getTestimonialFormHtml(data) {
@@ -389,6 +420,8 @@ async function saveItem() {
   const obj = {};
 
   if (editingType === 'video') {
+    obj.subject = document.getElementById('field_subject').value;
+    obj.grade = document.getElementById('field_grade').value;
     obj.title = document.getElementById('field_title').value;
     obj.youtube_url = document.getElementById('field_youtube_url').value;
     obj.topic = document.getElementById('field_topic').value;
