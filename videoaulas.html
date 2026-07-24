@@ -376,8 +376,22 @@ function renderVideos(params) {
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadVideos();
-  if (typeof initAnimations === 'function') initAnimations();
+  reinitAnimations();
 });
+
+function reinitAnimations() {
+  const els = document.querySelectorAll('.anim-fade-in:not(.visible), .anim-up:not(.visible)');
+  if (!els.length) return;
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  els.forEach(el => obs.observe(el));
+}
 </script>
 
 </body>
