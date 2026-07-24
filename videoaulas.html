@@ -169,138 +169,8 @@
 }
 
 /* ════════════════════════════════════════════
-   VIDEO DISPLAY — Featured + Grid
+   VIDEO GRID — uniform cards
    ════════════════════════════════════════════ */
-
-/* ── Featured (first video, large) ────────── */
-.va-featured {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  background: var(--c-white);
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  border: 1px solid var(--c-border-light);
-  margin-bottom: 32px;
-  min-height: 340px;
-  transition: box-shadow 0.4s var(--ease-out);
-}
-.va-featured:hover {
-  box-shadow: 0 24px 64px rgba(0,0,0,0.07);
-}
-
-/* Thumbnail */
-.va-featured-media {
-  position: relative;
-  min-height: 340px;
-}
-.va-featured-thumb {
-  display: block;
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: var(--c-secondary);
-}
-.va-featured-thumb img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s var(--ease-out);
-}
-.va-featured:hover .va-featured-thumb img {
-  transform: scale(1.04);
-}
-
-/* Play button */
-.va-featured-play {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.45) 100%);
-  z-index: 2;
-}
-.va-play-circle {
-  width: 76px;
-  height: 76px;
-  border-radius: 50%;
-  background: var(--c-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 32px rgba(200,150,12,0.45);
-  transition: transform 0.35s var(--ease-out), box-shadow 0.35s;
-  padding-left: 3px;
-}
-.va-featured:hover .va-play-circle {
-  transform: scale(1.1);
-  box-shadow: 0 12px 40px rgba(200,150,12,0.55);
-}
-
-/* Badge */
-.va-featured-badge {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 14px;
-  border-radius: 99px;
-  background: linear-gradient(135deg, var(--c-accent), var(--c-accent-dark));
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  box-shadow: 0 4px 12px rgba(212,98,138,0.35);
-  z-index: 3;
-}
-
-/* Body */
-.va-featured-body {
-  padding: 36px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.va-topic-tag {
-  display: inline-flex;
-  align-self: flex-start;
-  padding: 4px 14px;
-  border-radius: 99px;
-  background: var(--c-primary-light);
-  color: var(--c-primary);
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 14px;
-}
-.va-featured-title {
-  font-family: var(--font-display);
-  font-size: clamp(1.35rem, 2.5vw, 1.7rem);
-  font-weight: 800;
-  color: var(--c-secondary);
-  line-height: 1.2;
-  margin-bottom: 12px;
-  letter-spacing: -0.02em;
-}
-.va-featured-desc {
-  font-size: 0.9rem;
-  color: var(--c-text-secondary);
-  line-height: 1.7;
-  margin-bottom: 24px;
-}
-.va-featured-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-/* ── Grid (remaining videos) ──────────────── */
 .va-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -459,9 +329,7 @@
   .va-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 768px) {
-  .va-featured { grid-template-columns: 1fr; min-height: auto; }
-  .va-featured-media { min-height: 240px; }
-  .va-featured-body { padding: 24px; }
+  .va-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 480px) {
   .va-grid { grid-template-columns: 1fr; }
@@ -520,7 +388,6 @@
         <span class="va-section-count" id="vaSectionCount"></span>
       </div>
       <div id="vaFolders" class="va-folder-grid"></div>
-      <div id="vaFeatured" style="display:none"></div>
       <div id="vaGrid" class="va-grid" style="display:none"></div>
       <div id="vaEmpty" class="va-empty" style="display:none">
         <div class="va-empty-icon">
@@ -569,7 +436,6 @@
   var $head    = document.getElementById('vaSectionHead');
   var $headT   = document.getElementById('vaSectionTitle');
   var $headC   = document.getElementById('vaSectionCount');
-  var $feat    = document.getElementById('vaFeatured');
   var $grid    = document.getElementById('vaGrid');
   var $empty   = document.getElementById('vaEmpty');
 
@@ -594,7 +460,6 @@
   var CHEVRON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>';
   var YT_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5,3 19,12 5,21"/></svg>';
   var PDF_SVG = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
-  var PLAY_LG = '<svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="9.5,7 9.5,17 17,12"/></svg>';
   var PLAY_SM = '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="9.5,7 9.5,17 17,12"/></svg>';
 
   var videos = [];
@@ -604,7 +469,7 @@
   function esc(s){ if(!s)return''; var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 
   function hide() {
-    $folders.style.display='none'; $feat.style.display='none';
+    $folders.style.display='none';
     $grid.style.display='none'; $empty.style.display='none';
     $bc.style.display='none'; $head.style.display='none';
   }
@@ -671,55 +536,29 @@
 
     if(!list.length) { $empty.style.display='flex'; return; }
 
-    /* Featured */
-    var v=list[0], hp=v.pdf_url&&v.pdf_url.trim();
-    $feat.innerHTML=
-      '<div class="va-featured">'
-      +'<div class="va-featured-media">'
-        +'<a href="'+esc(v.youtube_url)+'" target="_blank" rel="noopener" class="va-featured-thumb">'
-          +'<img src="'+thumb(v.youtube_url,'maxresdefault')+'" alt="'+esc(v.title)+'" loading="eager" onerror="this.onerror=null;this.src=\''+thumb(v.youtube_url,'hqdefault')+'\'">'
+    /* Grid — all videos same size */
+    var cards='';
+    for(var k=0;k<list.length;k++) {
+      var r=list[k], hp2=r.pdf_url&&r.pdf_url.trim();
+      cards+='<div class="va-card">'
+        +'<a href="'+esc(r.youtube_url)+'" target="_blank" rel="noopener" class="va-card-thumb">'
+          +'<img src="'+thumb(r.youtube_url,'hqdefault')+'" alt="'+esc(r.title)+'" loading="lazy" onerror="this.onerror=null;this.src=\''+thumb(r.youtube_url,'sddefault')+'\'">'
+          +'<div class="va-card-overlay"></div>'
+          +'<div class="va-card-play"><div class="va-play-btn">'+PLAY_SM+'</div></div>'
+          +(r.topic?'<span class="va-card-topic">'+esc(r.topic)+'</span>':'')
         +'</a>'
-        +'<div class="va-featured-play"><div class="va-play-circle">'+PLAY_LG+'</div></div>'
-        +'<div class="va-featured-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg> Destaque</div>'
-      +'</div>'
-      +'<div class="va-featured-body">'
-        +(v.topic?'<span class="va-topic-tag">'+esc(v.topic)+'</span>':'')
-        +'<h2 class="va-featured-title">'+esc(v.title)+'</h2>'
-        +(v.description?'<p class="va-featured-desc">'+esc(v.description)+'</p>':'')
-        +'<div class="va-featured-actions">'
-          +'<a href="'+esc(v.youtube_url)+'" target="_blank" rel="noopener" class="btn btn-primary">'+YT_SVG+' Assistir no YouTube</a>'
-          +(hp?'<a href="'+esc(v.pdf_url)+'" target="_blank" rel="noopener" class="btn btn-secondary">'+PDF_SVG+' PDF</a>':'')
-        +'</div>'
-      +'</div>'
-      +'</div>';
-    $feat.style.display='block';
-
-    /* Grid */
-    var rest=list.slice(1);
-    if(rest.length) {
-      var cards='';
-      for(var k=0;k<rest.length;k++) {
-        var r=rest[k], hp2=r.pdf_url&&r.pdf_url.trim();
-        cards+='<div class="va-card">'
-          +'<a href="'+esc(r.youtube_url)+'" target="_blank" rel="noopener" class="va-card-thumb">'
-            +'<img src="'+thumb(r.youtube_url,'hqdefault')+'" alt="'+esc(r.title)+'" loading="lazy" onerror="this.onerror=null;this.src=\''+thumb(r.youtube_url,'sddefault')+'\'">'
-            +'<div class="va-card-overlay"></div>'
-            +'<div class="va-card-play"><div class="va-play-btn">'+PLAY_SM+'</div></div>'
-            +(r.topic?'<span class="va-card-topic">'+esc(r.topic)+'</span>':'')
-          +'</a>'
-          +'<div class="va-card-body">'
-            +'<h3 class="va-card-title">'+esc(r.title)+'</h3>'
-            +(r.description?'<p class="va-card-desc">'+esc(r.description)+'</p>':'')
-            +'<div class="va-card-actions">'
-              +'<a href="'+esc(r.youtube_url)+'" target="_blank" rel="noopener" class="va-action-yt">'+YT_SVG+' YouTube</a>'
-              +(hp2?'<span class="va-action-sep"></span><a href="'+esc(r.pdf_url)+'" target="_blank" rel="noopener" class="va-action-pdf">'+PDF_SVG+' PDF</a>':'')
-            +'</div>'
+        +'<div class="va-card-body">'
+          +'<h3 class="va-card-title">'+esc(r.title)+'</h3>'
+          +(r.description?'<p class="va-card-desc">'+esc(r.description)+'</p>':'')
+          +'<div class="va-card-actions">'
+            +'<a href="'+esc(r.youtube_url)+'" target="_blank" rel="noopener" class="va-action-yt">'+YT_SVG+' YouTube</a>'
+            +(hp2?'<span class="va-action-sep"></span><a href="'+esc(r.pdf_url)+'" target="_blank" rel="noopener" class="va-action-pdf">'+PDF_SVG+' PDF</a>':'')
           +'</div>'
-        +'</div>';
-      }
-      $grid.innerHTML=cards;
-      $grid.style.display='grid';
+        +'</div>'
+      +'</div>';
     }
+    $grid.innerHTML=cards;
+    $grid.style.display='grid';
   }
 
   document.addEventListener('click', function(e) {
