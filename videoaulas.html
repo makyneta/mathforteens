@@ -9,139 +9,50 @@
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="stylesheet" href="assets/css/reset.css">
 <link rel="stylesheet" href="assets/css/styles.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
 <script defer src="assets/js/chatbot.js"></script>
 <script defer src="assets/js/components.js"></script>
 <script defer src="assets/js/main.js"></script>
 <style>
-/* ── VA Scoped ────────────────────────────── */
+/* ── Loading / Error ──────────────────────── */
 .va-loading {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 100px 0;
+  padding: 80px 0;
 }
-.va-spinner {
-  width: 32px;
-  height: 32px;
+.va-loading-spinner {
+  width: 36px;
+  height: 36px;
   border: 3px solid var(--c-border);
   border-top-color: var(--c-primary);
   border-radius: 50%;
-  animation: va-spin .7s linear infinite;
+  animation: va-spin 0.8s linear infinite;
 }
 @keyframes va-spin { to { transform: rotate(360deg); } }
-
 .va-error {
   text-align: center;
-  padding: 80px 24px;
-  font-size: .92rem;
-  color: var(--c-text-secondary);
+  padding: 60px 24px;
+  color: var(--c-text-3);
 }
 
 /* ── Breadcrumb ───────────────────────────── */
-.va-bc {
+.va-breadcrumb {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 32px;
-  font-size: .85rem;
-  font-weight: 500;
+  gap: 8px;
+  margin-bottom: 28px;
+  font-size: 0.88rem;
 }
-.va-bc a {
-  color: var(--c-text-tertiary);
+.va-bc-link {
+  color: var(--c-text-3);
   text-decoration: none;
-  transition: color .2s;
+  transition: color 0.2s;
 }
-.va-bc a:hover { color: var(--c-primary); }
-.va-bc svg { color: var(--c-border); flex-shrink: 0; }
+.va-bc-link:hover { color: var(--c-primary); }
+.va-bc-sep { color: var(--c-text-3); }
 .va-bc-current { color: var(--c-text); font-weight: 600; }
 
-/* ── Folder Grid ──────────────────────────── */
-.va-folders {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 16px;
-  margin-bottom: 48px;
-}
-
-.va-folder {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 0 24px;
-  height: 88px;
-  background: var(--c-white);
-  border: 1px solid var(--c-border-light);
-  border-radius: 16px;
-  cursor: pointer;
-  text-align: left;
-  color: inherit;
-  font: inherit;
-  width: 100%;
-  transition: border-color .2s, box-shadow .2s, transform .2s;
-}
-.va-folder:hover {
-  border-color: var(--c-primary);
-  box-shadow: 0 8px 32px rgba(200,150,12,.08);
-  transform: translateY(-2px);
-}
-.va-folder:active { transform: translateY(0); }
-
-.va-folder-icon {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--c-bg);
-  border-radius: 12px;
-  flex-shrink: 0;
-}
-.va-folder-grade {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid;
-  border-radius: 12px;
-  font-weight: 800;
-  font-size: .95rem;
-  flex-shrink: 0;
-  background: var(--c-white);
-}
-.va-folder-body { flex: 1; min-width: 0; }
-.va-folder-title {
-  font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--c-text);
-  margin-bottom: 2px;
-}
-.va-folder-meta {
-  font-size: .8rem;
-  color: var(--c-text-tertiary);
-  font-weight: 500;
-}
-.va-folder-arrow {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--c-border);
-  border-radius: 8px;
-  flex-shrink: 0;
-  transition: color .2s, background .2s;
-}
-.va-folder:hover .va-folder-arrow {
-  color: var(--c-primary);
-  background: var(--c-primary-light);
-}
-
-/* ── Section Title ────────────────────────── */
+/* ── Section Header ───────────────────────── */
 .va-section-head {
   display: flex;
   align-items: center;
@@ -157,263 +68,82 @@
   color: var(--c-text);
   flex: 1;
 }
-.va-section-head .va-count {
-  font-size: .78rem;
+.va-section-count {
+  font-size: 0.78rem;
   font-weight: 600;
-  color: var(--c-text-tertiary);
+  color: var(--c-text-3);
   background: var(--c-bg);
   padding: 4px 12px;
   border-radius: 99px;
 }
 
-/* ── Featured Video ───────────────────────── */
-.va-featured {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  background: var(--c-white);
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid var(--c-border-light);
-  margin-bottom: 32px;
-  transition: box-shadow .4s var(--ease-out);
-}
-.va-featured:hover {
-  box-shadow: 0 24px 64px rgba(0,0,0,.06);
-}
-.va-featured-media { position: relative; }
-.va-featured-thumb {
-  display: block;
-  position: relative;
-  aspect-ratio: 16/10;
-  overflow: hidden;
-  background: var(--c-secondary);
-}
-.va-featured-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform .6s var(--ease-out);
-}
-.va-featured:hover .va-featured-thumb img {
-  transform: scale(1.03);
-}
-.va-featured-play {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,.45) 100%);
-  opacity: 0;
-  transition: opacity .3s;
-}
-.va-featured:hover .va-featured-play { opacity: 1; }
-.va-play-circle {
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  background: var(--c-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 32px rgba(200,150,12,.45);
-  transition: transform .35s var(--ease-out);
-  padding-left: 3px;
-}
-.va-featured:hover .va-play-circle { transform: scale(1.08); }
-.va-featured-badge {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 14px;
-  border-radius: 99px;
-  background: linear-gradient(135deg, var(--c-accent), var(--c-accent-dark));
-  color: #fff;
-  font-size: .7rem;
-  font-weight: 700;
-  letter-spacing: .03em;
-  box-shadow: 0 4px 16px rgba(212,98,138,.35);
-}
-.va-featured-body {
-  padding: 36px 36px 36px 0;
+/* ── Folder Grid ──────────────────────────── */
+.va-folder-grid {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  gap: 12px;
 }
-.va-topic-tag {
-  display: inline-flex;
-  align-self: flex-start;
-  padding: 4px 14px;
-  border-radius: 99px;
-  background: var(--c-primary-light);
-  color: var(--c-primary);
-  font-size: .72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  margin-bottom: 14px;
-}
-.va-featured-title {
-  font-family: var(--font-display);
-  font-size: clamp(1.3rem, 2.5vw, 1.65rem);
-  font-weight: 800;
-  color: var(--c-secondary);
-  line-height: 1.2;
-  margin-bottom: 12px;
-  letter-spacing: -.02em;
-}
-.va-featured-desc {
-  font-size: .88rem;
-  color: var(--c-text-secondary);
-  line-height: 1.7;
-  margin-bottom: 24px;
-}
-.va-featured-actions {
+.va-folder {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-/* ── Video Grid ───────────────────────────── */
-.va-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
   gap: 20px;
-}
-
-.va-card {
-  display: flex;
-  flex-direction: column;
+  padding: 22px 26px;
   background: var(--c-white);
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid var(--c-border-light);
-  transition: transform .35s var(--ease-out), box-shadow .35s var(--ease-out);
-}
-.va-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 48px rgba(0,0,0,.07);
-}
-.va-card-thumb {
-  position: relative;
-  aspect-ratio: 16/9;
-  display: block;
-  overflow: hidden;
-  background: var(--c-secondary);
-}
-.va-card-thumb img {
+  border: 1px solid var(--c-border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
+  text-align: left;
+  color: inherit;
+  font: inherit;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform .5s var(--ease-out);
 }
-.va-card:hover .va-card-thumb img { transform: scale(1.05); }
-.va-card-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,.3) 100%);
-  pointer-events: none;
+.va-folder:hover {
+  border-color: var(--c-primary);
+  box-shadow: 0 4px 20px rgba(200,150,12,0.1);
+  transform: translateY(-2px);
 }
-.va-card-play {
-  position: absolute;
-  inset: 0;
+.va-folder-icon {
+  width: 52px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity .3s;
+  background: var(--c-bg, #f8f6f3);
+  border-radius: 12px;
+  flex-shrink: 0;
 }
-.va-card:hover .va-card-play { opacity: 1; }
-.va-play-btn {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: rgba(200,150,12,.92);
+.va-folder-grade {
+  width: 52px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 20px rgba(200,150,12,.4);
-  transition: transform .35s var(--ease-out);
-  padding-left: 2px;
+  border: 2px solid;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 1rem;
+  flex-shrink: 0;
+  background: var(--c-white);
 }
-.va-card:hover .va-play-btn { transform: scale(1.12); }
-.va-card-topic {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  padding: 4px 10px;
-  border-radius: 99px;
-  background: rgba(0,0,0,.6);
-  backdrop-filter: blur(6px);
-  color: #fff;
-  font-size: .68rem;
-  font-weight: 600;
-  letter-spacing: .02em;
-}
-.va-card-body {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 18px 20px 20px;
-}
-.va-card-title {
-  font-family: var(--font-display);
-  font-size: .92rem;
+.va-folder-body { flex: 1; min-width: 0; }
+.va-folder-title {
+  font-size: 1.05rem;
   font-weight: 700;
-  color: var(--c-text);
-  line-height: 1.35;
-  margin-bottom: 6px;
-  transition: color .25s;
+  margin-bottom: 3px;
 }
-.va-card:hover .va-card-title { color: var(--c-primary); }
-.va-card-desc {
-  font-size: .8rem;
-  color: var(--c-text-tertiary);
-  line-height: 1.5;
-  margin-bottom: 14px;
-  flex: 1;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.va-folder-meta {
+  font-size: 0.82rem;
+  color: var(--c-text-3);
 }
-.va-card-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-top: 12px;
-  border-top: 1px solid var(--c-border-light);
+.va-folder-arrow {
+  color: var(--c-text-3);
+  flex-shrink: 0;
+  transition: transform 0.2s, color 0.2s;
 }
-.va-btn-sm {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 12px;
-  border-radius: 99px;
-  font-size: .73rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background .2s, color .2s;
-}
-.va-btn-yt {
-  background: rgba(200,150,12,.08);
+.va-folder:hover .va-folder-arrow {
+  transform: translateX(4px);
   color: var(--c-primary);
-}
-.va-btn-yt:hover { background: rgba(200,150,12,.18); }
-.va-btn-pdf {
-  background: rgba(212,98,138,.08);
-  color: var(--c-accent);
-}
-.va-btn-pdf:hover { background: rgba(212,98,138,.18); }
-.va-actions-sep {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: var(--c-border);
 }
 
 /* ── Empty State ──────────────────────────── */
@@ -425,45 +155,318 @@
   padding: 80px 24px;
   text-align: center;
 }
-.va-empty-icon {
-  width: 72px;
-  height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--c-bg);
-  border-radius: 20px;
-  color: var(--c-text-tertiary);
-}
+.va-empty-icon { color: var(--c-text-3); opacity: 0.4; }
 .va-empty h3 {
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--c-text);
 }
 .va-empty p {
-  font-size: .88rem;
-  color: var(--c-text-tertiary);
-  max-width: 320px;
-  line-height: 1.6;
+  font-size: 0.9rem;
+  color: var(--c-text-3);
+  max-width: 340px;
+}
+
+/* ════════════════════════════════════════════
+   VIDEO DISPLAY — Featured + Grid
+   ════════════════════════════════════════════ */
+
+/* ── Featured (first video, large) ────────── */
+.va-featured {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--c-white);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--c-border-light);
+  margin-bottom: 32px;
+  min-height: 340px;
+  transition: box-shadow 0.4s var(--ease-out);
+}
+.va-featured:hover {
+  box-shadow: 0 24px 64px rgba(0,0,0,0.07);
+}
+
+/* Thumbnail */
+.va-featured-media {
+  position: relative;
+  min-height: 340px;
+}
+.va-featured-thumb {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--c-secondary);
+}
+.va-featured-thumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s var(--ease-out);
+}
+.va-featured:hover .va-featured-thumb img {
+  transform: scale(1.04);
+}
+
+/* Play button */
+.va-featured-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.45) 100%);
+  z-index: 2;
+}
+.va-play-circle {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--c-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 32px rgba(200,150,12,0.45);
+  transition: transform 0.35s var(--ease-out), box-shadow 0.35s;
+  padding-left: 3px;
+}
+.va-featured:hover .va-play-circle {
+  transform: scale(1.1);
+  box-shadow: 0 12px 40px rgba(200,150,12,0.55);
+}
+
+/* Badge */
+.va-featured-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 14px;
+  border-radius: 99px;
+  background: linear-gradient(135deg, var(--c-accent), var(--c-accent-dark));
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  box-shadow: 0 4px 12px rgba(212,98,138,0.35);
+  z-index: 3;
+}
+
+/* Body */
+.va-featured-body {
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.va-topic-tag {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 4px 14px;
+  border-radius: 99px;
+  background: var(--c-primary-light);
+  color: var(--c-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 14px;
+}
+.va-featured-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.5vw, 1.7rem);
+  font-weight: 800;
+  color: var(--c-secondary);
+  line-height: 1.2;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+.va-featured-desc {
+  font-size: 0.9rem;
+  color: var(--c-text-secondary);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+.va-featured-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* ── Grid (remaining videos) ──────────────── */
+.va-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.va-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--c-white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--c-border-light);
+  transition: transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
+}
+.va-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.08);
+}
+
+/* Thumbnail */
+.va-card-thumb {
+  position: relative;
+  aspect-ratio: 16/9;
+  display: block;
+  overflow: hidden;
+  background: var(--c-secondary);
+}
+.va-card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s var(--ease-out);
+}
+.va-card:hover .va-card-thumb img {
+  transform: scale(1.06);
+}
+.va-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.35) 100%);
+  pointer-events: none;
+}
+
+/* Play button on card */
+.va-card-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.va-card:hover .va-card-play { opacity: 1; }
+.va-play-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(200,150,12,0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(200,150,12,0.4);
+  transition: transform 0.35s var(--ease-out);
+  padding-left: 2px;
+}
+.va-card:hover .va-play-btn {
+  transform: scale(1.12);
+}
+
+/* Topic tag on thumbnail */
+.va-card-topic {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Card body */
+.va-card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 18px 20px 20px;
+}
+.va-card-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--c-secondary);
+  line-height: 1.35;
+  margin-bottom: 6px;
+  transition: color 0.3s;
+}
+.va-card:hover .va-card-title { color: var(--c-primary); }
+.va-card-desc {
+  font-size: 0.82rem;
+  color: var(--c-text-3);
+  line-height: 1.55;
+  margin-bottom: 14px;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Card actions */
+.va-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--c-border-light);
+}
+.va-action-yt,
+.va-action-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.va-action-yt {
+  background: rgba(200,150,12,0.08);
+  color: var(--c-primary);
+}
+.va-action-yt:hover { background: rgba(200,150,12,0.18); }
+.va-action-pdf {
+  background: rgba(212,98,138,0.08);
+  color: var(--c-accent);
+}
+.va-action-pdf:hover { background: rgba(212,98,138,0.18); }
+.va-action-sep {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--c-border);
 }
 
 /* ── Responsive ───────────────────────────── */
 @media (max-width: 900px) {
-  .va-folders { grid-template-columns: 1fr; }
   .va-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 768px) {
-  .va-featured { grid-template-columns: 1fr; }
+  .va-featured { grid-template-columns: 1fr; min-height: auto; }
+  .va-featured-media { min-height: 240px; }
   .va-featured-body { padding: 24px; }
-  .va-section-head h2 { font-size: 1.05rem; }
 }
-@media (max-width: 520px) {
+@media (max-width: 480px) {
   .va-grid { grid-template-columns: 1fr; }
-  .va-folder { height: 80px; padding: 0 18px; gap: 14px; }
-  .va-folder-icon,
-  .va-folder-grade { width: 42px; height: 42px; border-radius: 10px; }
-  .va-folder-title { font-size: .92rem; }
+  .va-folder { padding: 16px 18px; gap: 14px; }
+  .va-folder-icon, .va-folder-grade { width: 44px; height: 44px; }
 }
 </style>
 </head>
@@ -511,32 +514,25 @@
 
   <section class="section">
     <div class="section-inner">
-
-      <div id="vaBreadcrumb" class="va-bc" style="display:none"></div>
-
+      <div id="vaBreadcrumb" class="va-breadcrumb" style="display:none"></div>
       <div id="vaSectionHead" class="va-section-head" style="display:none">
         <h2 id="vaSectionTitle"></h2>
-        <span class="va-count" id="vaSectionCount"></span>
+        <span class="va-section-count" id="vaSectionCount"></span>
       </div>
-
-      <div id="vaFolders" class="va-folders"></div>
-
+      <div id="vaFolders" class="va-folder-grid"></div>
       <div id="vaFeatured" style="display:none"></div>
       <div id="vaGrid" class="va-grid" style="display:none"></div>
-
       <div id="vaEmpty" class="va-empty" style="display:none">
         <div class="va-empty-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5,3 19,12 5,21"/></svg>
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5,3 19,12 5,21"/></svg>
         </div>
         <h3>Em breve!</h3>
         <p>Estamos a preparar aulas para esta disciplina. Fica atento!</p>
       </div>
-
       <div id="vaLoading" class="va-loading">
-        <div class="va-spinner"></div>
+        <div class="va-loading-spinner"></div>
       </div>
       <div id="vaError" class="va-error" style="display:none"></div>
-
     </div>
   </section>
 </main>
@@ -596,6 +592,10 @@
   var GNUM = {'7.º Ano':'7','8.º Ano':'8','9.º Ano':'9','10.º Ano':'10','11.º Ano':'11','12.º Ano':'12'};
   var ARROW = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>';
   var CHEVRON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>';
+  var YT_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5,3 19,12 5,21"/></svg>';
+  var PDF_SVG = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+  var PLAY_LG = '<svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="9.5,7 9.5,17 17,12"/></svg>';
+  var PLAY_SM = '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="9.5,7 9.5,17 17,12"/></svg>';
 
   var videos = [];
 
@@ -615,7 +615,6 @@
     return c;
   }
 
-  /* ── Subjects ──── */
   function showSubjects() {
     hide();
     var keys=Object.keys(SUBJECTS), html='';
@@ -628,14 +627,15 @@
         +'<div class="va-folder-arrow">'+ARROW+'</div></button>';
     }
     $folders.innerHTML=html;
-    $folders.style.display='grid';
+    $folders.style.display='flex';
   }
 
-  /* ── Grades ──── */
   function showGrades(subj) {
     hide();
     var c=SUBJECTS[subj]; if(!c) return showSubjects();
-    $bc.innerHTML='<a href="#" data-nav="subjects">Videoaulas</a><span>'+CHEVRON+'</span><span class="va-bc-current">'+esc(subj)+'</span>';
+    $bc.innerHTML='<a href="#" class="va-bc-link" data-nav="subjects">Videoaulas</a>'
+      +'<span class="va-bc-sep">'+CHEVRON+'</span>'
+      +'<span class="va-bc-current">'+esc(subj)+'</span>';
     $bc.style.display='flex';
     $headT.textContent=subj;
     $headC.textContent=count(subj)+' aula'+(count(subj)!==1?'s':'');
@@ -651,15 +651,15 @@
         +'<div class="va-folder-arrow">'+ARROW+'</div></button>';
     }
     $folders.innerHTML=html;
-    $folders.style.display='grid';
+    $folders.style.display='flex';
   }
 
-  /* ── Videos ──── */
   function showVideos(subj, grade) {
     hide();
-    var c=SUBJECTS[subj];
-    $bc.innerHTML='<a href="#" data-nav="subjects">Videoaulas</a><span>'+CHEVRON+'</span>'
-      +'<a href="#" data-nav="grades|'+esc(subj)+'">'+esc(subj)+'</a><span>'+CHEVRON+'</span>'
+    $bc.innerHTML='<a href="#" class="va-bc-link" data-nav="subjects">Videoaulas</a>'
+      +'<span class="va-bc-sep">'+CHEVRON+'</span>'
+      +'<a href="#" class="va-bc-link" data-nav="grades|'+esc(subj)+'">'+esc(subj)+'</a>'
+      +'<span class="va-bc-sep">'+CHEVRON+'</span>'
       +'<span class="va-bc-current">'+esc(grade)+'</span>';
     $bc.style.display='flex';
     $headT.textContent=grade+' · '+subj;
@@ -673,19 +673,25 @@
 
     /* Featured */
     var v=list[0], hp=v.pdf_url&&v.pdf_url.trim();
-    $feat.innerHTML='<div class="va-featured">'
-      +'<div class="va-featured-media"><a href="'+esc(v.youtube_url)+'" target="_blank" rel="noopener" class="va-featured-thumb">'
-      +'<img src="'+thumb(v.youtube_url,'maxresdefault')+'" alt="'+esc(v.title)+'" loading="eager" onerror="this.onerror=null;this.src=\''+thumb(v.youtube_url,'hqdefault')+'\'">'
-      +'<div class="va-featured-play"><div class="va-play-circle"><svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="9.5,7 9.5,17 17,12"/></svg></div></div>'
-      +'</a></div>'
+    $feat.innerHTML=
+      '<div class="va-featured">'
+      +'<div class="va-featured-media">'
+        +'<a href="'+esc(v.youtube_url)+'" target="_blank" rel="noopener" class="va-featured-thumb">'
+          +'<img src="'+thumb(v.youtube_url,'maxresdefault')+'" alt="'+esc(v.title)+'" loading="eager" onerror="this.onerror=null;this.src=\''+thumb(v.youtube_url,'hqdefault')+'\'">'
+        +'</a>'
+        +'<div class="va-featured-play"><div class="va-play-circle">'+PLAY_LG+'</div></div>'
+        +'<div class="va-featured-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg> Destaque</div>'
+      +'</div>'
       +'<div class="va-featured-body">'
-      +(v.topic?'<span class="va-topic-tag">'+esc(v.topic)+'</span>':'')
-      +'<h2 class="va-featured-title">'+esc(v.title)+'</h2>'
-      +(v.description?'<p class="va-featured-desc">'+esc(v.description)+'</p>':'')
-      +'<div class="va-featured-actions">'
-      +'<a href="'+esc(v.youtube_url)+'" target="_blank" rel="noopener" class="btn btn-primary"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5,3 19,12 5,21"/></svg> Assistir no YouTube</a>'
-      +(hp?'<a href="'+esc(v.pdf_url)+'" target="_blank" rel="noopener" class="btn btn-secondary"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> PDF</a>':'')
-      +'</div></div></div>';
+        +(v.topic?'<span class="va-topic-tag">'+esc(v.topic)+'</span>':'')
+        +'<h2 class="va-featured-title">'+esc(v.title)+'</h2>'
+        +(v.description?'<p class="va-featured-desc">'+esc(v.description)+'</p>':'')
+        +'<div class="va-featured-actions">'
+          +'<a href="'+esc(v.youtube_url)+'" target="_blank" rel="noopener" class="btn btn-primary">'+YT_SVG+' Assistir no YouTube</a>'
+          +(hp?'<a href="'+esc(v.pdf_url)+'" target="_blank" rel="noopener" class="btn btn-secondary">'+PDF_SVG+' PDF</a>':'')
+        +'</div>'
+      +'</div>'
+      +'</div>';
     $feat.style.display='block';
 
     /* Grid */
@@ -696,36 +702,36 @@
         var r=rest[k], hp2=r.pdf_url&&r.pdf_url.trim();
         cards+='<div class="va-card">'
           +'<a href="'+esc(r.youtube_url)+'" target="_blank" rel="noopener" class="va-card-thumb">'
-          +'<img src="'+thumb(r.youtube_url,'hqdefault')+'" alt="'+esc(r.title)+'" loading="lazy" onerror="this.onerror=null;this.src=\''+thumb(r.youtube_url,'sddefault')+'\'">'
-          +'<div class="va-card-overlay"></div>'
-          +'<div class="va-card-play"><div class="va-play-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="9.5,7 9.5,17 17,12"/></svg></div></div>'
-          +(r.topic?'<span class="va-card-topic">'+esc(r.topic)+'</span>':'')
+            +'<img src="'+thumb(r.youtube_url,'hqdefault')+'" alt="'+esc(r.title)+'" loading="lazy" onerror="this.onerror=null;this.src=\''+thumb(r.youtube_url,'sddefault')+'\'">'
+            +'<div class="va-card-overlay"></div>'
+            +'<div class="va-card-play"><div class="va-play-btn">'+PLAY_SM+'</div></div>'
+            +(r.topic?'<span class="va-card-topic">'+esc(r.topic)+'</span>':'')
           +'</a>'
           +'<div class="va-card-body">'
-          +'<h3 class="va-card-title">'+esc(r.title)+'</h3>'
-          +(r.description?'<p class="va-card-desc">'+esc(r.description)+'</p>':'')
-          +'<div class="va-card-actions">'
-          +'<a href="'+esc(r.youtube_url)+'" target="_blank" rel="noopener" class="va-btn-sm va-btn-yt"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5,3 19,12 5,21"/></svg> YouTube</a>'
-          +(hp2?'<span class="va-actions-sep"></span><a href="'+esc(r.pdf_url)+'" target="_blank" rel="noopener" class="va-btn-sm va-btn-pdf"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> PDF</a>':'')
-          +'</div></div></div>';
+            +'<h3 class="va-card-title">'+esc(r.title)+'</h3>'
+            +(r.description?'<p class="va-card-desc">'+esc(r.description)+'</p>':'')
+            +'<div class="va-card-actions">'
+              +'<a href="'+esc(r.youtube_url)+'" target="_blank" rel="noopener" class="va-action-yt">'+YT_SVG+' YouTube</a>'
+              +(hp2?'<span class="va-action-sep"></span><a href="'+esc(r.pdf_url)+'" target="_blank" rel="noopener" class="va-action-pdf">'+PDF_SVG+' PDF</a>':'')
+            +'</div>'
+          +'</div>'
+        +'</div>';
       }
       $grid.innerHTML=cards;
       $grid.style.display='grid';
     }
   }
 
-  /* ── Navigation (event delegation) ──── */
   document.addEventListener('click', function(e) {
     var btn=e.target.closest('[data-nav]');
     if(!btn) return;
     e.preventDefault();
-    var parts=btn.getAttribute('data-nav').split('|');
-    if(parts[0]==='subjects') showSubjects();
-    else if(parts[0]==='grades') showGrades(parts[1]);
-    else if(parts[0]==='videos') showVideos(parts[1],parts[2]);
+    var p=btn.getAttribute('data-nav').split('|');
+    if(p[0]==='subjects') showSubjects();
+    else if(p[0]==='grades') showGrades(p[1]);
+    else if(p[0]==='videos') showVideos(p[1],p[2]);
   });
 
-  /* ── Init ──── */
   async function init() {
     try {
       var res=await db.from('videos').select('*').order('order',{ascending:true});
