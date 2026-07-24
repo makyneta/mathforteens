@@ -162,7 +162,10 @@ async function loadTestimonials() {
   `).join('');
 }
 
-document.addEventListener('DOMContentLoaded', loadTestimonials);
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadTestimonials();
+  if (typeof initAnimations === 'function') initAnimations();
+});
 </script>
 
 </body>

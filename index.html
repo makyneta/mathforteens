@@ -187,6 +187,7 @@
         ${t.author_role ? `<div class="testimonial-role">${t.author_role}</div>` : ''}
       </div>
     `).join('');
+    if (typeof initAnimations === 'function') initAnimations();
   });
 })();
 </script>

@@ -246,7 +246,10 @@ async function renderVideos() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", renderVideos);
+document.addEventListener("DOMContentLoaded", async () => {
+  await renderVideos();
+  if (typeof initAnimations === 'function') initAnimations();
+});
 </script>
 
 </body>

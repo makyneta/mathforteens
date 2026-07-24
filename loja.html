@@ -212,7 +212,10 @@ function esc(str) {
   return div.innerHTML;
 }
 
-document.addEventListener('DOMContentLoaded', loadProducts);
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadProducts();
+  if (typeof initAnimations === 'function') initAnimations();
+});
 </script>
 
 </body>
