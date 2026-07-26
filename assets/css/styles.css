@@ -1286,11 +1286,6 @@ p { overflow-wrap: break-word; }
   color: var(--c-text-tertiary);
 }
 
-.book-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 48px rgba(0,0,0,0.12);
-}
-
 /* ═══════════════════════════════════════════
    ABOUT
    ═══════════════════════════════════════════ */
@@ -4380,7 +4375,7 @@ p { overflow-wrap: break-word; }
   }
 
   .book-section-grid > div:first-child {
-    min-height: 260px;
+    padding: 28px !important;
   }
 
   .testimonials-grid-full {
