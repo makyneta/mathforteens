@@ -4375,6 +4375,14 @@ p { overflow-wrap: break-word; }
    ═══════════════════════════════════════════ */
 
 @media (max-width: 768px) {
+  .book-section-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .book-section-grid > div:first-child {
+    min-height: 260px;
+  }
+
   .testimonials-grid-full {
     grid-template-columns: 1fr;
   }
