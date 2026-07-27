@@ -142,19 +142,7 @@
     </div>
   </section>
 
-  <section class="section" style="background:var(--c-white)">
-    <div class="section-inner">
-      <div class="text-center" style="margin-bottom:40px">
-        <div class="section-label" style="justify-content:center">Testemunhos</div>
-        <h2 class="section-title">O que dizem</h2>
-        <p class="section-subtitle" style="margin:0 auto">De alunos e pais que já experimentaram.</p>
-      </div>
-      <div id="homeTestimonials" class="testimonials-grid"></div>
-      <div style="text-align:center;margin-top:32px">
-        <a href="testemunhos" class="btn btn-secondary">Ver todos os testemunhos →</a>
-      </div>
-    </div>
-  </section>
+
 </main>
 
 <button id="chatbotToggle" class="chatbot-toggle" aria-label="Chat">
@@ -190,26 +178,7 @@
 
 <div id="footer"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="assets/js/supabase-config.js"></script>
-<script>
-(function() {
-  if (typeof supabase === 'undefined' || typeof SUPABASE_URL === 'undefined') return;
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  sb.from('testimonials').select('*').eq('active', true).order('order', { ascending: true }).limit(3).then(({ data }) => {
-    if (!data || !data.length) return;
-    const grid = document.getElementById('homeTestimonials');
-    if (!grid) return;
-    grid.innerHTML = data.map((t, i) => `
-      <div class="testimonial-card anim-fade-in${i > 0 ? ' anim-fade-in-d' + i : ''}">
-        <p class="testimonial-text">${t.content}</p>
-        ${t.author_role ? `<div class="testimonial-role">${t.author_role}</div>` : ''}
-      </div>
-    `).join('');
-    if (typeof initAnimations === 'function') initAnimations();
-  });
-})();
-</script>
+
 
 </body>
 </html>
