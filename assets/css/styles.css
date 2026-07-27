@@ -500,10 +500,17 @@ p { overflow-wrap: break-word; }
 
 .hero-decoration span {
   position: absolute;
-  opacity: 0.45;
+  opacity: 0.7;
   font-weight: 800;
   font-family: var(--font-display);
-  color: white;
+  background: 
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.9) 1px, transparent 1px, transparent 3px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.9) 1px, transparent 1px, transparent 3px),
+    linear-gradient(135deg, #ffffff, #e0e0e0, #ffffff, #d8d8d8);
+  background-size: 4px 4px, 4px 4px, 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   animation: floatSlow 8s ease-in-out infinite;
 }
 
@@ -512,8 +519,8 @@ p { overflow-wrap: break-word; }
 .hero-decoration span:nth-child(3) { bottom: 18%; left: 8%; font-size: 2.8rem; animation-delay: 0.6s; }
 .hero-decoration span:nth-child(4) { top: 55%; right: 3%; font-size: 2.2rem; animation-delay: 2s; }
 .hero-decoration span:nth-child(5) { bottom: 28%; right: 18%; font-size: 1.6rem; animation-delay: 1.8s; }
-.hero-decoration span:nth-child(6) { top: 15%; left: 55%; font-size: 1.4rem; animation-delay: 0.3s; opacity: 0.35; }
-.hero-decoration span:nth-child(7) { top: 70%; left: 30%; font-size: 2rem; animation-delay: 2.4s; opacity: 0.35; }
+.hero-decoration span:nth-child(6) { top: 15%; left: 55%; font-size: 1.4rem; animation-delay: 0.3s; opacity: 0.6; }
+.hero-decoration span:nth-child(7) { top: 70%; left: 30%; font-size: 2rem; animation-delay: 2.4s; opacity: 0.6; }
 
 .hero-shape {
   position: absolute;
@@ -1688,7 +1695,14 @@ p { overflow-wrap: break-word; }
   position: absolute;
   font-family: var(--font-display);
   font-weight: 300;
-  color: rgba(255,255,255,0.45);
+  background: 
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.9) 1px, transparent 1px, transparent 3px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.9) 1px, transparent 1px, transparent 3px),
+    linear-gradient(135deg, #ffffff, #e0e0e0, #ffffff, #d8d8d8);
+  background-size: 4px 4px, 4px 4px, 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-size: 3rem;
   animation: inscFloat 22s ease-in-out infinite;
 }
@@ -2904,8 +2918,15 @@ p { overflow-wrap: break-word; }
 
 .svc-hero-symbols span {
   position: absolute;
-  color: white;
-  opacity: 0.45;
+  background: 
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.9) 1px, transparent 1px, transparent 3px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.9) 1px, transparent 1px, transparent 3px),
+    linear-gradient(135deg, #ffffff, #e0e0e0, #ffffff, #d8d8d8);
+  background-size: 4px 4px, 4px 4px, 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  opacity: 0.7;
   font-size: 3rem;
   animation: float 6s ease-in-out infinite;
 }
@@ -3240,8 +3261,15 @@ p { overflow-wrap: break-word; }
 
 .vid-hero-symbols span {
   position: absolute;
-  color: white;
-  opacity: 0.45;
+  background: 
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.9) 1px, transparent 1px, transparent 3px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.9) 1px, transparent 1px, transparent 3px),
+    linear-gradient(135deg, #ffffff, #e0e0e0, #ffffff, #d8d8d8);
+  background-size: 4px 4px, 4px 4px, 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  opacity: 0.7;
   font-weight: 800;
   font-family: var(--font-display);
   animation: floatSlow 8s ease-in-out infinite;
