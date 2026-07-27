@@ -1,5 +1,5 @@
 // ============================================
-// Math For Teens — Admin Panel
+// Math For Teens — Admin Panel (v2)
 // ============================================
 
 let db;
@@ -66,11 +66,19 @@ function showAdmin() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('adminApp').style.display = 'flex';
   document.getElementById('adminEmail').textContent = currentUser.email;
+
+  const email = currentUser.email || '';
+  const name = email.split('@')[0];
+  const initial = (name.charAt(0) || 'A').toUpperCase();
+  document.getElementById('sidebarAvatar').textContent = initial;
+  document.getElementById('sidebarUserName').textContent = name;
+  document.getElementById('welcomeMessage').textContent = 'Bem-vindo, ' + name + '!';
+
   loadAll();
 }
 
 // ============================================
-// NAVIGATION
+// SIDEBAR / NAVIGATION
 // ============================================
 document.querySelectorAll('.admin-nav-link[data-tab]').forEach(link => {
   link.addEventListener('click', (e) => {
@@ -81,12 +89,19 @@ document.querySelectorAll('.admin-nav-link[data-tab]').forEach(link => {
     document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
     document.getElementById('tab-' + tab).classList.add('active');
     document.getElementById('pageTitle').textContent = link.textContent.trim();
+    closeSidebar();
   });
 });
 
 document.getElementById('sidebarToggle').addEventListener('click', () => {
-  document.querySelector('.admin-sidebar').classList.toggle('open');
+  document.querySelector('.admin-sidebar').classList.add('open');
+  document.getElementById('sidebarBackdrop').classList.add('visible');
 });
+
+function closeSidebar() {
+  document.querySelector('.admin-sidebar').classList.remove('open');
+  document.getElementById('sidebarBackdrop').classList.remove('visible');
+}
 
 // ============================================
 // LOAD DATA
@@ -101,6 +116,7 @@ async function loadVideos() {
   window._adminVideos = data || [];
   renderVideos(window._adminVideos);
   renderAdminFolders();
+  updateStats();
 }
 
 async function loadFolders() {
@@ -114,18 +130,36 @@ async function loadTestimonials() {
   const { data, error } = await db.from('testimonials').select('*').order('order', { ascending: true });
   if (error) { showToast('Erro ao carregar testemunhos', 'error'); return; }
   renderTestimonials(data || []);
+  updateStats();
 }
 
 async function loadProducts() {
   const { data, error } = await db.from('products').select('*').order('order', { ascending: true });
   if (error) { showToast('Erro ao carregar produtos', 'error'); return; }
   renderProducts(data || []);
+  updateStats();
 }
 
 async function loadLogins() {
   const { data, error } = await db.from('platform_logins').select('*').order('created_at', { ascending: false });
   if (error) { showToast('Erro ao carregar logins', 'error'); return; }
   renderLogins(data || []);
+  updateStats();
+}
+
+// ============================================
+// STATS
+// ============================================
+function updateStats() {
+  const videos = window._adminVideos || [];
+  const testimonials = document.querySelectorAll('#testimonialsList .admin-list-item').length || 0;
+  const products = document.querySelectorAll('#productsList .admin-list-item').length || 0;
+  const logins = document.querySelectorAll('#loginsList .admin-list-item').length || 0;
+
+  document.getElementById('statVideos').textContent = videos.length;
+  document.getElementById('statTestimonials').textContent = document.getElementById('testimonialsEmpty').style.display === 'none' ? document.querySelectorAll('#testimonialsList .admin-list-item').length : 0;
+  document.getElementById('statProducts').textContent = document.getElementById('productsEmpty').style.display === 'none' ? document.querySelectorAll('#productsList .admin-list-item').length : 0;
+  document.getElementById('statLogins').textContent = document.getElementById('loginsEmpty').style.display === 'none' ? document.querySelectorAll('#loginsList .admin-list-item').length : 0;
 }
 
 // ============================================
@@ -151,7 +185,7 @@ async function fileToBase64(file) {
 
 async function uploadPdf(file) {
   const token = await getGithubToken();
-  if (!token) throw new Error('Token GitHub não configurado. Vai a Supabase > site_config e adiciona github_token.');
+  if (!token) throw new Error('Token GitHub nao configurado. Vai a Supabase > site_config e adiciona github_token.');
 
   if (!file) return null;
   const ext = file.name.split('.').pop();
@@ -208,40 +242,57 @@ async function deletePdf(url) {
 function renderVideos(items) {
   const list = document.getElementById('videosList');
   const empty = document.getElementById('videosEmpty');
-  if (!items.length) { list.innerHTML = ''; list.style.display = 'none'; empty.style.display = 'flex'; return; }
-  empty.style.display = 'none'; list.style.display = 'flex';
-  list.innerHTML = items.map(v => {
+  if (!items.length) { list.innerHTML = ''; list.style.display = 'none'; empty.style.display = 'flex'; updateStats(); return; }
+  empty.style.display = 'none';
+  list.style.display = 'block';
+
+  let html = '<div class="admin-list-header videos">'
+    + '<span>Vídeo</span><span>Disciplina</span><span>Estado</span><span style="text-align:right">Ações</span>'
+    + '</div>';
+
+  html += items.map(v => {
     const id = extractVideoId(v.youtube_url);
     const thumb = id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : '';
     const folder = v.folder_id ? allFolders.find(f => f.id === v.folder_id) : null;
     const badges = [];
-    if (v.featured) badges.push('<span class="admin-badge active">Destaque</span>');
+    if (v.featured) badges.push('<span class="admin-badge info">Destaque</span>');
     if (v.draft) badges.push('<span class="admin-badge inactive">Rascunho</span>');
-    return `
-      <div class="admin-list-item">
+    return `<div class="admin-list-item videos">
+      <div style="display:flex;align-items:center;gap:12px;min-width:0">
         ${thumb ? `<img src="${thumb}" class="admin-list-thumb" alt="${v.title}" onerror="this.style.display='none'">` : ''}
         <div class="admin-list-info">
           <h4>${esc(v.title)}</h4>
-          <p>${esc(v.subject || 'Matemática')} · ${esc(v.grade || '')}${folder ? ' · 📁 ' + esc(folder.name) : ''}${v.topic ? ' · ' + esc(v.topic) : ''}${v.pdf_url ? ' · PDF' : ''}</p>
+          <p>${v.topic ? esc(v.topic) : ''}${folder ? ' · ' + esc(folder.name) : ''}${v.pdf_url ? ' · PDF' : ''}</p>
         </div>
-        ${badges.join(' ')}
-        <div class="admin-list-actions">
-          <button class="admin-action-btn" onclick="openModal('video','${v.id}')">Editar</button>
-          <button class="admin-action-btn danger" onclick="deleteItem('videos','${v.id}')">Apagar</button>
-        </div>
-      </div>`;
+      </div>
+      <div style="font-size:0.8rem;color:var(--admin-text-secondary)">${esc(v.subject || 'Matemática')}<br>${esc(v.grade || '')}</div>
+      <div>${badges.join(' ')}</div>
+      <div class="admin-list-actions">
+        <button class="admin-action-btn" onclick="openModal('video','${v.id}')">Editar</button>
+        <button class="admin-action-btn danger" onclick="deleteItem('videos','${v.id}')">Apagar</button>
+      </div>
+    </div>`;
   }).join('');
+
+  list.innerHTML = html;
+  updateStats();
 }
 
 function renderTestimonials(items) {
   const list = document.getElementById('testimonialsList');
   const empty = document.getElementById('testimonialsEmpty');
-  if (!items.length) { list.innerHTML = ''; list.style.display = 'none'; empty.style.display = 'flex'; return; }
-  empty.style.display = 'none'; list.style.display = 'flex';
-  list.innerHTML = items.map(t => `
-    <div class="admin-list-item">
+  if (!items.length) { list.innerHTML = ''; list.style.display = 'none'; empty.style.display = 'flex'; updateStats(); return; }
+  empty.style.display = 'none';
+  list.style.display = 'block';
+
+  let html = '<div class="admin-list-header testimonials">'
+    + '<span>Autor</span><span>Estado</span><span style="text-align:right">Ações</span>'
+    + '</div>';
+
+  html += items.map(t => `
+    <div class="admin-list-item testimonials">
       <div class="admin-list-info">
-        <h4>${esc(t.author_name)} ${t.author_role ? '<span style="font-weight:400;color:var(--c-text-secondary);font-size:0.8rem">— ' + esc(t.author_role) + '</span>' : ''}</h4>
+        <h4>${esc(t.author_name)} ${t.author_role ? '<span style="font-weight:400;color:var(--admin-text-secondary);font-size:0.8rem">— ' + esc(t.author_role) + '</span>' : ''}</h4>
         <p>"${esc(t.content.substring(0, 80))}${t.content.length > 80 ? '...' : ''}"</p>
       </div>
       <span class="admin-badge ${t.active ? 'active' : 'inactive'}">${t.active ? 'Ativo' : 'Inativo'}</span>
@@ -250,49 +301,75 @@ function renderTestimonials(items) {
         <button class="admin-action-btn danger" onclick="deleteItem('testimonials','${t.id}')">Apagar</button>
       </div>
     </div>`).join('');
+
+  list.innerHTML = html;
+  updateStats();
 }
 
 function renderProducts(items) {
   const list = document.getElementById('productsList');
   const empty = document.getElementById('productsEmpty');
-  if (!items.length) { list.innerHTML = ''; list.style.display = 'none'; empty.style.display = 'flex'; return; }
-  empty.style.display = 'none'; list.style.display = 'flex';
-  list.innerHTML = items.map(p => `
-    <div class="admin-list-item">
-      ${p.image_url ? `<img src="${esc(p.image_url)}" class="admin-list-thumb" alt="${p.name}" onerror="this.style.display='none'">` : ''}
-      <div class="admin-list-info">
-        <h4>${esc(p.name)}</h4>
-        <p>${esc(p.category)} · ${p.price}€${p.original_price ? ' <s style="color:var(--c-text-tertiary)">' + p.original_price + '€</s>' : ''}</p>
+  if (!items.length) { list.innerHTML = ''; list.style.display = 'none'; empty.style.display = 'flex'; updateStats(); return; }
+  empty.style.display = 'none';
+  list.style.display = 'block';
+
+  let html = '<div class="admin-list-header products">'
+    + '<span>Produto</span><span>Preço</span><span>Estado</span><span style="text-align:right">Ações</span>'
+    + '</div>';
+
+  html += items.map(p => `
+    <div class="admin-list-item products">
+      <div style="display:flex;align-items:center;gap:12px;min-width:0">
+        ${p.image_url ? `<img src="${esc(p.image_url)}" class="admin-list-thumb" alt="${p.name}" onerror="this.style.display='none'">` : ''}
+        <div class="admin-list-info">
+          <h4>${esc(p.name)}</h4>
+          <p>${esc(p.category)}${p.featured ? ' · Destaque' : ''}</p>
+        </div>
       </div>
+      <div style="font-size:0.875rem;font-weight:600">${p.price}&euro;${p.original_price ? ' <s style="color:var(--admin-text-tertiary);font-weight:400;font-size:0.8rem">' + p.original_price + '&euro;</s>' : ''}</div>
       <span class="admin-badge ${p.active ? 'active' : 'inactive'}">${p.active ? 'Ativo' : 'Inativo'}</span>
       <div class="admin-list-actions">
         <button class="admin-action-btn" onclick="openModal('product','${p.id}')">Editar</button>
         <button class="admin-action-btn danger" onclick="deleteItem('products','${p.id}')">Apagar</button>
       </div>
     </div>`).join('');
+
+  list.innerHTML = html;
+  updateStats();
 }
 
 function renderLogins(items) {
   const list = document.getElementById('loginsList');
   const empty = document.getElementById('loginsEmpty');
-  if (!items.length) { list.innerHTML = ''; list.style.display = 'none'; empty.style.display = 'flex'; return; }
-  empty.style.display = 'none'; list.style.display = 'flex';
-  list.innerHTML = items.map(l => `
-    <div class="admin-list-item">
+  if (!items.length) { list.innerHTML = ''; list.style.display = 'none'; empty.style.display = 'flex'; updateStats(); return; }
+  empty.style.display = 'none';
+  list.style.display = 'block';
+
+  let html = '<div class="admin-list-header logins">'
+    + '<span>Plataforma</span><span>Credenciais</span><span style="text-align:right">Ações</span>'
+    + '</div>';
+
+  html += items.map(l => `
+    <div class="admin-list-item logins">
       <div class="admin-list-info">
         <h4>${esc(l.platform_name)}</h4>
-        <p>${esc(l.email)}</p>
+        ${l.url ? '<p><a href="' + esc(l.url) + '" target="_blank" style="color:var(--admin-primary);font-weight:500">' + esc(l.url) + '</a></p>' : ''}
+      </div>
+      <div>
+        <p style="font-size:0.8rem;color:var(--admin-text-secondary)">${esc(l.email)}</p>
         <div class="admin-login-password-row">
           <span class="admin-login-password" id="pw-${l.id}">••••••••</span>
           <button class="admin-action-btn" onclick="toggleLoginPassword('${l.id}', '${esc(l.password)}')">Mostrar</button>
         </div>
-        ${l.url ? '<p><a href="' + esc(l.url) + '" target="_blank" style="color:var(--c-primary)">' + esc(l.url) + '</a></p>' : ''}
       </div>
       <div class="admin-list-actions">
         <button class="admin-action-btn" onclick="openModal('platform_login','${l.id}')">Editar</button>
         <button class="admin-action-btn danger" onclick="deleteItem('platform_logins','${l.id}')">Apagar</button>
       </div>
     </div>`).join('');
+
+  list.innerHTML = html;
+  updateStats();
 }
 
 function toggleLoginPassword(id, pw) {
@@ -317,7 +394,7 @@ let adminNav = { level: 'subjects' };
 function getAdminSubjectColors() {
   return {
     'Matemática': '#0E8C8F',
-    'Matemática A': '#F9E87A',
+    'Matemática A': '#F59E0B',
     'Matemática B': '#1A3840'
   };
 }
@@ -342,13 +419,13 @@ function renderAdminSubjects() {
   subjects.forEach(s => {
     const folderCount = allFolders.filter(f => f.subject === s).length;
     const videoCount = (window._adminVideos || []).filter(v => v.subject === s).length;
-    html += '<button class="admin-folder-item" onclick="adminNavTo(\'' + s + '\')">'
-      + '<div class="admin-folder-icon" style="background:' + colors[s] + '15;color:' + colors[s] + '">'
+    html += '<button class="admin-folder-item" onclick="adminNavTo(\'' + esc(s) + '\')">'
+      + '<div class="admin-folder-icon" style="background:' + colors[s] + '12;color:' + colors[s] + '">'
       + '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>'
       + '</div>'
       + '<div class="admin-folder-info"><h4>' + esc(s) + '</h4>'
       + '<p>' + folderCount + ' pasta' + (folderCount !== 1 ? 's' : '') + ' · ' + videoCount + ' vídeo' + (videoCount !== 1 ? 's' : '') + '</p></div>'
-      + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;opacity:0.3"><polyline points="9 18 15 12 9 6"/></svg>'
+      + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;opacity:0.25"><polyline points="9 18 15 12 9 6"/></svg>'
       + '</button>';
   });
   grid.innerHTML = html;
@@ -374,7 +451,7 @@ function renderAdminGrades(subject) {
   bc.innerHTML = '<a href="#" onclick="renderAdminSubjects();return false">Pastas</a>'
     + ' <span class="admin-bc-sep">/</span> '
     + '<strong>' + esc(subject) + '</strong>';
-  bc.style.display = 'block';
+  bc.style.display = 'flex';
 
   let html = '';
   grades.forEach(g => {
@@ -385,7 +462,7 @@ function renderAdminGrades(subject) {
       + '<div class="admin-folder-grade" style="border-color:' + color + '">' + num + '</div>'
       + '<div class="admin-folder-info"><h4>' + esc(g) + '</h4>'
       + '<p>' + folderCount + ' pasta' + (folderCount !== 1 ? 's' : '') + ' · ' + videoCount + ' vídeo' + (videoCount !== 1 ? 's' : '') + '</p></div>'
-      + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;opacity:0.3"><polyline points="9 18 15 12 9 6"/></svg>'
+      + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;opacity:0.25"><polyline points="9 18 15 12 9 6"/></svg>'
       + '</button>';
   });
   grid.innerHTML = html;
@@ -407,7 +484,7 @@ function renderAdminFolderList(subject, grade) {
     + '<a href="#" onclick="adminNavTo(\'' + esc(subject) + '\');return false">' + esc(subject) + '</a>'
     + ' <span class="admin-bc-sep">/</span> '
     + '<strong>' + esc(grade) + '</strong>';
-  bc.style.display = 'block';
+  bc.style.display = 'flex';
 
   if (!folders.length) {
     grid.style.display = 'none';
@@ -419,7 +496,7 @@ function renderAdminFolderList(subject, grade) {
   grid.innerHTML = folders.map(f => {
     const videoCount = (window._adminVideos || []).filter(v => v.folder_id === f.id).length;
     return '<div class="admin-folder-item">'
-      + '<div class="admin-folder-icon" style="background:var(--c-primary-light);color:var(--c-primary)">'
+      + '<div class="admin-folder-icon" style="background:var(--admin-primary-light);color:var(--admin-primary)">'
       + '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>'
       + '</div>'
       + '<div class="admin-folder-info"><h4>' + esc(f.name) + '</h4>'
@@ -583,9 +660,9 @@ function getVideoFormHtml(data) {
     </div>
     <div class="admin-field-row">
       <div class="admin-field"><label>Ordem</label><input type="number" id="field_order" value="${v.order || 0}"></div>
-      <div style="display:flex;flex-direction:column;gap:12px;padding-top:24px">
+      <div style="display:flex;flex-direction:column;gap:14px;padding-top:24px">
         <div class="admin-check-row"><input type="checkbox" id="field_featured" ${v.featured ? 'checked' : ''}><label for="field_featured">Destaque</label></div>
-        <div class="admin-check-row"><input type="checkbox" id="field_draft" ${v.draft ? 'checked' : ''}><label for="field_draft">Rascunho (não publicar)</label></div>
+        <div class="admin-check-row"><input type="checkbox" id="field_draft" ${v.draft ? 'checked' : ''}><label for="field_draft">Rascunho (nao publicar)</label></div>
       </div>
     </div>`;
 }
@@ -618,7 +695,7 @@ function getTestimonialFormHtml(data) {
   const t = data || {};
   return `
     <div class="admin-field"><label>Nome do autor *</label><input type="text" id="field_author_name" value="${esc(t.author_name || '')}" required></div>
-    <div class="admin-field"><label>Cargo/Função</label><input type="text" id="field_author_role" value="${esc(t.author_role || '')}" placeholder="Ex: Aluno do 10.º ano"></div>
+    <div class="admin-field"><label>Cargo/Funcao</label><input type="text" id="field_author_role" value="${esc(t.author_role || '')}" placeholder="Ex: Aluno do 10. ano"></div>
     <div class="admin-field"><label>Testemunho *</label><textarea id="field_content" required placeholder="Escreve o testemunho...">${esc(t.content || '')}</textarea></div>
     <div class="admin-field-row">
       <div class="admin-field"><label>Avaliação (1-5)</label><input type="number" id="field_rating" value="${t.rating || 5}" min="1" max="5"></div>
@@ -638,14 +715,14 @@ function getProductFormHtml(data) {
     <div class="admin-field"><label>Descrição curta</label><input type="text" id="field_description" value="${esc(p.description || '')}"></div>
     <div class="admin-field"><label>Descrição longa</label><textarea id="field_long_description">${esc(p.long_description || '')}</textarea></div>
     <div class="admin-field-row">
-      <div class="admin-field"><label>Preço (€) *</label><input type="number" id="field_price" value="${p.price || ''}" step="0.01" required></div>
-      <div class="admin-field"><label>Preço original (€)</label><input type="number" id="field_original_price" value="${p.original_price || ''}" step="0.01"></div>
+      <div class="admin-field"><label>Preço (&euro;) *</label><input type="number" id="field_price" value="${p.price || ''}" step="0.01" required></div>
+      <div class="admin-field"><label>Preço original (&euro;)</label><input type="number" id="field_original_price" value="${p.original_price || ''}" step="0.01"></div>
     </div>
     <div class="admin-field"><label>URL da imagem</label><input type="url" id="field_image_url" value="${esc(p.image_url || '')}" placeholder="https://..."></div>
     <div class="admin-field"><label>Link externo (compra)</label><input type="url" id="field_external_url" value="${esc(p.external_url || '')}"></div>
     <div class="admin-field-row">
       <div class="admin-field"><label>Ordem</label><input type="number" id="field_order" value="${p.order || 0}"></div>
-      <div style="display:flex;flex-direction:column;gap:12px;padding-top:24px">
+      <div style="display:flex;flex-direction:column;gap:14px;padding-top:24px">
         <div class="admin-check-row"><input type="checkbox" id="field_featured" ${p.featured ? 'checked' : ''}><label for="field_featured">Destaque</label></div>
         <div class="admin-check-row"><input type="checkbox" id="field_active" ${p.active !== false ? 'checked' : ''}><label for="field_active">Ativo</label></div>
       </div>
@@ -670,7 +747,7 @@ function handlePdfPreview(input) {
   if (!file) return;
   pendingPdfFile = file;
   removePdfFlag = false;
-  document.getElementById('pdfPreview').innerHTML = `<div class="admin-pdf-file"><span>📄 ${esc(file.name)} (${(file.size / 1024).toFixed(0)} KB)</span><button type="button" class="admin-action-btn danger" onclick="removePdf()">Remover</button></div>`;
+  document.getElementById('pdfPreview').innerHTML = `<div class="admin-pdf-file"><span>${esc(file.name)} (${(file.size / 1024).toFixed(0)} KB)</span><button type="button" class="admin-action-btn danger" onclick="removePdf()">Remover</button></div>`;
 }
 
 function removePdf() {
@@ -749,7 +826,6 @@ async function saveItem() {
     const folderVal = document.getElementById('field_folder_id')?.value;
     obj.folder_id = folderVal || null;
 
-    // Handle PDF
     if (removePdfFlag && !pendingPdfFile) {
       if (editingId && obj.pdf_url !== undefined) {
         const old = await db.from('videos').select('pdf_url').eq('id', editingId).single();

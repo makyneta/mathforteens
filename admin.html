@@ -14,7 +14,7 @@
 <div id="loginScreen" class="admin-login">
   <div class="admin-login-card">
     <div class="admin-login-header">
-      <img src="favicon.ico" alt="Math For Teens" width="40" height="40">
+      <img src="favicon.ico" alt="Math For Teens" width="44" height="44">
       <h1>Painel Admin</h1>
       <p>Math For Teens</p>
     </div>
@@ -34,13 +34,20 @@
 </div>
 
 <div id="adminApp" class="admin-app" style="display:none">
+  <div id="sidebarBackdrop" class="admin-sidebar-backdrop" onclick="closeSidebar()"></div>
+
   <aside class="admin-sidebar">
     <div class="admin-sidebar-brand">
-      <img src="favicon.ico" alt="MFT" width="28" height="28">
+      <img src="favicon.ico" alt="MFT" width="30" height="30">
       <span>Admin</span>
     </div>
     <nav class="admin-nav">
-      <a href="#" class="admin-nav-link active" data-tab="videos">
+      <span class="admin-nav-section">Principal</span>
+      <a href="#" class="admin-nav-link active" data-tab="dashboard">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="#" class="admin-nav-link" data-tab="videos">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5,3 19,12 5,21"/></svg>
         Videoaulas
       </a>
@@ -52,12 +59,20 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         Loja
       </a>
+      <span class="admin-nav-section">Sistema</span>
       <a href="#" class="admin-nav-link" data-tab="logins">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         Logins
       </a>
     </nav>
     <div class="admin-sidebar-footer">
+      <div class="admin-sidebar-user" id="sidebarUser">
+        <div class="admin-sidebar-avatar" id="sidebarAvatar">A</div>
+        <div class="admin-sidebar-user-info">
+          <div class="admin-sidebar-user-name" id="sidebarUserName">Admin</div>
+          <div class="admin-sidebar-user-role">Administrador</div>
+        </div>
+      </div>
       <a href="index.html" target="_blank" class="admin-nav-link">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         Ver Site
@@ -74,15 +89,64 @@
       <button id="sidebarToggle" class="admin-sidebar-toggle">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
-      <h2 id="pageTitle">Videoaulas</h2>
+      <h2 id="pageTitle">Dashboard</h2>
       <div class="admin-topbar-right">
         <span id="adminEmail" class="admin-user-email"></span>
       </div>
     </header>
 
+    <!-- TAB: DASHBOARD -->
+    <div id="tab-dashboard" class="admin-tab active">
+      <div class="admin-welcome-card">
+        <h2 id="welcomeMessage">Bem-vindo de volta!</h2>
+        <p>Aqui tens uma visão geral do teu painel administrativo.</p>
+      </div>
+      <div class="admin-stats-grid">
+        <div class="admin-stat-card">
+          <div class="admin-stat-header">
+            <span class="admin-stat-label">Videoaulas</span>
+            <div class="admin-stat-icon primary">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5,3 19,12 5,21"/></svg>
+            </div>
+          </div>
+          <div class="admin-stat-value" id="statVideos">0</div>
+          <div class="admin-stat-sub">vídeos publicados</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-header">
+            <span class="admin-stat-label">Testemunhos</span>
+            <div class="admin-stat-icon warning">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+          </div>
+          <div class="admin-stat-value" id="statTestimonials">0</div>
+          <div class="admin-stat-sub">testemunhos ativos</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-header">
+            <span class="admin-stat-label">Produtos</span>
+            <div class="admin-stat-icon success">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </div>
+          </div>
+          <div class="admin-stat-value" id="statProducts">0</div>
+          <div class="admin-stat-sub">na loja</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-header">
+            <span class="admin-stat-label">Logins</span>
+            <div class="admin-stat-icon info">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+          </div>
+          <div class="admin-stat-value" id="statLogins">0</div>
+          <div class="admin-stat-sub">plataformas</div>
+        </div>
+      </div>
+    </div>
+
     <!-- TAB: VIDEOS -->
-    <div id="tab-videos" class="admin-tab active">
-      <!-- Folders View -->
+    <div id="tab-videos" class="admin-tab">
       <div id="foldersView">
         <div id="foldersBreadcrumb" class="admin-breadcrumb" style="display:none"></div>
         <div class="admin-tab-header">
@@ -94,11 +158,13 @@
         </div>
         <div id="adminFoldersList" class="admin-folder-grid"></div>
         <div id="adminFoldersEmpty" class="admin-empty" style="display:none">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <div class="admin-empty-icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          </div>
           <h3>Nenhuma pasta criada</h3>
-          <p>Clica em "Adicionar Pasta" para organizar os vídeos.</p>
+          <p>Clica em "Adicionar Pasta" para organizar os vídeos por disciplina e ano escolar.</p>
         </div>
-        <div class="admin-tab-header" style="margin-top:32px;border-top:1px solid var(--c-border-light);padding-top:24px">
+        <div class="admin-tab-header" style="margin-top:32px;border-top:1px solid var(--admin-border-light);padding-top:24px">
           <h3>Vídeos</h3>
           <button class="btn btn-primary admin-btn-add" onclick="openModal('video')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -107,9 +173,11 @@
         </div>
         <div id="videosList" class="admin-list"></div>
         <div id="videosEmpty" class="admin-empty" style="display:none">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5,3 19,12 5,21"/></svg>
+          <div class="admin-empty-icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5,3 19,12 5,21"/></svg>
+          </div>
           <h3>Nenhum vídeo adicionado</h3>
-          <p>Clica em "Adicionar Vídeo" para começar.</p>
+          <p>Clica em "Adicionar Vídeo" para começar a carregar conteúdo.</p>
         </div>
       </div>
     </div>
@@ -125,9 +193,11 @@
       </div>
       <div id="testimonialsList" class="admin-list"></div>
       <div id="testimonialsEmpty" class="admin-empty" style="display:none">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <div class="admin-empty-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
         <h3>Nenhum testemunho adicionado</h3>
-        <p>Clica em "Adicionar Testemunho" para começar.</p>
+        <p>Clica em "Adicionar Testemunho" para começar a partilhar feedback de alunos.</p>
       </div>
     </div>
 
@@ -142,9 +212,11 @@
       </div>
       <div id="productsList" class="admin-list"></div>
       <div id="productsEmpty" class="admin-empty" style="display:none">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <div class="admin-empty-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </div>
         <h3>Nenhum produto adicionado</h3>
-        <p>Clica em "Adicionar Produto" para começar.</p>
+        <p>Clica em "Adicionar Produto" para começar a vender materiais.</p>
       </div>
     </div>
 
@@ -159,7 +231,9 @@
       </div>
       <div id="loginsList" class="admin-list"></div>
       <div id="loginsEmpty" class="admin-empty" style="display:none">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <div class="admin-empty-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
         <h3>Nenhum login guardado</h3>
         <p>Clica em "Adicionar Login" para guardar credenciais de outras plataformas.</p>
       </div>
