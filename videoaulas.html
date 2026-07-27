@@ -578,7 +578,6 @@
 
     for(var i=0;i<folders.length;i++) {
       var f=folders[i], cnt=countFolder(subj,grade,f.id);
-      if(cnt===0) continue;
       html+='<button class="va-folder" data-nav="videos|'+esc(subj)+'|'+esc(grade)+'|'+esc(f.id)+'">'
         +'<div class="va-folder-icon" style="color:var(--c-primary)">'
         +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>'
