@@ -434,7 +434,7 @@ p { overflow-wrap: break-word; }
 
 .hero {
   padding: calc(var(--header-h) + var(--space-4xl)) var(--space-lg) calc(var(--space-4xl) + 20px);
-  background: linear-gradient(160deg, var(--c-secondary) 0%, #1A3840 35%, #1D3640 65%, var(--c-secondary) 100%);
+  background: linear-gradient(160deg, #0D7174 0%, #0E7478 35%, #118184 65%, #0F7879 100%);
   background-size: 200% 200%;
   animation: gradientShift 12s ease infinite;
   color: white;
@@ -448,7 +448,7 @@ p { overflow-wrap: break-word; }
   border-radius: 50%;
   pointer-events: none;
   filter: blur(80px);
-  opacity: 0.5;
+  opacity: 0.85;
 }
 
 .hero-glow-1 {
@@ -456,7 +456,7 @@ p { overflow-wrap: break-word; }
   right: -10%;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(200,150,12,0.2) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(200,150,12,0.5) 0%, transparent 70%);
   animation: floatSlow 10s ease-in-out infinite;
 }
 
@@ -465,7 +465,7 @@ p { overflow-wrap: break-word; }
   left: -10%;
   width: 450px;
   height: 450px;
-  background: radial-gradient(circle, rgba(212,98,138,0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(212,98,138,0.35) 0%, transparent 70%);
   animation: floatSlow 14s ease-in-out infinite reverse;
 }
 
@@ -474,7 +474,7 @@ p { overflow-wrap: break-word; }
   left: 50%;
   width: 300px;
   height: 300px;
-  background: radial-gradient(circle, rgba(200,150,12,0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(200,150,12,0.3) 0%, transparent 70%);
   animation: glowPulse 4s ease-in-out infinite;
 }
 
@@ -482,8 +482,8 @@ p { overflow-wrap: break-word; }
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+    linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
   background-size: 52px 52px;
   pointer-events: none;
   mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
@@ -500,7 +500,7 @@ p { overflow-wrap: break-word; }
 
 .hero-decoration span {
   position: absolute;
-  opacity: 0.04;
+  opacity: 0.18;
   font-weight: 800;
   font-family: var(--font-display);
   color: white;
@@ -512,8 +512,8 @@ p { overflow-wrap: break-word; }
 .hero-decoration span:nth-child(3) { bottom: 18%; left: 8%; font-size: 2.8rem; animation-delay: 0.6s; }
 .hero-decoration span:nth-child(4) { top: 55%; right: 3%; font-size: 2.2rem; animation-delay: 2s; }
 .hero-decoration span:nth-child(5) { bottom: 28%; right: 18%; font-size: 1.6rem; animation-delay: 1.8s; }
-.hero-decoration span:nth-child(6) { top: 15%; left: 55%; font-size: 1.4rem; animation-delay: 0.3s; opacity: 0.025; }
-.hero-decoration span:nth-child(7) { top: 70%; left: 30%; font-size: 2rem; animation-delay: 2.4s; opacity: 0.025; }
+.hero-decoration span:nth-child(6) { top: 15%; left: 55%; font-size: 1.4rem; animation-delay: 0.3s; opacity: 0.14; }
+.hero-decoration span:nth-child(7) { top: 70%; left: 30%; font-size: 2rem; animation-delay: 2.4s; opacity: 0.14; }
 
 .hero-shape {
   position: absolute;
@@ -1292,7 +1292,7 @@ p { overflow-wrap: break-word; }
 
 .about-hero {
   padding: calc(var(--header-h) + var(--space-3xl)) var(--space-lg) var(--space-3xl);
-  background: linear-gradient(160deg, var(--c-secondary) 0%, #1A3840 100%);
+  background: linear-gradient(160deg, #0D7174 0%, #0E7478 100%);
   color: white;
   position: relative;
   overflow: hidden;
@@ -1305,7 +1305,7 @@ p { overflow-wrap: break-word; }
   right: -15%;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(200,150,12,0.12) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(200,150,12,0.4) 0%, transparent 65%);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -1674,7 +1674,7 @@ p { overflow-wrap: break-word; }
   padding: calc(var(--header-h) + var(--space-3xl)) var(--space-lg) var(--space-3xl);
   text-align: center;
   overflow: hidden;
-  background: linear-gradient(160deg, var(--c-secondary) 0%, #1C3740 40%, #193440 100%);
+  background: linear-gradient(160deg, #0D7174 0%, #107D80 40%, #0D7174 100%);
 }
 
 .insc-hero-symbols {
@@ -1688,7 +1688,7 @@ p { overflow-wrap: break-word; }
   position: absolute;
   font-family: var(--font-display);
   font-weight: 300;
-  color: rgba(255,255,255,0.03);
+  color: rgba(255,255,255,0.18);
   font-size: 3rem;
   animation: inscFloat 22s ease-in-out infinite;
 }
@@ -1701,10 +1701,10 @@ p { overflow-wrap: break-word; }
 .insc-hero-symbols span:nth-child(6) { top: 30%; right: 14%; animation-delay: -20s; font-size: 3.2rem; }
 
 @keyframes inscFloat {
-  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.03; }
-  25% { transform: translateY(-14px) rotate(5deg); opacity: 0.07; }
-  50% { transform: translateY(-6px) rotate(-2deg); opacity: 0.04; }
-  75% { transform: translateY(-20px) rotate(3deg); opacity: 0.08; }
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.18; }
+  25% { transform: translateY(-14px) rotate(5deg); opacity: 0.28; }
+  50% { transform: translateY(-6px) rotate(-2deg); opacity: 0.2; }
+  75% { transform: translateY(-20px) rotate(3deg); opacity: 0.32; }
 }
 
 .insc-hero::after {
@@ -1715,7 +1715,7 @@ p { overflow-wrap: break-word; }
   transform: translateX(-50%);
   width: 700px;
   height: 350px;
-  background: radial-gradient(ellipse at center, rgba(200,150,12,0.06) 0%, rgba(212,98,138,0.03) 30%, transparent 70%);
+  background: radial-gradient(ellipse at center, rgba(200,150,12,0.28) 0%, rgba(212,98,138,0.15) 30%, transparent 70%);
   pointer-events: none;
 }
 
@@ -2890,7 +2890,7 @@ p { overflow-wrap: break-word; }
 .svc-hero {
   position: relative;
   padding: calc(var(--header-h) + var(--space-3xl)) var(--space-lg) var(--space-2xl);
-  background: linear-gradient(135deg, var(--c-secondary), #1F3D44);
+  background: linear-gradient(135deg, #0D7174, #128587);
   color: white;
   overflow: hidden;
   text-align: center;
@@ -2905,7 +2905,7 @@ p { overflow-wrap: break-word; }
 .svc-hero-symbols span {
   position: absolute;
   color: white;
-  opacity: 0.03;
+  opacity: 0.18;
   font-size: 3rem;
   animation: float 6s ease-in-out infinite;
 }
@@ -2924,7 +2924,7 @@ p { overflow-wrap: break-word; }
   right: -20%;
   width: 700px;
   height: 700px;
-  background: radial-gradient(circle, rgba(200,150,12,0.15) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(200,150,12,0.45) 0%, transparent 65%);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -2936,7 +2936,7 @@ p { overflow-wrap: break-word; }
   left: -10%;
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(212,98,138,0.08) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(212,98,138,0.3) 0%, transparent 65%);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -3186,7 +3186,7 @@ p { overflow-wrap: break-word; }
 .vid-hero {
   position: relative;
   padding: calc(var(--header-h) + var(--space-4xl)) var(--space-lg) calc(var(--space-4xl) + 20px);
-  background: linear-gradient(160deg, var(--c-secondary) 0%, #1B3640 30%, #1C3740 60%, var(--c-secondary) 100%);
+  background: linear-gradient(160deg, #0D7174 0%, #0F7879 30%, #107D80 60%, #0E7478 100%);
   background-size: 200% 200%;
   animation: gradientShift 12s ease infinite;
   color: white;
@@ -3199,7 +3199,7 @@ p { overflow-wrap: break-word; }
   border-radius: 50%;
   pointer-events: none;
   filter: blur(80px);
-  opacity: 0.5;
+  opacity: 0.85;
 }
 
 .vid-hero-glow-1 {
@@ -3207,7 +3207,7 @@ p { overflow-wrap: break-word; }
   right: -10%;
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(200,150,12,0.2) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(200,150,12,0.5) 0%, transparent 70%);
   animation: floatSlow 10s ease-in-out infinite;
 }
 
@@ -3216,7 +3216,7 @@ p { overflow-wrap: break-word; }
   left: -5%;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(212,98,138,0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(212,98,138,0.35) 0%, transparent 70%);
   animation: floatSlow 14s ease-in-out infinite reverse;
 }
 
@@ -3224,8 +3224,8 @@ p { overflow-wrap: break-word; }
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+    linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
   background-size: 52px 52px;
   pointer-events: none;
   mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
@@ -3241,7 +3241,7 @@ p { overflow-wrap: break-word; }
 .vid-hero-symbols span {
   position: absolute;
   color: white;
-  opacity: 0.03;
+  opacity: 0.18;
   font-weight: 800;
   font-family: var(--font-display);
   animation: floatSlow 8s ease-in-out infinite;
@@ -3252,7 +3252,7 @@ p { overflow-wrap: break-word; }
 .vid-hero-symbols span:nth-child(3) { bottom: 18%; left: 8%; font-size: 2.8rem; animation-delay: 0.6s; }
 .vid-hero-symbols span:nth-child(4) { top: 55%; right: 3%; font-size: 2.2rem; animation-delay: 2s; }
 .vid-hero-symbols span:nth-child(5) { bottom: 28%; right: 18%; font-size: 1.6rem; animation-delay: 1.8s; }
-.vid-hero-symbols span:nth-child(6) { top: 15%; left: 55%; font-size: 1.4rem; animation-delay: 0.3s; opacity: 0.025; }
+.vid-hero-symbols span:nth-child(6) { top: 15%; left: 55%; font-size: 1.4rem; animation-delay: 0.3s; opacity: 0.14; }
 
 .vid-hero-shape {
   position: absolute;
