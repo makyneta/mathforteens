@@ -92,7 +92,7 @@ document.getElementById('sidebarToggle').addEventListener('click', () => {
 // LOAD DATA
 // ============================================
 async function loadAll() {
-  await Promise.all([loadVideos(), loadFolders(), loadTestimonials(), loadProducts()]);
+  await Promise.all([loadVideos(), loadFolders(), loadTestimonials(), loadProducts(), loadLogins()]);
 }
 
 async function loadVideos() {
@@ -120,6 +120,12 @@ async function loadProducts() {
   const { data, error } = await db.from('products').select('*').order('order', { ascending: true });
   if (error) { showToast('Erro ao carregar produtos', 'error'); return; }
   renderProducts(data || []);
+}
+
+async function loadLogins() {
+  const { data, error } = await db.from('platform_logins').select('*').order('created_at', { ascending: false });
+  if (error) { showToast('Erro ao carregar logins', 'error'); return; }
+  renderLogins(data || []);
 }
 
 // ============================================
@@ -262,6 +268,24 @@ function renderProducts(items) {
       <div class="admin-list-actions">
         <button class="admin-action-btn" onclick="openModal('product','${p.id}')">Editar</button>
         <button class="admin-action-btn danger" onclick="deleteItem('products','${p.id}')">Apagar</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderLogins(items) {
+  const list = document.getElementById('loginsList');
+  const empty = document.getElementById('loginsEmpty');
+  if (!items.length) { list.innerHTML = ''; list.style.display = 'none'; empty.style.display = 'flex'; return; }
+  empty.style.display = 'none'; list.style.display = 'flex';
+  list.innerHTML = items.map(l => `
+    <div class="admin-list-item">
+      <div class="admin-list-info">
+        <h4>${esc(l.platform_name)}</h4>
+        <p>${esc(l.email)}${l.url ? ' · <a href="' + esc(l.url) + '" target="_blank" style="color:var(--c-primary)">' + esc(l.url) + '</a>' : ''}</p>
+      </div>
+      <div class="admin-list-actions">
+        <button class="admin-action-btn" onclick="openModal('platform_login','${l.id}')">Editar</button>
+        <button class="admin-action-btn danger" onclick="deleteItem('platform_logins','${l.id}')">Apagar</button>
       </div>
     </div>`).join('');
 }
@@ -609,6 +633,16 @@ function getProductFormHtml(data) {
     </div>`;
 }
 
+function getPlatformLoginFormHtml(data) {
+  const l = data || {};
+  return `
+    <div class="admin-field"><label>Nome da Plataforma *</label><input type="text" id="field_platform_name" value="${esc(l.platform_name || '')}" required placeholder="Ex: Google Classroom"></div>
+    <div class="admin-field"><label>Email *</label><input type="email" id="field_login_email" value="${esc(l.email || '')}" required placeholder="utilizador@email.com"></div>
+    <div class="admin-field"><label>Password *</label><div class="admin-password-field"><input type="password" id="field_login_password" value="${esc(l.password || '')}" required><button type="button" class="admin-action-btn" onclick="togglePasswordField('field_login_password', this)">Mostrar</button></div></div>
+    <div class="admin-field"><label>URL de Login</label><input type="url" id="field_login_url" value="${esc(l.url || '')}" placeholder="https://..."></div>
+    <div class="admin-field"><label>Notas</label><textarea id="field_login_notes" placeholder="Notas adicionais...">${esc(l.notes || '')}</textarea></div>`;
+}
+
 let pendingPdfFile = null;
 let removePdfFlag = false;
 
@@ -627,6 +661,17 @@ function removePdf() {
   document.getElementById('field_pdf_file').value = '';
 }
 
+function togglePasswordField(fieldId, btn) {
+  const field = document.getElementById(fieldId);
+  if (field.type === 'password') {
+    field.type = 'text';
+    btn.textContent = 'Ocultar';
+  } else {
+    field.type = 'password';
+    btn.textContent = 'Mostrar';
+  }
+}
+
 async function openModal(type, id) {
   editingType = type;
   editingId = id || null;
@@ -635,18 +680,19 @@ async function openModal(type, id) {
 
   let data = null;
   if (id) {
-    const table = type === 'video' ? 'videos' : type + 's';
+    const table = type === 'video' ? 'videos' : type === 'platform_login' ? 'platform_logins' : type + 's';
     const { data: row } = await db.from(table).select('*').eq('id', id).single();
     data = row;
   }
 
-  const titles = { video: 'Vídeo YouTube', testimonial: 'Testemunho', product: 'Produto da Loja' };
+  const titles = { video: 'Vídeo YouTube', testimonial: 'Testemunho', product: 'Produto da Loja', platform_login: 'Login de Plataforma' };
   document.getElementById('modalTitle').textContent = id ? 'Editar ' + titles[type] : 'Adicionar ' + titles[type];
 
   const formEl = document.getElementById('modalForm');
   if (type === 'video') formEl.innerHTML = getVideoFormHtml(data);
   else if (type === 'testimonial') formEl.innerHTML = getTestimonialFormHtml(data);
   else if (type === 'product') formEl.innerHTML = getProductFormHtml(data);
+  else if (type === 'platform_login') formEl.innerHTML = getPlatformLoginFormHtml(data);
 
   formEl.innerHTML += `<div class="admin-modal-footer"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button><button type="submit" class="btn btn-primary" id="modalSubmitBtn">Guardar</button></div>`;
   formEl.onsubmit = (e) => { e.preventDefault(); saveItem(); };
@@ -726,9 +772,15 @@ async function saveItem() {
     obj.order = parseInt(document.getElementById('field_order').value) || 0;
     obj.featured = document.getElementById('field_featured').checked;
     obj.active = document.getElementById('field_active').checked;
+  } else if (editingType === 'platform_login') {
+    obj.platform_name = document.getElementById('field_platform_name').value;
+    obj.email = document.getElementById('field_login_email').value;
+    obj.password = document.getElementById('field_login_password').value;
+    obj.url = document.getElementById('field_login_url').value;
+    obj.notes = document.getElementById('field_login_notes').value;
   }
 
-  const table = editingType === 'video' ? 'videos' : editingType + 's';
+  const table = editingType === 'video' ? 'videos' : editingType === 'platform_login' ? 'platform_logins' : editingType + 's';
   let result;
   if (editingId) {
     result = await db.from(table).update(obj).eq('id', editingId);

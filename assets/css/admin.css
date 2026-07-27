@@ -533,6 +533,22 @@
   gap: 8px;
 }
 
+/* Password Field */
+.admin-password-field {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.admin-password-field input {
+  flex: 1;
+}
+
+.admin-password-field .admin-action-btn {
+  white-space: nowrap;
+  padding: 10px 14px;
+}
+
 .admin-pdf-preview {
   min-height: 0;
 }

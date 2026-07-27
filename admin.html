@@ -52,6 +52,10 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         Loja
       </a>
+      <a href="#" class="admin-nav-link" data-tab="logins">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Logins
+      </a>
     </nav>
     <div class="admin-sidebar-footer">
       <a href="index.html" target="_blank" class="admin-nav-link">
@@ -141,6 +145,23 @@
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         <h3>Nenhum produto adicionado</h3>
         <p>Clica em "Adicionar Produto" para começar.</p>
+      </div>
+    </div>
+
+    <!-- TAB: LOGINS -->
+    <div id="tab-logins" class="admin-tab">
+      <div class="admin-tab-header">
+        <h3>Logins de Plataformas</h3>
+        <button class="btn btn-primary admin-btn-add" onclick="openModal('platform_login')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Adicionar Login
+        </button>
+      </div>
+      <div id="loginsList" class="admin-list"></div>
+      <div id="loginsEmpty" class="admin-empty" style="display:none">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <h3>Nenhum login guardado</h3>
+        <p>Clica em "Adicionar Login" para guardar credenciais de outras plataformas.</p>
       </div>
     </div>
   </main>
