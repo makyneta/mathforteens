@@ -67,7 +67,7 @@
         </div>
       </div>
 
-      <form class="contact-form" onsubmit="enviarForm(event)">
+      <form class="contact-form" action="https://formspree.io/f/mojgybrv" method="POST">
         <h2>Envia mensagem</h2>
         <div class="form-group">
           <label for="nome">Nome</label>
@@ -124,15 +124,7 @@
 
 <div id="footer"></div>
 
-<script>
-function enviarForm(e) {
-  e.preventDefault()
-  const n = document.getElementById('nome').value
-  const m = document.getElementById('mensagem').value
-  const e_mail = document.getElementById('email').value
-  window.open(`https://wa.me/351910256373?text=Olá! Sou o(a) ${encodeURIComponent(n)}.%0A%0A${encodeURIComponent(m)}%0A%0AMeu email: ${encodeURIComponent(e_mail)}`, '_blank')
-}
-</script>
+
 
 </body>
 </html>
