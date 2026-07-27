@@ -14,7 +14,7 @@
   justify-content: center;
   min-height: 100vh;
   padding: 24px;
-  background: linear-gradient(135deg, #3D2B1F 0%, #1A3840 100%);
+  background: linear-gradient(135deg, #095759 0%, #1A3840 100%);
 }
 
 .admin-login-card {
@@ -77,7 +77,7 @@
 .admin-field select:focus {
   outline: none;
   border-color: var(--c-primary);
-  box-shadow: 0 0 0 3px rgba(200,150,12,0.1);
+  box-shadow: 0 0 0 3px rgba(14,140,143,0.1);
 }
 
 .admin-field textarea {
@@ -577,7 +577,7 @@
   justify-content: space-between;
   padding: 10px 14px;
   background: var(--c-success-light);
-  border: 1px solid #A7F3D0;
+  border: 1px solid #B2E5E6;
   border-radius: var(--radius-md);
   font-size: 0.85rem;
 }

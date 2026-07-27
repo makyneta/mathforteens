@@ -316,9 +316,9 @@ let adminNav = { level: 'subjects' };
 
 function getAdminSubjectColors() {
   return {
-    'Matemática': '#C8960C',
-    'Matemática A': '#D4628A',
-    'Matemática B': '#3D2B1F'
+    'Matemática': '#0E8C8F',
+    'Matemática A': '#F9E87A',
+    'Matemática B': '#1A3840'
   };
 }
 
@@ -364,7 +364,7 @@ function renderAdminGrades(subject) {
     'Matemática B': ['10.º Ano', '11.º Ano']
   };
   const grades = gradesBySubject[subject] || [];
-  const color = getAdminSubjectColors()[subject] || '#C8960C';
+  const color = getAdminSubjectColors()[subject] || '#0E8C8F';
   const grid = document.getElementById('adminFoldersList');
   const empty = document.getElementById('adminFoldersEmpty');
   const bc = document.getElementById('foldersBreadcrumb');

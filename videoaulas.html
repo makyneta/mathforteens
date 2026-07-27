@@ -121,7 +121,7 @@
 }
 .va-folder:hover {
   border-color: var(--c-primary);
-  box-shadow: 0 4px 20px rgba(200,150,12,0.1);
+  box-shadow: 0 4px 20px rgba(14,140,143,0.1);
   transform: translateY(-2px);
 }
 .va-folder-icon {
@@ -252,11 +252,11 @@
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: rgba(200,150,12,0.92);
+  background: rgba(14,140,143,0.92);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 20px rgba(200,150,12,0.4);
+  box-shadow: 0 4px 20px rgba(14,140,143,0.4);
   transition: transform 0.35s var(--ease-out);
   padding-left: 2px;
 }
@@ -329,15 +329,15 @@
   transition: background 0.2s;
 }
 .va-action-yt {
-  background: rgba(200,150,12,0.08);
+  background: rgba(14,140,143,0.08);
   color: var(--c-primary);
 }
-.va-action-yt:hover { background: rgba(200,150,12,0.18); }
+.va-action-yt:hover { background: rgba(14,140,143,0.18); }
 .va-action-pdf {
-  background: rgba(212,98,138,0.08);
+  background: rgba(249,232,122,0.08);
   color: var(--c-accent);
 }
-.va-action-pdf:hover { background: rgba(212,98,138,0.18); }
+.va-action-pdf:hover { background: rgba(249,232,122,0.18); }
 .va-action-sep {
   width: 3px;
   height: 3px;
@@ -469,11 +469,11 @@
   var db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   var SUBJECTS = {
-    'Matemática':   { color: '#C8960C', grades: ['7.º Ano','8.º Ano','9.º Ano'],
+    'Matemática':   { color: '#0E8C8F', grades: ['7.º Ano','8.º Ano','9.º Ano'],
       icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>' },
-    'Matemática A': { color: '#D4628A', grades: ['10.º Ano','11.º Ano','12.º Ano'],
+    'Matemática A': { color: '#F9E87A', grades: ['10.º Ano','11.º Ano','12.º Ano'],
       icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>' },
-    'Matemática B': { color: '#3D2B1F', grades: ['10.º Ano','11.º Ano'],
+    'Matemática B': { color: '#1A3840', grades: ['10.º Ano','11.º Ano'],
       icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>' }
   };
   var GNUM = {'7.º Ano':'7','8.º Ano':'8','9.º Ano':'9','10.º Ano':'10','11.º Ano':'11','12.º Ano':'12'};
