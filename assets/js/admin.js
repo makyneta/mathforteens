@@ -16,6 +16,7 @@ try {
 let currentUser = null;
 let editingId = null;
 let editingType = null;
+let allFolders = [];
 
 // ============================================
 // AUTH
@@ -91,13 +92,22 @@ document.getElementById('sidebarToggle').addEventListener('click', () => {
 // LOAD DATA
 // ============================================
 async function loadAll() {
-  await Promise.all([loadVideos(), loadTestimonials(), loadProducts()]);
+  await Promise.all([loadVideos(), loadFolders(), loadTestimonials(), loadProducts()]);
 }
 
 async function loadVideos() {
   const { data, error } = await db.from('videos').select('*').order('order', { ascending: true });
   if (error) { showToast('Erro ao carregar vídeos', 'error'); return; }
-  renderVideos(data || []);
+  window._adminVideos = data || [];
+  renderVideos(window._adminVideos);
+  renderAdminFolders();
+}
+
+async function loadFolders() {
+  const { data, error } = await db.from('folders').select('*').order('order', { ascending: true });
+  if (error) { showToast('Erro ao carregar pastas', 'error'); return; }
+  allFolders = data || [];
+  renderAdminFolders();
 }
 
 async function loadTestimonials() {
@@ -197,6 +207,7 @@ function renderVideos(items) {
   list.innerHTML = items.map(v => {
     const id = extractVideoId(v.youtube_url);
     const thumb = id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : '';
+    const folder = v.folder_id ? allFolders.find(f => f.id === v.folder_id) : null;
     const badges = [];
     if (v.featured) badges.push('<span class="admin-badge active">Destaque</span>');
     if (v.draft) badges.push('<span class="admin-badge inactive">Rascunho</span>');
@@ -205,7 +216,7 @@ function renderVideos(items) {
         ${thumb ? `<img src="${thumb}" class="admin-list-thumb" alt="${v.title}" onerror="this.style.display='none'">` : ''}
         <div class="admin-list-info">
           <h4>${esc(v.title)}</h4>
-          <p>${esc(v.subject || 'Matemática')} · ${esc(v.grade || '')}${v.topic ? ' · ' + esc(v.topic) : ''}${v.pdf_url ? ' · 📎 PDF' : ''}</p>
+          <p>${esc(v.subject || 'Matemática')} · ${esc(v.grade || '')}${folder ? ' · 📁 ' + esc(folder.name) : ''}${v.topic ? ' · ' + esc(v.topic) : ''}${v.pdf_url ? ' · PDF' : ''}</p>
         </div>
         ${badges.join(' ')}
         <div class="admin-list-actions">
@@ -256,6 +267,230 @@ function renderProducts(items) {
 }
 
 // ============================================
+// FOLDER NAVIGATION (Admin)
+// ============================================
+let adminNav = { level: 'subjects' };
+
+function getAdminSubjectColors() {
+  return {
+    'Matemática': '#C8960C',
+    'Matemática A': '#D4628A',
+    'Matemática B': '#3D2B1F'
+  };
+}
+
+function renderAdminFolders() {
+  if (adminNav.level === 'subjects') renderAdminSubjects();
+  else if (adminNav.level === 'grades') renderAdminGrades(adminNav.subject);
+  else if (adminNav.level === 'folders') renderAdminFolderList(adminNav.subject, adminNav.grade);
+}
+
+function renderAdminSubjects() {
+  adminNav = { level: 'subjects' };
+  const subjects = ['Matemática', 'Matemática A', 'Matemática B'];
+  const colors = getAdminSubjectColors();
+  const grid = document.getElementById('adminFoldersList');
+  const empty = document.getElementById('adminFoldersEmpty');
+  document.getElementById('foldersBreadcrumb').style.display = 'none';
+  document.getElementById('foldersViewTitle').textContent = 'Pastas de Videoaulas';
+  document.getElementById('foldersAddBtnText').textContent = 'Adicionar Pasta';
+
+  let html = '';
+  subjects.forEach(s => {
+    const folderCount = allFolders.filter(f => f.subject === s).length;
+    const videoCount = (window._adminVideos || []).filter(v => v.subject === s).length;
+    html += '<button class="admin-folder-item" onclick="adminNavTo(\'' + s + '\')">'
+      + '<div class="admin-folder-icon" style="background:' + colors[s] + '15;color:' + colors[s] + '">'
+      + '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>'
+      + '</div>'
+      + '<div class="admin-folder-info"><h4>' + esc(s) + '</h4>'
+      + '<p>' + folderCount + ' pasta' + (folderCount !== 1 ? 's' : '') + ' · ' + videoCount + ' vídeo' + (videoCount !== 1 ? 's' : '') + '</p></div>'
+      + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;opacity:0.3"><polyline points="9 18 15 12 9 6"/></svg>'
+      + '</button>';
+  });
+  grid.innerHTML = html;
+  grid.style.display = 'flex';
+  empty.style.display = 'none';
+}
+
+function renderAdminGrades(subject) {
+  adminNav = { level: 'grades', subject: subject };
+  const gradesBySubject = {
+    'Matemática': ['7.º Ano', '8.º Ano', '9.º Ano'],
+    'Matemática A': ['10.º Ano', '11.º Ano', '12.º Ano'],
+    'Matemática B': ['10.º Ano', '11.º Ano']
+  };
+  const grades = gradesBySubject[subject] || [];
+  const color = getAdminSubjectColors()[subject] || '#C8960C';
+  const grid = document.getElementById('adminFoldersList');
+  const empty = document.getElementById('adminFoldersEmpty');
+  const bc = document.getElementById('foldersBreadcrumb');
+  document.getElementById('foldersViewTitle').textContent = subject;
+  document.getElementById('foldersAddBtnText').textContent = 'Adicionar Pasta';
+
+  bc.innerHTML = '<a href="#" onclick="renderAdminSubjects();return false">Pastas</a>'
+    + ' <span class="admin-bc-sep">/</span> '
+    + '<strong>' + esc(subject) + '</strong>';
+  bc.style.display = 'block';
+
+  let html = '';
+  grades.forEach(g => {
+    const num = g.replace('.º Ano', '');
+    const folderCount = allFolders.filter(f => f.subject === subject && f.grade === g).length;
+    const videoCount = (window._adminVideos || []).filter(v => v.subject === subject && v.grade === g).length;
+    html += '<button class="admin-folder-item" onclick="adminNavTo(\'' + esc(subject) + '\',\'' + esc(g) + '\')">'
+      + '<div class="admin-folder-grade" style="border-color:' + color + '">' + num + '</div>'
+      + '<div class="admin-folder-info"><h4>' + esc(g) + '</h4>'
+      + '<p>' + folderCount + ' pasta' + (folderCount !== 1 ? 's' : '') + ' · ' + videoCount + ' vídeo' + (videoCount !== 1 ? 's' : '') + '</p></div>'
+      + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;opacity:0.3"><polyline points="9 18 15 12 9 6"/></svg>'
+      + '</button>';
+  });
+  grid.innerHTML = html;
+  grid.style.display = 'flex';
+  empty.style.display = 'none';
+}
+
+function renderAdminFolderList(subject, grade) {
+  adminNav = { level: 'folders', subject: subject, grade: grade };
+  const folders = allFolders.filter(f => f.subject === subject && f.grade === grade);
+  const grid = document.getElementById('adminFoldersList');
+  const empty = document.getElementById('adminFoldersEmpty');
+  const bc = document.getElementById('foldersBreadcrumb');
+  document.getElementById('foldersViewTitle').textContent = subject + ' › ' + grade;
+  document.getElementById('foldersAddBtnText').textContent = 'Adicionar Pasta';
+
+  bc.innerHTML = '<a href="#" onclick="renderAdminSubjects();return false">Pastas</a>'
+    + ' <span class="admin-bc-sep">/</span> '
+    + '<a href="#" onclick="adminNavTo(\'' + esc(subject) + '\');return false">' + esc(subject) + '</a>'
+    + ' <span class="admin-bc-sep">/</span> '
+    + '<strong>' + esc(grade) + '</strong>';
+  bc.style.display = 'block';
+
+  if (!folders.length) {
+    grid.style.display = 'none';
+    empty.style.display = 'flex';
+    return;
+  }
+  empty.style.display = 'none';
+  grid.style.display = 'flex';
+  grid.innerHTML = folders.map(f => {
+    const videoCount = (window._adminVideos || []).filter(v => v.folder_id === f.id).length;
+    return '<div class="admin-folder-item">'
+      + '<div class="admin-folder-icon" style="background:var(--c-primary-light);color:var(--c-primary)">'
+      + '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>'
+      + '</div>'
+      + '<div class="admin-folder-info"><h4>' + esc(f.name) + '</h4>'
+      + '<p>' + videoCount + ' vídeo' + (videoCount !== 1 ? 's' : '') + (f.order ? ' · Ordem: ' + f.order : '') + '</p></div>'
+      + '<div class="admin-list-actions">'
+      + '<button class="admin-action-btn" onclick="openFolderModal(\'' + f.id + '\')">Editar</button>'
+      + '<button class="admin-action-btn danger" onclick="deleteFolder(\'' + f.id + '\')">Apagar</button>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function adminNavTo(subject, grade) {
+  if (grade) renderAdminFolderList(subject, grade);
+  else renderAdminGrades(subject);
+}
+
+// ============================================
+// FOLDER CRUD
+// ============================================
+async function openFolderModal(id) {
+  let data = null;
+  if (id) {
+    const { data: row } = await db.from('folders').select('*').eq('id', id).single();
+    data = row;
+  }
+
+  const f = data || {};
+  const subjects = ['Matemática', 'Matemática A', 'Matemática B'];
+  const gradesBySubject = {
+    'Matemática': ['7.º Ano', '8.º Ano', '9.º Ano'],
+    'Matemática A': ['10.º Ano', '11.º Ano', '12.º Ano'],
+    'Matemática B': ['10.º Ano', '11.º Ano']
+  };
+
+  let currentSubject = f.subject || adminNav.subject || 'Matemática';
+  let currentGrade = f.grade || adminNav.grade || '7.º Ano';
+
+  document.getElementById('modalTitle').textContent = id ? 'Editar Pasta' : 'Adicionar Pasta';
+  const formEl = document.getElementById('modalForm');
+  formEl.innerHTML = `
+    <div class="admin-field-row">
+      <div class="admin-field"><label>Disciplina *</label><select id="field_folder_subject" required onchange="updateFolderGradeOptions()">
+        ${subjects.map(s => `<option value="${s}" ${currentSubject === s ? 'selected' : ''}>${s}</option>`).join('')}
+      </select></div>
+      <div class="admin-field"><label>Ano Escolar *</label><select id="field_folder_grade" required>
+        ${(gradesBySubject[currentSubject] || []).map(g => `<option value="${g}" ${currentGrade === g ? 'selected' : ''}>${g}</option>`).join('')}
+      </select></div>
+    </div>
+    <div class="admin-field"><label>Nome da Pasta *</label><input type="text" id="field_folder_name" value="${esc(f.name || '')}" required placeholder="Ex: Derivadas"></div>
+    <div class="admin-field"><label>Ordem</label><input type="number" id="field_folder_order" value="${f.order || 0}"></div>
+    <div class="admin-modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" id="modalSubmitBtn">Guardar</button>
+    </div>`;
+
+  formEl.onsubmit = (e) => { e.preventDefault(); saveFolder(id); };
+  document.getElementById('modal').style.display = 'flex';
+}
+
+function updateFolderGradeOptions() {
+  const gradesBySubject = {
+    'Matemática': ['7.º Ano', '8.º Ano', '9.º Ano'],
+    'Matemática A': ['10.º Ano', '11.º Ano', '12.º Ano'],
+    'Matemática B': ['10.º Ano', '11.º Ano']
+  };
+  const subject = document.getElementById('field_folder_subject').value;
+  const gradeSelect = document.getElementById('field_folder_grade');
+  const grades = gradesBySubject[subject] || [];
+  gradeSelect.innerHTML = grades.map(g => `<option value="${g}">${g}</option>`).join('');
+}
+
+async function saveFolder(editId) {
+  const btn = document.getElementById('modalSubmitBtn');
+  btn.innerHTML = '<span class="admin-spinner"></span>';
+  btn.disabled = true;
+
+  const obj = {
+    name: document.getElementById('field_folder_name').value,
+    subject: document.getElementById('field_folder_subject').value,
+    grade: document.getElementById('field_folder_grade').value,
+    order: parseInt(document.getElementById('field_folder_order').value) || 0
+  };
+
+  let result;
+  if (editId) {
+    result = await db.from('folders').update(obj).eq('id', editId);
+  } else {
+    result = await db.from('folders').insert(obj);
+  }
+
+  if (result.error) {
+    showToast('Erro: ' + result.error.message, 'error');
+    btn.innerHTML = 'Guardar';
+    btn.disabled = false;
+    return;
+  }
+
+  showToast(editId ? 'Pasta atualizada!' : 'Pasta criada!', 'success');
+  closeModal();
+  loadFolders();
+  loadVideos();
+}
+
+async function deleteFolder(id) {
+  if (!confirm('Tem certeza que queres apagar esta pasta?\nOs vídeos dentro dela ficarão sem pasta.')) return;
+  const { error } = await db.from('folders').delete().eq('id', id);
+  if (error) { showToast('Erro ao apagar: ' + error.message, 'error'); return; }
+  showToast('Pasta apagada!', 'success');
+  loadFolders();
+  loadVideos();
+}
+
+// ============================================
 // MODAL / FORMS
 // ============================================
 function getVideoFormHtml(data) {
@@ -270,16 +505,22 @@ function getVideoFormHtml(data) {
   const currentSubject = v.subject || 'Matemática';
   const currentGrade = v.grade || '7.º Ano';
   const availableGrades = gradesBySubject[currentSubject] || gradesBySubject['Matemática'];
+  const matchingFolders = allFolders.filter(f => f.subject === currentSubject && f.grade === currentGrade);
+  const currentFolderId = v.folder_id || '';
 
   return `
     <div class="admin-field-row">
-      <div class="admin-field"><label>Disciplina *</label><select id="field_subject" required onchange="updateGradeOptions()">
+      <div class="admin-field"><label>Disciplina *</label><select id="field_subject" required onchange="updateGradeOptions();updateFolderOptions()">
         ${subjects.map(s => `<option value="${s}" ${currentSubject === s ? 'selected' : ''}>${s}</option>`).join('')}
       </select></div>
-      <div class="admin-field"><label>AnoEscolar *</label><select id="field_grade" required>
+      <div class="admin-field"><label>Ano Escolar *</label><select id="field_grade" required onchange="updateFolderOptions()">
         ${availableGrades.map(g => `<option value="${g}" ${currentGrade === g ? 'selected' : ''}>${g}</option>`).join('')}
       </select></div>
     </div>
+    <div class="admin-field"><label>Pasta</label><select id="field_folder_id">
+      <option value="">Sem pasta</option>
+      ${matchingFolders.map(f => `<option value="${f.id}" ${currentFolderId === f.id ? 'selected' : ''}>${esc(f.name)}</option>`).join('')}
+    </select></div>
     <div class="admin-field"><label>Título *</label><input type="text" id="field_title" value="${esc(v.title || '')}" required></div>
     <div class="admin-field"><label>URL do YouTube *</label><input type="url" id="field_youtube_url" value="${esc(v.youtube_url || '')}" required placeholder="https://www.youtube.com/watch?v=..."></div>
     <div class="admin-field"><label>Tópico</label><input type="text" id="field_topic" value="${esc(v.topic || '')}" placeholder="Ex: Derivadas"></div>
@@ -293,7 +534,7 @@ function getVideoFormHtml(data) {
           ${hasPdf ? 'Substituir PDF' : 'Carregar PDF'}
         </button>
         <div id="pdfPreview" class="admin-pdf-preview">
-          ${hasPdf ? `<div class="admin-pdf-file"><a href="${esc(v.pdf_url)}" target="_blank">📄 PDF atual</a><button type="button" class="admin-action-btn danger" onclick="removePdf()">Remover</button></div>` : ''}
+          ${hasPdf ? `<div class="admin-pdf-file"><a href="${esc(v.pdf_url)}" target="_blank">PDF atual</a><button type="button" class="admin-action-btn danger" onclick="removePdf()">Remover</button></div>` : ''}
         </div>
       </div>
     </div>
@@ -317,6 +558,17 @@ function updateGradeOptions() {
   const currentGrade = gradeSelect.value;
   const grades = gradesBySubject[subject] || [];
   gradeSelect.innerHTML = grades.map(g => `<option value="${g}" ${currentGrade === g ? 'selected' : ''}>${g}</option>`).join('');
+}
+
+function updateFolderOptions() {
+  const subject = document.getElementById('field_subject').value;
+  const grade = document.getElementById('field_grade').value;
+  const folderSelect = document.getElementById('field_folder_id');
+  if (!folderSelect) return;
+  const currentFolder = folderSelect.value;
+  const matchingFolders = allFolders.filter(f => f.subject === subject && f.grade === grade);
+  folderSelect.innerHTML = '<option value="">Sem pasta</option>'
+    + matchingFolders.map(f => `<option value="${f.id}" ${currentFolder === f.id ? 'selected' : ''}>${esc(f.name)}</option>`).join('');
 }
 
 function getTestimonialFormHtml(data) {
@@ -429,6 +681,8 @@ async function saveItem() {
     obj.order = parseInt(document.getElementById('field_order').value) || 0;
     obj.featured = document.getElementById('field_featured').checked;
     obj.draft = document.getElementById('field_draft').checked;
+    const folderVal = document.getElementById('field_folder_id')?.value;
+    obj.folder_id = folderVal || null;
 
     // Handle PDF
     if (removePdfFlag && !pendingPdfFile) {

@@ -569,6 +569,98 @@
   to { transform: rotate(360deg); }
 }
 
+/* Folder Management (Admin) */
+.admin-breadcrumb {
+  font-size: 0.85rem;
+  color: var(--c-text-secondary);
+  margin-bottom: 16px;
+}
+
+.admin-breadcrumb a {
+  color: var(--c-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.admin-breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.admin-bc-sep {
+  margin: 0 6px;
+  opacity: 0.4;
+}
+
+.admin-folder-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-folder-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: white;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--c-border-light);
+  transition: box-shadow 0.2s;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.admin-folder-item:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+button.admin-folder-item {
+  cursor: pointer;
+}
+
+.admin-folder-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.admin-folder-grade {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  background: white;
+}
+
+.admin-folder-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-folder-info h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.admin-folder-info p {
+  font-size: 0.8rem;
+  color: var(--c-text-secondary);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .admin-sidebar {

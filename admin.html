@@ -78,18 +78,35 @@
 
     <!-- TAB: VIDEOS -->
     <div id="tab-videos" class="admin-tab active">
-      <div class="admin-tab-header">
-        <h3>Gerir Videoaulas</h3>
-        <button class="btn btn-primary admin-btn-add" onclick="openModal('video')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Adicionar Vídeo
-        </button>
-      </div>
-      <div id="videosList" class="admin-list"></div>
-      <div id="videosEmpty" class="admin-empty" style="display:none">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5,3 19,12 5,21"/></svg>
-        <h3>Nenhum vídeo adicionado</h3>
-        <p>Clica em "Adicionar Vídeo" para começar.</p>
+      <!-- Folders View -->
+      <div id="foldersView">
+        <div id="foldersBreadcrumb" class="admin-breadcrumb" style="display:none"></div>
+        <div class="admin-tab-header">
+          <h3 id="foldersViewTitle">Pastas de Videoaulas</h3>
+          <button class="btn btn-primary admin-btn-add" onclick="openFolderModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span id="foldersAddBtnText">Adicionar Pasta</span>
+          </button>
+        </div>
+        <div id="adminFoldersList" class="admin-folder-grid"></div>
+        <div id="adminFoldersEmpty" class="admin-empty" style="display:none">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <h3>Nenhuma pasta criada</h3>
+          <p>Clica em "Adicionar Pasta" para organizar os vídeos.</p>
+        </div>
+        <div class="admin-tab-header" style="margin-top:32px;border-top:1px solid var(--c-border-light);padding-top:24px">
+          <h3>Vídeos</h3>
+          <button class="btn btn-primary admin-btn-add" onclick="openModal('video')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Adicionar Vídeo
+          </button>
+        </div>
+        <div id="videosList" class="admin-list"></div>
+        <div id="videosEmpty" class="admin-empty" style="display:none">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5,3 19,12 5,21"/></svg>
+          <h3>Nenhum vídeo adicionado</h3>
+          <p>Clica em "Adicionar Vídeo" para começar.</p>
+        </div>
       </div>
     </div>
 
