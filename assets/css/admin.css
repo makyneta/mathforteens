@@ -549,6 +549,24 @@
   padding: 10px 14px;
 }
 
+.admin-login-password-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.admin-login-password {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--c-text-secondary);
+}
+
+.admin-login-password-visible {
+  color: var(--c-text);
+  user-select: all;
+}
+
 .admin-pdf-preview {
   min-height: 0;
 }

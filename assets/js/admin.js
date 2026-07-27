@@ -281,13 +281,32 @@ function renderLogins(items) {
     <div class="admin-list-item">
       <div class="admin-list-info">
         <h4>${esc(l.platform_name)}</h4>
-        <p>${esc(l.email)}${l.url ? ' · <a href="' + esc(l.url) + '" target="_blank" style="color:var(--c-primary)">' + esc(l.url) + '</a>' : ''}</p>
+        <p>${esc(l.email)}</p>
+        <div class="admin-login-password-row">
+          <span class="admin-login-password" id="pw-${l.id}">••••••••</span>
+          <button class="admin-action-btn" onclick="toggleLoginPassword('${l.id}', '${esc(l.password)}')">Mostrar</button>
+        </div>
+        ${l.url ? '<p><a href="' + esc(l.url) + '" target="_blank" style="color:var(--c-primary)">' + esc(l.url) + '</a></p>' : ''}
       </div>
       <div class="admin-list-actions">
         <button class="admin-action-btn" onclick="openModal('platform_login','${l.id}')">Editar</button>
         <button class="admin-action-btn danger" onclick="deleteItem('platform_logins','${l.id}')">Apagar</button>
       </div>
     </div>`).join('');
+}
+
+function toggleLoginPassword(id, pw) {
+  const el = document.getElementById('pw-' + id);
+  const btn = el.nextElementSibling;
+  if (el.textContent === '••••••••') {
+    el.textContent = pw;
+    el.classList.add('admin-login-password-visible');
+    btn.textContent = 'Ocultar';
+  } else {
+    el.textContent = '••••••••';
+    el.classList.remove('admin-login-password-visible');
+    btn.textContent = 'Mostrar';
+  }
 }
 
 // ============================================
