@@ -15,23 +15,46 @@
 <style>
 /* ── Smaller Hero (scoped override) ───────── */
 .vid-hero {
-  padding: calc(var(--header-h) + 40px) var(--space-lg) 60px;
+  padding: calc(var(--header-h) + 56px) var(--space-lg) 64px;
+}
+.vid-hero-glow-1,
+.vid-hero-glow-2 {
+  opacity: 0.35;
+}
+.vid-hero-symbols span {
+  font-size: 1.3rem !important;
+  opacity: 0.2;
+}
+.vid-hero-badge {
+  margin-bottom: var(--space-md);
+  padding: 6px 16px;
+  font-size: 0.75rem;
 }
 .vid-hero h1 {
   font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+  margin-bottom: 0;
 }
 .vid-hero p {
-  font-size: 0.9rem;
-  margin-bottom: var(--space-lg);
+  display: none;
 }
 .vid-hero-stats {
   gap: var(--space-xl);
+  margin-top: var(--space-sm);
 }
 .vid-hero-stat-icon {
   display: none;
 }
+.vid-hero-stat-value {
+  font-size: 1.1rem;
+}
+.vid-hero-stat-label {
+  font-size: 0.65rem;
+}
+.vid-hero-stat + .vid-hero-stat::before {
+  display: none;
+}
 .vid-hero-shape {
-  height: 48px;
+  height: 32px;
 }
 
 /* ── Loading / Error ──────────────────────── */
@@ -377,7 +400,6 @@
         Aulas em Vídeo
       </div>
       <h1>Aprende com quem <span>domina</span></h1>
-      <p>Aulas gravadas por Tomás Correia.<br>Assiste no YouTube e descarrega os materiais PDF.</p>
       <div class="vid-hero-stats">
         <div class="vid-hero-stat">
           <span class="vid-hero-stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5,3 19,12 5,21"/></svg></span>
@@ -468,15 +490,49 @@
   }
   var db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  var SUBJECTS = {
-    'Matemática':   { color: '#0E8C8F', grades: ['7.º Ano','8.º Ano','9.º Ano'],
-      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>' },
-    'Matemática A': { color: '#F9E87A', grades: ['10.º Ano','11.º Ano','12.º Ano'],
-      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>' },
-    'Matemática B': { color: '#1A3840', grades: ['10.º Ano','11.º Ano'],
-      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>' }
-  };
-  var GNUM = {'7.º Ano':'7','8.º Ano':'8','9.º Ano':'9','10.º Ano':'10','11.º Ano':'11','12.º Ano':'12'};
+  var subjectsData = [];
+  var gradesData = [];
+
+  var SUBJECT_ICONS = [
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>',
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>',
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>',
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>',
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="8" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="16" y1="10" x2="16" y2="10.01"/><line x1="8" y1="14" x2="8" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="16" y1="14" x2="16" y2="14.01"/><line x1="8" y1="18" x2="8" y2="18.01"/><line x1="12" y1="18" x2="12" y2="18.01"/><line x1="16" y1="18" x2="16" y2="18.01"/></svg>',
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 1 0 0-8c-2 0-4 1.33-6 4Z"/></svg>',
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>',
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 4h10"/><path d="M4 20c1.5 0 3-.5 4-2 .85-1.27 2-4 2-4s.25 3.06 1 4c.5.66 1.5 2 3 2s3-.5 4-2V4"/></svg>',
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h4c2 0 4 1.5 4 4s-2 4-4 4H6"/><path d="M6 12h2c2 0 4 1.5 4 4s-2 4-4 4H4"/><path d="M16 4h4"/><path d="M18 4v16"/><path d="M16 20h4"/></svg>'
+  ];
+
+  function getSubjectColor(name) {
+    for (var i = 0; i < subjectsData.length; i++) { if (subjectsData[i].name === name) return subjectsData[i].color; }
+    return '#0E8C8F';
+  }
+  function getSubjectIconIndex(name) {
+    for (var i = 0; i < subjectsData.length; i++) { if (subjectsData[i].name === name) return subjectsData[i].icon_index; }
+    return 0;
+  }
+  function getGradesForSubject(name) {
+    var subj = null;
+    for (var i = 0; i < subjectsData.length; i++) { if (subjectsData[i].name === name) { subj = subjectsData[i]; break; } }
+    if (!subj) return [];
+    var out = [];
+    for (var i = 0; i < gradesData.length; i++) { if (gradesData[i].subject_id === subj.id) out.push(gradesData[i].grade); }
+    return out;
+  }
+  function getGradeDisplay(g) {
+    var m=g.match(/^(\d+)/);
+    if(m) return m[1];
+    return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>';
+  }
+
   var ARROW = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>';
   var CHEVRON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>';
   var YT_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5,3 19,12 5,21"/></svg>';
@@ -541,13 +597,13 @@
 
   function showSubjects() {
     hide();
-    var keys=Object.keys(SUBJECTS), html='';
-    for(var i=0;i<keys.length;i++) {
-      var n=keys[i], c=SUBJECTS[n], cnt=count(n);
+    var html='';
+    for(var i=0;i<subjectsData.length;i++) {
+      var n=subjectsData[i].name, col=subjectsData[i].color, ii=subjectsData[i].icon_index, grades=getGradesForSubject(n), cnt=count(n);
       html+='<button class="va-folder" data-nav="grades|'+esc(n)+'">'
-        +'<div class="va-folder-icon" style="color:'+c.color+'">'+c.icon+'</div>'
+        +'<div class="va-folder-icon" style="color:'+col+'">'+(SUBJECT_ICONS[ii]||SUBJECT_ICONS[0])+'</div>'
         +'<div class="va-folder-body"><div class="va-folder-title">'+n+'</div>'
-        +'<div class="va-folder-meta">'+c.grades.length+' anos · '+cnt+' aula'+(cnt!==1?'s':'')+'</div></div>'
+        +'<div class="va-folder-meta">'+grades.length+' anos · '+cnt+' aula'+(cnt!==1?'s':'')+'</div></div>'
         +'<div class="va-folder-arrow">'+ARROW+'</div></button>';
     }
     $folders.innerHTML=html;
@@ -556,7 +612,8 @@
 
   function showGrades(subj) {
     hide();
-    var c=SUBJECTS[subj]; if(!c) return showSubjects();
+    var color=getSubjectColor(subj);
+    var grades=getGradesForSubject(subj);
     $bc.innerHTML='<a href="#" class="va-bc-link" data-nav="subjects">Videoaulas</a>'
       +'<span class="va-bc-sep">'+CHEVRON+'</span>'
       +'<span class="va-bc-current">'+esc(subj)+'</span>';
@@ -566,10 +623,11 @@
     $head.style.display='flex';
 
     var html='';
-    for(var i=0;i<c.grades.length;i++) {
-      var g=c.grades[i], cnt=count(subj,g);
+    for(var i=0;i<grades.length;i++) {
+      var g=grades[i], cnt=count(subj,g);
+      var gd=getGradeDisplay(g);
       html+='<button class="va-folder" data-nav="folders|'+esc(subj)+'|'+esc(g)+'">'
-        +'<div class="va-folder-grade" style="border-color:'+c.color+'">'+(GNUM[g]||g)+'</div>'
+        +'<div class="va-folder-grade" style="border-color:'+color+'">'+gd+'</div>'
         +'<div class="va-folder-body"><div class="va-folder-title">'+g+'</div>'
         +'<div class="va-folder-meta">'+cnt+' aula'+(cnt!==1?'s':'')+'</div></div>'
         +'<div class="va-folder-arrow">'+ARROW+'</div></button>';
@@ -580,7 +638,6 @@
 
   function showFolders(subj, grade) {
     hide();
-    var c=SUBJECTS[subj]; if(!c) return showSubjects();
     $bc.innerHTML='<a href="#" class="va-bc-link" data-nav="subjects">Videoaulas</a>'
       +'<span class="va-bc-sep">'+CHEVRON+'</span>'
       +'<a href="#" class="va-bc-link" data-nav="grades|'+esc(subj)+'">'+esc(subj)+'</a>'
@@ -690,6 +747,11 @@
 
   async function init() {
     try {
+      var sRes=await db.from('subjects').select('*').order('display_order',{ascending:true});
+      var gRes=await db.from('subject_grades').select('*').order('display_order',{ascending:true});
+      subjectsData=sRes.data||[];
+      gradesData=gRes.data||[];
+
       var res=await db.from('videos').select('*').order('order',{ascending:true});
       var fRes=await db.from('folders').select('*').order('order',{ascending:true});
       $loading.style.display='none';

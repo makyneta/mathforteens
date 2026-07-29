@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeaderScroll()
   initContadores()
   initTypewriter()
+  initInscPopup()
+  initCitacao()
 })
 
 function initNav() {
@@ -50,7 +52,9 @@ function initAnimations() {
     })
   }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' })
   els.forEach(el => obs.observe(el))
-}function initContadores() {
+}
+
+function initContadores() {
   const contadores = document.querySelectorAll('[data-contar]')
   if (!contadores.length) return
   const obs = new IntersectionObserver((entries) => {
@@ -79,6 +83,27 @@ function animarNumero(el, target, sufixo, duracao) {
     if (progress < 1) requestAnimationFrame(step)
   }
   requestAnimationFrame(step)
+}
+
+function initInscPopup() {
+  const popup = document.getElementById('inscPopup')
+  if (!popup) return
+  const dismissed = sessionStorage.getItem('inscPopupDismissed')
+  if (dismissed) return
+  setTimeout(() => popup.classList.add('open'), 1000)
+}
+
+function closeInscPopup() {
+  const popup = document.getElementById('inscPopup')
+  if (!popup) return
+  popup.classList.remove('open')
+  sessionStorage.setItem('inscPopupDismissed', 'true')
+}
+
+function initCitacao() {
+  const el = document.getElementById('hero-citacao')
+  if (!el) return
+  el.innerHTML = '«(...) venero a Matemática (...) Vislumbro-a, vassalo-a, rendo-me por completo. Uma ciência tão bonita, mãe de tantas outras, indispensável para o dia-a-dia e para as maiores descobertas do planeta. Um encanto que pouca gente compreende.»<span class="hero-citacao-author">— Crónicas d\'Adolescente, de Tomás Correia</span>'
 }
 
 function initTypewriter() {

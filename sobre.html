@@ -12,9 +12,12 @@
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="stylesheet" href="assets/css/reset.css">
 <link rel="stylesheet" href="assets/css/styles.css">
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script defer src="assets/js/supabase-config.js"></script>
 <script defer src="assets/js/chatbot.js"></script>
 <script defer src="assets/js/components.js"></script>
 <script defer src="assets/js/main.js"></script>
+<script defer src="assets/js/news.js"></script>
 </head>
 <body>
 
@@ -31,7 +34,7 @@
           <p>O projeto foi criado pelo <strong>Tomás Correia</strong>, um estudante do Ensino Secundário (Ciências e Tecnologias) que, na altura, tinha 15 anos. O que começou como uma página nas redes sociais cresceu rapidamente — quase 18 mil seguidores em poucas semanas. Até que a conta foi banida. E ele recomeçou do zero. Hoje são mais de <strong>40 mil seguidores</strong>.</p>
           <p>Mas a história começa bem antes. Aos 11 anos, o Tomás já dava mentorias gratuitas — explicações de alunos para alunos. Aos 14, começou a cobrar por preparação para a Prova Final de Ciclo de Matemática. E <strong>obteve 100% nesse exame, em 2024</strong>.</p>
           <p>Em 2024, venceu o <strong>1.º prémio do Festival Livros Oeste</strong> (município da Lourinhã) com o conto <em>"Cravos de Abril"</em>. Em 2025, publicou o livro <strong>Crónicas d'Adolescente</strong>, disponível autografado.</p>
-          <p>Hoje, o Math For Teens ajuda alunos dos <strong>8 aos 16 anos</strong> através de redes sociais, cursos online e apoio direto. Expandiu-se a outras disciplinas: Biologia e Geologia, Física e Química, Português, História, e mais.</p>
+          <p>Hoje, o Math For Teens ajuda alunos dos <strong>8 aos 16 anos</strong> através de redes sociais, cursos online e apoio direto. Expandiu-se a outras disciplinas: Física e Química, Português, e mais.</p>
         </div>
       </div>
       <div class="about-photo">
@@ -71,18 +74,63 @@
         <div class="timeline-item">
           <div class="timeline-year">2026</div>
           <div class="timeline-title">Expansão a novas disciplinas</div>
-          <div class="timeline-desc">Cursos de BG, FQA, e explicações de várias disciplinas. Mais de 40 mil seguidores.</div>
+          <div class="timeline-desc">Cursos de várias disciplinas. Mais de 40 mil seguidores.</div>
         </div>
       </div>
     </div>
   </section>
 
+  <section class="section" style="background:var(--c-white)" id="news-section">
+    <div class="section-inner">
+      <div class="text-center" style="margin-bottom:48px">
+        <div class="section-label" style="justify-content:center">Notícias</div>
+        <h2 class="section-title">Últimas novidades</h2>
+      </div>
+      <div id="newsGrid" class="news-grid"></div>
+      <div class="text-center" style="margin-top:36px">
+        <button id="viewAllNewsBtn" class="btn btn-secondary" style="display:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h12"/></svg>
+          Ver todas as notícias
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal: Todas as Notícias -->
+  <div id="allNewsModal" class="news-modal-overlay" style="display:none">
+    <div class="news-modal-backdrop" onclick="closeAllNewsModal()"></div>
+    <div class="news-modal-container">
+      <div class="news-modal-header">
+        <h3>Todas as Notícias</h3>
+        <button class="news-modal-close" onclick="closeAllNewsModal()">&times;</button>
+      </div>
+      <div class="news-modal-body">
+        <div id="allNewsGrid" class="news-grid"></div>
+        <div id="allNewsEmpty" class="news-empty" style="display:none">
+          <p>Ainda não há notícias publicadas.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Detalhe da Notícia -->
+  <div id="newsDetailModal" class="news-modal-overlay" style="display:none">
+    <div class="news-modal-backdrop" onclick="closeNewsDetail()"></div>
+    <div class="news-modal-container news-detail-container">
+      <div class="news-modal-header">
+        <h3 id="newsDetailTitle">Notícia</h3>
+        <button class="news-modal-close" onclick="closeNewsDetail()">&times;</button>
+      </div>
+      <div class="news-modal-body" id="newsDetailBody"></div>
+    </div>
+  </div>
+
   <section class="section" style="background:var(--c-white)">
     <div class="section-inner text-center">
       <h2 class="section-title">Vamos estudar juntos?</h2>
-      <p style="font-size:1rem;color:var(--c-text-secondary);margin-bottom:24px">Escolhe o teu curso e começa hoje.</p>
+      <!-- <p style="font-size:1rem;color:var(--c-text-secondary);margin-bottom:24px">Escolhe o teu curso e começa hoje.</p> -->
       <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-        <a href="contacto.html" class="btn btn-primary">Ver Cursos</a>
+        <!-- <a href="contacto.html" class="btn btn-primary">Ver Cursos</a> -->
         <a href="https://wa.me/351910256373" target="_blank" class="btn btn-whatsapp">Falar no WhatsApp</a>
       </div>
     </div>

@@ -37,9 +37,9 @@
     </div>
     <div class="hero-inner">
       <div class="hero-content">
-        <div class="hero-badge">🏆 100% no Exame de Matemática 2026</div>
+        <div class="hero-badge">🏆 100% no Exame de Matemática 2024</div>
         <h1>Matemática <span>sem drama</span>.<br>Por quem já lá esteve.</h1>
-        <p style="font-style:italic;color:#ffffff;max-width:520px;line-height:1.7">«(...) venero a Matemática (...) Vislumbro-a, vassalo-a, rendo-me por completo. Uma ciência tão bonita, mãe de tantas outras, indispensável para o dia-a-dia e para as maiores descobertas do planeta. Um encanto que pouca gente compreende.»<br><span style="font-size:0.8rem;font-style:normal;opacity:0.6">— Crónicas d'Adolescente, de Tomás Correia</span></p>
+        <p id="hero-citacao" class="hero-citacao"></p>
         <div class="hero-stats">
           <div class="hero-stat">
             <span class="hero-stat-value"><span data-contar="40" data-sufixo="K+">0</span></span>
@@ -85,10 +85,10 @@
           <div class="section-label">Sobre o Projeto</div>
           <h2 class="section-title">De miúdo para miúdo.<br>E funciona.</h2>
           <p style="font-size:0.95rem;line-height:1.8;color:var(--c-text-secondary);margin-bottom:16px">
-            O <strong>Math For Teens</strong> nasceu em 2024, criado pelo <strong>Tomás Correia</strong>, um estudante de 16 anos que obteve <strong>100%</strong> na Prova Final de Ciclo de Matemática.
+            O <strong>Math For Teens</strong> nasceu em 2024, criado pelo <strong>Tomás Correia</strong>, um estudante de 17 anos que obteve <strong>100%</strong> na Prova Final de Ciclo de Matemática.
           </p>
           <p style="font-size:0.95rem;line-height:1.8;color:var(--c-text-secondary);margin-bottom:24px">
-            Hoje ajuda dezenas de alunos do 8.º ao 12.º ano através de aulas online, materiais organizados no Classroom e apoio direto no WhatsApp. Em 2025 publicou o livro <em>Crónicas d'Adolescente</em>.
+            Hoje ajuda dezenas de alunos do 7.º ao ensino secundário através de aulas online, materiais organizados no Classroom e apoio direto no WhatsApp. Em 2025 publicou o livro <em>Crónicas d'Adolescente</em>.
           </p>
           <a href="sobre" class="btn btn-secondary">Conhecer a História →</a>
         </div>
@@ -96,8 +96,8 @@
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
             <div style="background:var(--c-white);padding:20px;border-radius:var(--radius-md);border:1px solid var(--c-border-light);text-align:center">
               <div style="font-size:1.6rem;margin-bottom:6px">📚</div>
-              <div style="font-weight:700;font-size:1rem">70+ Aulas</div>
-              <div style="font-size:0.8rem;color:var(--c-text-secondary)">Online com materiais</div>
+              <div style="font-weight:700;font-size:1rem">20 Valores</div>
+              <div style="font-size:0.8rem;color:var(--c-text-secondary)">Exame Nacional Matemática B</div>
             </div>
             <div style="background:var(--c-white);padding:20px;border-radius:var(--radius-md);border:1px solid var(--c-border-light);text-align:center">
               <div style="font-size:1.6rem;margin-bottom:6px">💬</div>
@@ -178,7 +178,21 @@
 
 <div id="footer"></div>
 
-
+<div id="inscPopup" class="popup-overlay">
+  <div class="popup-overlay-bg" onclick="closeInscPopup()"></div>
+  <div class="popup-card">
+    <button class="popup-close" onclick="closeInscPopup()" aria-label="Fechar">&times;</button>
+    <div class="popup-content">
+      <div class="popup-badge">📢 Inscrições 2026/2027</div>
+      <h2 class="popup-title">Estão abertas!</h2>
+      <p class="popup-text">Garante a tua vaga no Math For Teens.</p>
+      <div class="popup-actions">
+        <a href="inscricoes" class="btn btn-primary btn-lg popup-btn" onclick="closeInscPopup()">Inscreve-te Agora →</a>
+        <button class="popup-later" onclick="closeInscPopup()">Mais tarde</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

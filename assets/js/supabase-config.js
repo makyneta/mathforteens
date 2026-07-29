@@ -8,3 +8,6 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const GITHUB_REPO = 'makyneta/mathforteens';
 const GITHUB_PDF_PATH = 'assets/pdfs';
 const GITHUB_PDF_BASE_URL = 'https://makyneta.github.io/mathforteens/' + GITHUB_PDF_PATH;
+
+const GITHUB_IMAGE_PATH = 'assets/images/news';
+const GITHUB_IMAGE_BASE_URL = 'https://makyneta.github.io/mathforteens/' + GITHUB_IMAGE_PATH;

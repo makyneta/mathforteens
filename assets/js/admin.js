@@ -1,7 +1,3 @@
-// ============================================
-// Math For Teens — Admin Panel (v2)
-// ============================================
-
 let db;
 try {
   if (!window.supabase) throw new Error('Supabase library not loaded');
@@ -17,6 +13,9 @@ let currentUser = null;
 let editingId = null;
 let editingType = null;
 let allFolders = [];
+let adminSubjects = [];
+let adminGrades = [];
+let adminNav = { level: 'subjects' };
 
 const FOLDER_ICONS = [
   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
@@ -35,6 +34,24 @@ const FOLDER_ICONS = [
   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'
+];
+
+const SUBJECT_ICONS = [
+  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>',
+  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
+  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>',
+  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>',
+  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
+  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>',
+  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="8" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="16" y1="10" x2="16" y2="10.01"/><line x1="8" y1="14" x2="8" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="16" y1="14" x2="16" y2="14.01"/><line x1="8" y1="18" x2="8" y2="18.01"/><line x1="12" y1="18" x2="12" y2="18.01"/><line x1="16" y1="18" x2="16" y2="18.01"/></svg>',
+  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
+  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 1 0 0-8c-2 0-4 1.33-6 4Z"/></svg>',
+  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>',
+  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 4h10"/><path d="M4 20c1.5 0 3-.5 4-2 .85-1.27 2-4 2-4s.25 3.06 1 4c.5.66 1.5 2 3 2s3-.5 4-2V4"/></svg>',
+  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h4c2 0 4 1.5 4 4s-2 4-4 4H6"/><path d="M6 12h2c2 0 4 1.5 4 4s-2 4-4 4H4"/><path d="M16 4h4"/><path d="M18 4v16"/><path d="M16 20h4"/></svg>'
 ];
 
 function pickIcon(name) {
@@ -132,7 +149,34 @@ function closeSidebar() {
 // LOAD DATA
 // ============================================
 async function loadAll() {
-  await Promise.all([loadVideos(), loadFolders(), loadTestimonials(), loadProducts(), loadLogins()]);
+  await loadSubjects();
+  await Promise.all([loadVideos(), loadFolders(), loadTestimonials(), loadNews(), loadProducts(), loadLogins()]);
+}
+
+async function loadSubjects() {
+  const [subRes, grRes] = await Promise.all([
+    db.from('subjects').select('*').order('display_order', { ascending: true }),
+    db.from('subject_grades').select('*').order('display_order', { ascending: true })
+  ]);
+  if (subRes.error) { showToast('Erro ao carregar disciplinas', 'error'); return; }
+  adminSubjects = subRes.data || [];
+  adminGrades = grRes.data || [];
+}
+
+function getSubjectColor(name) {
+  const s = adminSubjects.find(x => x.name === name);
+  return s ? s.color : '#0E8C8F';
+}
+
+function getSubjectIconIndex(name) {
+  const s = adminSubjects.find(x => x.name === name);
+  return s ? s.icon_index : 0;
+}
+
+function getGradesForSubject(name) {
+  const s = adminSubjects.find(x => x.name === name);
+  if (!s) return [];
+  return adminGrades.filter(g => g.subject_id === s.id).map(g => g.grade);
 }
 
 async function loadVideos() {
@@ -172,17 +216,21 @@ async function loadLogins() {
   updateStats();
 }
 
+async function loadNews() {
+  const { data, error } = await db.from('news').select('*').order('created_at', { ascending: false });
+  if (error) { showToast('Erro ao carregar notícias', 'error'); return; }
+  renderNews(data || []);
+  updateStats();
+}
+
 // ============================================
 // STATS
 // ============================================
 function updateStats() {
   const videos = window._adminVideos || [];
-  const testimonials = document.querySelectorAll('#testimonialsList .admin-list-item').length || 0;
-  const products = document.querySelectorAll('#productsList .admin-list-item').length || 0;
-  const logins = document.querySelectorAll('#loginsList .admin-list-item').length || 0;
-
   document.getElementById('statVideos').textContent = videos.length;
   document.getElementById('statTestimonials').textContent = document.getElementById('testimonialsEmpty').style.display === 'none' ? document.querySelectorAll('#testimonialsList .admin-list-item').length : 0;
+  document.getElementById('statNews').textContent = document.getElementById('newsEmpty').style.display === 'none' ? document.querySelectorAll('#newsList .admin-list-item').length : 0;
   document.getElementById('statProducts').textContent = document.getElementById('productsEmpty').style.display === 'none' ? document.querySelectorAll('#productsList .admin-list-item').length : 0;
   document.getElementById('statLogins').textContent = document.getElementById('loginsEmpty').style.display === 'none' ? document.querySelectorAll('#loginsList .admin-list-item').length : 0;
 }
@@ -258,6 +306,73 @@ async function deletePdf(url) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ message: 'Delete PDF: ' + filename, sha: fileData.sha })
+  });
+}
+
+let pendingImageFile = null;
+let removeImageFlag = false;
+
+function handleImagePreview(input) {
+  const file = input.files[0];
+  if (!file) return;
+  pendingImageFile = file;
+  removeImageFlag = false;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('imagePreview').innerHTML = '<div class="admin-image-file"><img src="' + e.target.result + '" class="admin-image-preview-img" alt="Preview"><span>' + esc(file.name) + ' (' + (file.size / 1024).toFixed(0) + ' KB)</span><button type="button" class="admin-action-btn danger" onclick="removeImage()">Remover</button></div>';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImage() {
+  pendingImageFile = null;
+  removeImageFlag = true;
+  document.getElementById('imagePreview').innerHTML = '';
+  document.getElementById('field_news_image').value = '';
+}
+
+async function uploadImage(file) {
+  const token = await getGithubToken();
+  if (!token) throw new Error('Token GitHub nao configurado.');
+  if (!file) return null;
+  const ext = file.name.split('.').pop();
+  const cleanName = file.name.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9-_]/g, '_').toLowerCase();
+  const filename = cleanName + '-' + Date.now().toString(36) + '.' + ext;
+  const path = GITHUB_IMAGE_PATH + '/' + filename;
+  const content = await fileToBase64(file);
+  const res = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + path, {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'token ' + token,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ message: 'Upload Image: ' + file.name, content })
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || 'Erro ao enviar imagem para GitHub');
+  }
+  return GITHUB_IMAGE_BASE_URL + '/' + filename;
+}
+
+async function deleteImage(url) {
+  if (!url || !url.includes(GITHUB_IMAGE_PATH)) return;
+  const token = await getGithubToken();
+  if (!token) return;
+  const filename = url.split('/').pop();
+  const path = GITHUB_IMAGE_PATH + '/' + filename;
+  const getRes = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + path, {
+    headers: { 'Authorization': 'token ' + token }
+  });
+  if (!getRes.ok) return;
+  const fileData = await getRes.json();
+  await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + path, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': 'token ' + token,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ message: 'Delete Image: ' + filename, sha: fileData.sha })
   });
 }
 
@@ -397,6 +512,40 @@ function renderLogins(items) {
   updateStats();
 }
 
+function renderNews(items) {
+  const list = document.getElementById('newsList');
+  const empty = document.getElementById('newsEmpty');
+  if (!items.length) { list.innerHTML = ''; list.style.display = 'none'; empty.style.display = 'flex'; updateStats(); return; }
+  empty.style.display = 'none';
+  list.style.display = 'block';
+
+  let html = '<div class="admin-list-header news">'
+    + '<span>Notícia</span><span>Data</span><span style="text-align:right">Ações</span>'
+    + '</div>';
+
+  html += items.map(n => {
+    const date = n.created_at ? new Date(n.created_at).toLocaleDateString('pt-PT', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+    const preview = n.content ? n.content.substring(0, 80) + (n.content.length > 80 ? '...' : '') : '';
+    return `<div class="admin-list-item news">
+      <div style="display:flex;align-items:center;gap:12px;min-width:0">
+        ${n.image_url ? `<img src="${esc(n.image_url)}" class="admin-news-thumb" alt="${esc(n.title)}" onerror="this.style.display='none'">` : `<div class="admin-news-thumb admin-news-thumb-placeholder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg></div>`}
+        <div class="admin-list-info">
+          <h4>${esc(n.title)}</h4>
+          <p>${esc(preview)}</p>
+        </div>
+      </div>
+      <div style="font-size:0.8rem;color:var(--admin-text-secondary)">${date}</div>
+      <div class="admin-list-actions">
+        <button class="admin-action-btn" onclick="openNewsModal('${n.id}')">Editar</button>
+        <button class="admin-action-btn danger" onclick="deleteNews('${n.id}')">Apagar</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  list.innerHTML = html;
+  updateStats();
+}
+
 function toggleLoginPassword(id, pw) {
   const el = document.getElementById('pw-' + id);
   const btn = el.nextElementSibling;
@@ -412,18 +561,8 @@ function toggleLoginPassword(id, pw) {
 }
 
 // ============================================
-// FOLDER NAVIGATION (Admin)
+// SUBJECTS & GRADES CRUD (Admin)
 // ============================================
-let adminNav = { level: 'subjects' };
-
-function getAdminSubjectColors() {
-  return {
-    'Matemática': '#0E8C8F',
-    'Matemática A': '#F59E0B',
-    'Matemática B': '#1A3840'
-  };
-}
-
 function renderAdminFolders() {
   if (adminNav.level === 'subjects') renderAdminSubjects();
   else if (adminNav.level === 'grades') renderAdminGrades(adminNav.subject);
@@ -432,67 +571,92 @@ function renderAdminFolders() {
 
 function renderAdminSubjects() {
   adminNav = { level: 'subjects' };
-  const subjects = ['Matemática', 'Matemática A', 'Matemática B'];
-  const colors = getAdminSubjectColors();
   const grid = document.getElementById('adminFoldersList');
   const empty = document.getElementById('adminFoldersEmpty');
   document.getElementById('foldersBreadcrumb').style.display = 'none';
-  document.getElementById('foldersViewTitle').textContent = 'Pastas de Videoaulas';
-  document.getElementById('foldersAddBtnText').textContent = 'Adicionar Pasta';
+  document.getElementById('foldersViewTitle').textContent = 'Disciplinas';
+  document.getElementById('foldersAddBtnText').textContent = 'Adicionar Disciplina';
+  document.getElementById('foldersAddBtn').setAttribute('onclick', 'openSubjectModal()');
+
+  if (!adminSubjects.length) {
+    grid.style.display = 'none';
+    empty.style.display = 'flex';
+    empty.innerHTML = `
+      <div class="admin-empty-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+      <h3>Nenhuma disciplina criada</h3>
+      <p>Clica em "Adicionar Disciplina" para começar.</p>`;
+    return;
+  }
+  empty.style.display = 'none';
+  grid.style.display = 'flex';
 
   let html = '';
-  subjects.forEach(s => {
-    const folderCount = allFolders.filter(f => f.subject === s).length;
-    const videoCount = (window._adminVideos || []).filter(v => v.subject === s).length;
-    html += '<button class="admin-folder-item" onclick="adminNavTo(\'' + esc(s) + '\')">'
-      + '<div class="admin-folder-icon" style="background:' + colors[s] + '12;color:' + colors[s] + '">'
-      + '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>'
+  adminSubjects.forEach(s => {
+    const grades = adminGrades.filter(g => g.subject_id === s.id);
+    const folderCount = allFolders.filter(f => f.subject === s.name).length;
+    const videoCount = (window._adminVideos || []).filter(v => v.subject === s.name).length;
+    html += '<div class="admin-folder-item">'
+      + '<div class="admin-folder-icon" style="background:' + s.color + '18;color:' + s.color + '">'
+      + (SUBJECT_ICONS[s.icon_index] || SUBJECT_ICONS[0])
       + '</div>'
-      + '<div class="admin-folder-info"><h4>' + esc(s) + '</h4>'
-      + '<p>' + folderCount + ' pasta' + (folderCount !== 1 ? 's' : '') + ' · ' + videoCount + ' vídeo' + (videoCount !== 1 ? 's' : '') + '</p></div>'
-      + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;opacity:0.25"><polyline points="9 18 15 12 9 6"/></svg>'
-      + '</button>';
+      + '<div class="admin-folder-info" style="cursor:pointer" onclick="adminNavTo(\'' + esc(s.name) + '\')"><h4>' + esc(s.name) + '</h4>'
+      + '<p>' + grades.length + ' ano' + (grades.length !== 1 ? 's' : '') + ' · ' + folderCount + ' pasta' + (folderCount !== 1 ? 's' : '') + ' · ' + videoCount + ' vídeo' + (videoCount !== 1 ? 's' : '') + '</p></div>'
+      + '<div class="admin-list-actions">'
+      + '<button class="admin-action-btn" onclick="event.stopPropagation();openSubjectModal(\'' + s.id + '\')">Editar</button>'
+      + '<button class="admin-action-btn danger" onclick="event.stopPropagation();deleteSubject(\'' + s.id + '\')">Apagar</button>'
+      + '</div>'
+      + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;opacity:0.25;cursor:pointer" onclick="adminNavTo(\'' + esc(s.name) + '\')"><polyline points="9 18 15 12 9 6"/></svg>'
+      + '</div>';
   });
   grid.innerHTML = html;
-  grid.style.display = 'flex';
-  empty.style.display = 'none';
 }
 
 function renderAdminGrades(subject) {
   adminNav = { level: 'grades', subject: subject };
-  const gradesBySubject = {
-    'Matemática': ['7.º Ano', '8.º Ano', '9.º Ano'],
-    'Matemática A': ['10.º Ano', '11.º Ano', '12.º Ano'],
-    'Matemática B': ['10.º Ano', '11.º Ano']
-  };
-  const grades = gradesBySubject[subject] || [];
-  const color = getAdminSubjectColors()[subject] || '#0E8C8F';
+  const subj = adminSubjects.find(s => s.name === subject);
+  const grades = subj ? adminGrades.filter(g => g.subject_id === subj.id) : [];
+  const color = subj ? subj.color : '#0E8C8F';
   const grid = document.getElementById('adminFoldersList');
   const empty = document.getElementById('adminFoldersEmpty');
   const bc = document.getElementById('foldersBreadcrumb');
   document.getElementById('foldersViewTitle').textContent = subject;
-  document.getElementById('foldersAddBtnText').textContent = 'Adicionar Pasta';
+  document.getElementById('foldersAddBtnText').textContent = 'Adicionar Ano';
+  document.getElementById('foldersAddBtn').setAttribute('onclick', 'openGradeModal(\'' + esc(subject) + '\')');
 
-  bc.innerHTML = '<a href="#" onclick="renderAdminSubjects();return false">Pastas</a>'
+  bc.innerHTML = '<a href="#" onclick="renderAdminSubjects();return false">Disciplinas</a>'
     + ' <span class="admin-bc-sep">/</span> '
     + '<strong>' + esc(subject) + '</strong>';
   bc.style.display = 'flex';
 
+  if (!grades.length) {
+    grid.style.display = 'none';
+    empty.style.display = 'flex';
+    empty.innerHTML = `
+      <div class="admin-empty-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg></div>
+      <h3>Nenhum ano adicionado</h3>
+      <p>Clica em "Adicionar Ano" para adicionar anos a esta disciplina.</p>`;
+    return;
+  }
+  empty.style.display = 'none';
+  grid.style.display = 'flex';
+
   let html = '';
   grades.forEach(g => {
-    const num = g.replace('.º Ano', '');
-    const folderCount = allFolders.filter(f => f.subject === subject && f.grade === g).length;
-    const videoCount = (window._adminVideos || []).filter(v => v.subject === subject && v.grade === g).length;
-    html += '<button class="admin-folder-item" onclick="adminNavTo(\'' + esc(subject) + '\',\'' + esc(g) + '\')">'
+    const num = getGradeDisplay(g.grade);
+    const folderCount = allFolders.filter(f => f.subject === subject && f.grade === g.grade).length;
+    const videoCount = (window._adminVideos || []).filter(v => v.subject === subject && v.grade === g.grade).length;
+    html += '<div class="admin-folder-item">'
       + '<div class="admin-folder-grade" style="border-color:' + color + '">' + num + '</div>'
-      + '<div class="admin-folder-info"><h4>' + esc(g) + '</h4>'
+      + '<div class="admin-folder-info" style="cursor:pointer" onclick="adminNavTo(\'' + esc(subject) + '\',\'' + esc(g.grade) + '\')"><h4>' + esc(g.grade) + '</h4>'
       + '<p>' + folderCount + ' pasta' + (folderCount !== 1 ? 's' : '') + ' · ' + videoCount + ' vídeo' + (videoCount !== 1 ? 's' : '') + '</p></div>'
-      + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;opacity:0.25"><polyline points="9 18 15 12 9 6"/></svg>'
-      + '</button>';
+      + '<div class="admin-list-actions">'
+      + '<button class="admin-action-btn" onclick="event.stopPropagation();openGradeModal(\'' + esc(subject) + '\',\'' + g.id + '\')">Editar</button>'
+      + '<button class="admin-action-btn danger" onclick="event.stopPropagation();deleteGrade(\'' + g.id + '\',\'' + esc(subject) + '\')">Apagar</button>'
+      + '</div>'
+      + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;opacity:0.25;cursor:pointer" onclick="adminNavTo(\'' + esc(subject) + '\',\'' + esc(g.grade) + '\')"><polyline points="9 18 15 12 9 6"/></svg>'
+      + '</div>';
   });
   grid.innerHTML = html;
-  grid.style.display = 'flex';
-  empty.style.display = 'none';
 }
 
 function renderAdminFolderList(subject, grade) {
@@ -503,8 +667,9 @@ function renderAdminFolderList(subject, grade) {
   const bc = document.getElementById('foldersBreadcrumb');
   document.getElementById('foldersViewTitle').textContent = subject + ' › ' + grade;
   document.getElementById('foldersAddBtnText').textContent = 'Adicionar Pasta';
+  document.getElementById('foldersAddBtn').setAttribute('onclick', 'openFolderModal()');
 
-  bc.innerHTML = '<a href="#" onclick="renderAdminSubjects();return false">Pastas</a>'
+  bc.innerHTML = '<a href="#" onclick="renderAdminSubjects();return false">Disciplinas</a>'
     + ' <span class="admin-bc-sep">/</span> '
     + '<a href="#" onclick="adminNavTo(\'' + esc(subject) + '\');return false">' + esc(subject) + '</a>'
     + ' <span class="admin-bc-sep">/</span> '
@@ -540,6 +705,186 @@ function adminNavTo(subject, grade) {
 }
 
 // ============================================
+// SUBJECT CRUD
+// ============================================
+async function openSubjectModal(id) {
+  let data = null;
+  if (id) {
+    const { data: row } = await db.from('subjects').select('*').eq('id', id).single();
+    data = row;
+  }
+  const f = data || {};
+
+  document.getElementById('modalTitle').textContent = id ? 'Editar Disciplina' : 'Adicionar Disciplina';
+  const formEl = document.getElementById('modalForm');
+
+  let iconOptions = '';
+  SUBJECT_ICONS.forEach((svg, idx) => {
+    const selected = (f.icon_index || 0) === idx ? 'selected' : '';
+    iconOptions += `<option value="${idx}" ${selected}>Ícone ${idx + 1}</option>`;
+  });
+
+  formEl.innerHTML = `
+    <div class="admin-field"><label>Nome da Disciplina *</label><input type="text" id="field_subject_name" value="${esc(f.name || '')}" required placeholder="Ex: Matemática C"></div>
+    <div class="admin-field-row">
+      <div class="admin-field"><label>Cor</label><div style="display:flex;gap:8px;align-items:center"><input type="color" id="field_subject_color" value="${f.color || '#0E8C8F'}" style="width:48px;height:48px;padding:2px;border-radius:8px;cursor:pointer"><input type="text" id="field_subject_color_text" value="${f.color || '#0E8C8F'}" style="flex:1" placeholder="#0E8C8F"></div></div>
+      <div class="admin-field"><label>Ícone</label><select id="field_subject_icon">${iconOptions}</select></div>
+    </div>
+    <div class="admin-field"><label>Ordem de exibição</label><input type="number" id="field_subject_order" value="${f.display_order || 0}"></div>
+    <div class="admin-field" style="margin-top:12px"><label>Pré-visualização</label><div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--admin-surface-hover);border-radius:10px" id="subjectPreview"><div id="subjectPreviewIcon" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:${f.color || '#0E8C8F'};background:${(f.color || '#0E8C8F') + '18'}">${SUBJECT_ICONS[f.icon_index || 0]}</div><span style="font-weight:600">${esc(f.name || 'Nova Disciplina')}</span></div></div>
+    <div class="admin-modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" id="modalSubmitBtn">Guardar</button>
+    </div>`;
+
+  const colorInput = document.getElementById('field_subject_color');
+  const colorText = document.getElementById('field_subject_color_text');
+  const iconSelect = document.getElementById('field_subject_icon');
+  const nameInput = document.getElementById('field_subject_name');
+
+  function updatePreview() {
+    const c = colorInput.value;
+    colorText.value = c;
+    const idx = parseInt(iconSelect.value) || 0;
+    const iconEl = document.getElementById('subjectPreviewIcon');
+    iconEl.style.color = c;
+    iconEl.style.background = c + '18';
+    iconEl.innerHTML = SUBJECT_ICONS[idx] || SUBJECT_ICONS[0];
+    document.getElementById('subjectPreview').querySelector('span').textContent = nameInput.value || 'Nova Disciplina';
+  }
+
+  colorInput.addEventListener('input', updatePreview);
+  colorText.addEventListener('input', function() {
+    if (/^#[0-9a-f]{6}$/i.test(this.value)) {
+      colorInput.value = this.value;
+      updatePreview();
+    }
+  });
+  iconSelect.addEventListener('change', updatePreview);
+  nameInput.addEventListener('input', updatePreview);
+
+  formEl.onsubmit = (e) => { e.preventDefault(); saveSubject(id); };
+  document.getElementById('modal').style.display = 'flex';
+}
+
+async function saveSubject(editId) {
+  const btn = document.getElementById('modalSubmitBtn');
+  btn.innerHTML = '<span class="admin-spinner"></span>';
+  btn.disabled = true;
+
+  const obj = {
+    name: document.getElementById('field_subject_name').value,
+    color: document.getElementById('field_subject_color').value,
+    icon_index: parseInt(document.getElementById('field_subject_icon').value) || 0,
+    display_order: parseInt(document.getElementById('field_subject_order').value) || 0
+  };
+
+  let result;
+  if (editId) {
+    result = await db.from('subjects').update(obj).eq('id', editId);
+  } else {
+    result = await db.from('subjects').insert(obj);
+  }
+
+  if (result.error) {
+    showToast('Erro: ' + result.error.message, 'error');
+    btn.innerHTML = 'Guardar';
+    btn.disabled = false;
+    return;
+  }
+
+  showToast(editId ? 'Disciplina atualizada!' : 'Disciplina criada!', 'success');
+  closeModal();
+  await loadSubjects();
+  renderAdminFolders();
+}
+
+async function deleteSubject(id) {
+  const subj = adminSubjects.find(s => s.id === id);
+  if (!subj) return;
+  if (!confirm('Tem certeza que queres apagar a disciplina "' + subj.name + '"?\nTodos os anos, pastas e vídeos associados ficarão sem disciplina.')) return;
+  const { error } = await db.from('subjects').delete().eq('id', id);
+  if (error) { showToast('Erro ao apagar: ' + error.message, 'error'); return; }
+  showToast('Disciplina apagada!', 'success');
+  await loadSubjects();
+  renderAdminFolders();
+}
+
+// ============================================
+// GRADE CRUD
+// ============================================
+async function openGradeModal(subject, id) {
+  let data = null;
+  if (id) {
+    const { data: row } = await db.from('subject_grades').select('*').eq('id', id).single();
+    data = row;
+  }
+  const f = data || {};
+
+  document.getElementById('modalTitle').textContent = id ? 'Editar Ano' : 'Adicionar Ano';
+  const formEl = document.getElementById('modalForm');
+  formEl.innerHTML = `
+    <div class="admin-field"><label>Disciplina</label><input type="text" value="${esc(subject)}" disabled style="background:var(--admin-surface-hover);opacity:0.8"></div>
+    <div class="admin-field"><label>Ano Escolar *</label><input type="text" id="field_grade_name" value="${esc(f.grade || '')}" required placeholder="Ex: 7.º Ano"></div>
+    <div class="admin-field"><label>Ordem de exibição</label><input type="number" id="field_grade_order" value="${f.display_order || 0}"></div>
+    <div class="admin-modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" id="modalSubmitBtn">Guardar</button>
+    </div>`;
+
+  formEl.onsubmit = (e) => { e.preventDefault(); saveGrade(subject, id); };
+  document.getElementById('modal').style.display = 'flex';
+}
+
+async function saveGrade(subject, editId) {
+  const btn = document.getElementById('modalSubmitBtn');
+  btn.innerHTML = '<span class="admin-spinner"></span>';
+  btn.disabled = true;
+
+  const subj = adminSubjects.find(s => s.name === subject);
+  if (!subj) {
+    showToast('Erro: Disciplina não encontrada', 'error');
+    btn.innerHTML = 'Guardar';
+    btn.disabled = false;
+    return;
+  }
+
+  const obj = {
+    subject_id: subj.id,
+    grade: document.getElementById('field_grade_name').value,
+    display_order: parseInt(document.getElementById('field_grade_order').value) || 0
+  };
+
+  let result;
+  if (editId) {
+    result = await db.from('subject_grades').update(obj).eq('id', editId);
+  } else {
+    result = await db.from('subject_grades').insert(obj);
+  }
+
+  if (result.error) {
+    showToast('Erro: ' + result.error.message, 'error');
+    btn.innerHTML = 'Guardar';
+    btn.disabled = false;
+    return;
+  }
+
+  showToast(editId ? 'Ano atualizado!' : 'Ano adicionado!', 'success');
+  closeModal();
+  await loadSubjects();
+  renderAdminFolders();
+}
+
+async function deleteGrade(id, subject) {
+  if (!confirm('Tem certeza que queres apagar este ano?\nAs pastas e vídeos associados ficarão sem ano.')) return;
+  const { error } = await db.from('subject_grades').delete().eq('id', id);
+  if (error) { showToast('Erro ao apagar: ' + error.message, 'error'); return; }
+  showToast('Ano apagado!', 'success');
+  await loadSubjects();
+  renderAdminFolders();
+}
+
+// ============================================
 // FOLDER CRUD
 // ============================================
 async function openFolderModal(id) {
@@ -550,25 +895,27 @@ async function openFolderModal(id) {
   }
 
   const f = data || {};
-  const subjects = ['Matemática', 'Matemática A', 'Matemática B'];
-  const gradesBySubject = {
-    'Matemática': ['7.º Ano', '8.º Ano', '9.º Ano'],
-    'Matemática A': ['10.º Ano', '11.º Ano', '12.º Ano'],
-    'Matemática B': ['10.º Ano', '11.º Ano']
-  };
-
-  let currentSubject = f.subject || adminNav.subject || 'Matemática';
-  let currentGrade = f.grade || adminNav.grade || '7.º Ano';
+  let currentSubject = f.subject || adminNav.subject || (adminSubjects.length ? adminSubjects[0].name : 'Matemática');
+  let currentGrade = f.grade || adminNav.grade || (getGradesForSubject(currentSubject)[0] || '7.º Ano');
 
   document.getElementById('modalTitle').textContent = id ? 'Editar Pasta' : 'Adicionar Pasta';
   const formEl = document.getElementById('modalForm');
+
+  const subjectOptions = adminSubjects.map(s =>
+    `<option value="${esc(s.name)}" ${currentSubject === s.name ? 'selected' : ''}>${esc(s.name)}</option>`
+  ).join('');
+
+  const gradeOptions = getGradesForSubject(currentSubject).map(g =>
+    `<option value="${g}" ${currentGrade === g ? 'selected' : ''}>${g}</option>`
+  ).join('');
+
   formEl.innerHTML = `
     <div class="admin-field-row">
       <div class="admin-field"><label>Disciplina *</label><select id="field_folder_subject" required onchange="updateFolderGradeOptions()">
-        ${subjects.map(s => `<option value="${s}" ${currentSubject === s ? 'selected' : ''}>${s}</option>`).join('')}
+        ${subjectOptions}
       </select></div>
       <div class="admin-field"><label>Ano Escolar *</label><select id="field_folder_grade" required>
-        ${(gradesBySubject[currentSubject] || []).map(g => `<option value="${g}" ${currentGrade === g ? 'selected' : ''}>${g}</option>`).join('')}
+        ${gradeOptions}
       </select></div>
     </div>
     <div class="admin-field"><label>Nome da Pasta *</label><input type="text" id="field_folder_name" value="${esc(f.name || '')}" required placeholder="Ex: Derivadas"></div>
@@ -583,14 +930,9 @@ async function openFolderModal(id) {
 }
 
 function updateFolderGradeOptions() {
-  const gradesBySubject = {
-    'Matemática': ['7.º Ano', '8.º Ano', '9.º Ano'],
-    'Matemática A': ['10.º Ano', '11.º Ano', '12.º Ano'],
-    'Matemática B': ['10.º Ano', '11.º Ano']
-  };
   const subject = document.getElementById('field_folder_subject').value;
   const gradeSelect = document.getElementById('field_folder_grade');
-  const grades = gradesBySubject[subject] || [];
+  const grades = getGradesForSubject(subject);
   gradeSelect.innerHTML = grades.map(g => `<option value="${g}">${g}</option>`).join('');
 }
 
@@ -636,35 +978,148 @@ async function deleteFolder(id) {
 }
 
 // ============================================
+// NEWS CRUD
+// ============================================
+async function openNewsModal(id) {
+  editingType = 'news';
+  editingId = id || null;
+  pendingImageFile = null;
+  removeImageFlag = false;
+
+  let data = null;
+  if (id) {
+    const { data: row } = await db.from('news').select('*').eq('id', id).single();
+    data = row;
+  }
+  const n = data || {};
+
+  document.getElementById('modalTitle').textContent = id ? 'Editar Notícia' : 'Adicionar Notícia';
+  const formEl = document.getElementById('modalForm');
+
+  const hasImage = n.image_url && n.image_url.trim();
+
+  formEl.innerHTML = `
+    <div class="admin-field"><label>Título *</label><input type="text" id="field_news_title" value="${esc(n.title || '')}" required placeholder="Título da notícia"></div>
+    <div class="admin-field"><label>Conteúdo *</label><textarea id="field_news_content" required placeholder="Escreve o conteúdo da notícia..." style="min-height:180px">${esc(n.content || '')}</textarea></div>
+    <div class="admin-field">
+      <label>Imagem</label>
+      <div class="admin-image-upload">
+        <input type="file" id="field_news_image" accept="image/*" style="display:none" onchange="handleImagePreview(this)">
+        <button type="button" class="btn btn-secondary admin-btn-full" onclick="document.getElementById('field_news_image').click()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          ${hasImage ? 'Substituir Imagem' : 'Carregar Imagem'}
+        </button>
+        <div id="imagePreview" class="admin-image-preview">
+          ${hasImage ? '<div class="admin-image-file"><img src="' + esc(n.image_url) + '" class="admin-image-preview-img" alt=""><span>Imagem atual</span><button type="button" class="admin-action-btn danger" onclick="removeImage()">Remover</button></div>' : ''}
+        </div>
+      </div>
+    </div>
+    <div class="admin-modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" id="modalSubmitBtn">Guardar</button>
+    </div>`;
+
+  formEl.onsubmit = (e) => { e.preventDefault(); saveNews(); };
+  document.getElementById('modal').style.display = 'flex';
+}
+
+async function saveNews() {
+  const btn = document.getElementById('modalSubmitBtn');
+  btn.innerHTML = '<span class="admin-spinner"></span>';
+  btn.disabled = true;
+
+  const obj = {
+    title: document.getElementById('field_news_title').value,
+    content: document.getElementById('field_news_content').value
+  };
+
+  if (removeImageFlag && !pendingImageFile) {
+    if (editingId) {
+      const old = await db.from('news').select('image_url').eq('id', editingId).single();
+      if (old.data?.image_url) await deleteImage(old.data.image_url);
+    }
+    obj.image_url = null;
+  } else if (pendingImageFile) {
+    try {
+      if (editingId) {
+        const old = await db.from('news').select('image_url').eq('id', editingId).single();
+        if (old.data?.image_url) await deleteImage(old.data.image_url);
+      }
+      obj.image_url = await uploadImage(pendingImageFile);
+    } catch(e) {
+      showToast('Erro ao upload imagem: ' + e.message, 'error');
+      btn.innerHTML = 'Guardar';
+      btn.disabled = false;
+      return;
+    }
+  }
+
+  let result;
+  if (editingId) {
+    result = await db.from('news').update(obj).eq('id', editingId);
+  } else {
+    result = await db.from('news').insert(obj);
+  }
+
+  if (result.error) {
+    showToast('Erro: ' + result.error.message, 'error');
+    btn.innerHTML = 'Guardar';
+    btn.disabled = false;
+    return;
+  }
+
+  showToast(editingId ? 'Notícia atualizada!' : 'Notícia criada!', 'success');
+  closeModal();
+  loadNews();
+}
+
+async function deleteNews(id) {
+  if (!confirm('Tem certeza que queres apagar esta notícia?')) return;
+  const { data } = await db.from('news').select('image_url').eq('id', id).single();
+  if (data?.image_url) await deleteImage(data.image_url);
+  const { error } = await db.from('news').delete().eq('id', id);
+  if (error) { showToast('Erro ao apagar: ' + error.message, 'error'); return; }
+  showToast('Notícia apagada!', 'success');
+  loadNews();
+}
+
+// ============================================
 // MODAL / FORMS
 // ============================================
 function getVideoFormHtml(data) {
   const v = data || {};
   const hasPdf = v.pdf_url && v.pdf_url.trim();
-  const subjects = ['Matemática', 'Matemática A', 'Matemática B'];
-  const gradesBySubject = {
-    'Matemática': ['7.º Ano', '8.º Ano', '9.º Ano'],
-    'Matemática A': ['10.º Ano', '11.º Ano', '12.º Ano'],
-    'Matemática B': ['10.º Ano', '11.º Ano']
-  };
-  const currentSubject = v.subject || 'Matemática';
-  const currentGrade = v.grade || '7.º Ano';
-  const availableGrades = gradesBySubject[currentSubject] || gradesBySubject['Matemática'];
+
+  const currentSubject = v.subject || (adminSubjects.length ? adminSubjects[0].name : 'Matemática');
+  const currentGrade = v.grade || (getGradesForSubject(currentSubject)[0] || '7.º Ano');
+  const availableGrades = getGradesForSubject(currentSubject);
   const matchingFolders = allFolders.filter(f => f.subject === currentSubject && f.grade === currentGrade);
   const currentFolderId = v.folder_id || '';
+
+  const subjectOptions = adminSubjects.map(s =>
+    `<option value="${esc(s.name)}" ${currentSubject === s.name ? 'selected' : ''}>${esc(s.name)}</option>`
+  ).join('');
+
+  const gradeOptions = availableGrades.map(g =>
+    `<option value="${g}" ${currentGrade === g ? 'selected' : ''}>${g}</option>`
+  ).join('');
+
+  const folderOptions = matchingFolders.map(f =>
+    `<option value="${f.id}" ${currentFolderId === f.id ? 'selected' : ''}>${esc(f.name)}</option>`
+  ).join('');
 
   return `
     <div class="admin-field-row">
       <div class="admin-field"><label>Disciplina *</label><select id="field_subject" required onchange="updateGradeOptions();updateFolderOptions()">
-        ${subjects.map(s => `<option value="${s}" ${currentSubject === s ? 'selected' : ''}>${s}</option>`).join('')}
+        ${subjectOptions}
       </select></div>
       <div class="admin-field"><label>Ano Escolar *</label><select id="field_grade" required onchange="updateFolderOptions()">
-        ${availableGrades.map(g => `<option value="${g}" ${currentGrade === g ? 'selected' : ''}>${g}</option>`).join('')}
+        ${gradeOptions}
       </select></div>
     </div>
     <div class="admin-field"><label>Pasta</label><select id="field_folder_id">
       <option value="">Sem pasta</option>
-      ${matchingFolders.map(f => `<option value="${f.id}" ${currentFolderId === f.id ? 'selected' : ''}>${esc(f.name)}</option>`).join('')}
+      ${folderOptions}
     </select></div>
     <div class="admin-field"><label>Título *</label><input type="text" id="field_title" value="${esc(v.title || '')}" required></div>
     <div class="admin-field"><label>URL do YouTube *</label><input type="url" id="field_youtube_url" value="${esc(v.youtube_url || '')}" required placeholder="https://www.youtube.com/watch?v=..."></div>
@@ -693,15 +1148,10 @@ function getVideoFormHtml(data) {
 }
 
 function updateGradeOptions() {
-  const gradesBySubject = {
-    'Matemática': ['7.º Ano', '8.º Ano', '9.º Ano'],
-    'Matemática A': ['10.º Ano', '11.º Ano', '12.º Ano'],
-    'Matemática B': ['10.º Ano', '11.º Ano']
-  };
   const subject = document.getElementById('field_subject').value;
   const gradeSelect = document.getElementById('field_grade');
   const currentGrade = gradeSelect.value;
-  const grades = gradesBySubject[subject] || [];
+  const grades = getGradesForSubject(subject);
   gradeSelect.innerHTML = grades.map(g => `<option value="${g}" ${currentGrade === g ? 'selected' : ''}>${g}</option>`).join('');
 }
 
@@ -941,6 +1391,12 @@ function extractVideoId(url) {
   if (!url) return null;
   const match = url.match(/(?:v=|youtu\.be\/|embed\/|\/v\/)([a-zA-Z0-9_-]{11})/);
   return match ? match[1] : null;
+}
+
+function getGradeDisplay(g) {
+  const m = g.match(/^(\d+)/);
+  if (m) return m[1];
+  return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>';
 }
 
 function esc(str) {

@@ -55,6 +55,10 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Testemunhos
       </a>
+      <a href="#" class="admin-nav-link" data-tab="news">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+        Notícias
+      </a>
       <a href="#" class="admin-nav-link" data-tab="products">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         Loja
@@ -124,6 +128,16 @@
         </div>
         <div class="admin-stat-card">
           <div class="admin-stat-header">
+            <span class="admin-stat-label">Notícias</span>
+            <div class="admin-stat-icon info">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+            </div>
+          </div>
+          <div class="admin-stat-value" id="statNews">0</div>
+          <div class="admin-stat-sub">notícias publicadas</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-header">
             <span class="admin-stat-label">Produtos</span>
             <div class="admin-stat-icon success">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
@@ -151,7 +165,7 @@
         <div id="foldersBreadcrumb" class="admin-breadcrumb" style="display:none"></div>
         <div class="admin-tab-header">
           <h3 id="foldersViewTitle">Pastas de Videoaulas</h3>
-          <button class="btn btn-primary admin-btn-add" onclick="openFolderModal()">
+          <button id="foldersAddBtn" class="btn btn-primary admin-btn-add" onclick="openFolderModal()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             <span id="foldersAddBtnText">Adicionar Pasta</span>
           </button>
@@ -198,6 +212,25 @@
         </div>
         <h3>Nenhum testemunho adicionado</h3>
         <p>Clica em "Adicionar Testemunho" para começar a partilhar feedback de alunos.</p>
+      </div>
+    </div>
+
+    <!-- TAB: NEWS -->
+    <div id="tab-news" class="admin-tab">
+      <div class="admin-tab-header">
+        <h3>Gerir Notícias</h3>
+        <button class="btn btn-primary admin-btn-add" onclick="openNewsModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Adicionar Notícia
+        </button>
+      </div>
+      <div id="newsList" class="admin-list"></div>
+      <div id="newsEmpty" class="admin-empty" style="display:none">
+        <div class="admin-empty-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+        </div>
+        <h3>Nenhuma notícia adicionada</h3>
+        <p>Clica em "Adicionar Notícia" para começares a publicar novidades.</p>
       </div>
     </div>
 
