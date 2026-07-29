@@ -1,33 +1,73 @@
-# Math For Teens
+<p align="center">
+  <img src="./favicon.svg" alt="" width="80">
+</p>
 
-Preparação para exames nacionais e explicações online, dadas por um adolescente que obteve 100% na Prova Final de Ciclo de Matemática.
+<h1 align="center">Math For Teens</h1>
 
-## Sobre
+<p align="center">
+  <a href="https://mathforteens.pt">
+    <img src="https://img.shields.io/badge/website-mathforteens.pt-3b82f6?style=for-the-badge&logo=netlify&logoColor=white">
+  </a>
+  <a href="https://github.com/makyneta/mathforteens">
+    <img src="https://img.shields.io/badge/repo-mathforteens-22c55e?style=for-the-badge&logo=github&logoColor=white">
+  </a>
+</p>
 
-O **Math For Teens** nasceu em 2024, criado pelo Tomás Correia, um estudante que obteve 100% na Prova Final de Ciclo de Matemática. O projeto ajuda dezenas de alunos do 8.º ao 12.º ano através de aulas online, materiais organizados no Classroom e apoio direto no WhatsApp.
+---
 
-## Páginas
+## 📋 Sobre o Repositório
 
-- `index.html` — Página inicial
-- `sobre.html` — História e cronologia do projeto
-- `inscricoes.html` — Formulário de inscrição para o ano letivo
-- `contacto.html` — Contactos e redes sociais
-- `termos-condicoes.html` — Termos e condições
-- `politica-privacidade.html` — Política de privacidade
-- `politica-cookies.html` — Política de cookies
-- `404.html` — Página de erro personalizada
+Código-fonte do site institucional do **Math For Teens** — plataforma de explicações de matemática online do 7.º ao ensino superior.
 
-## Tecnologias
+Site estático em HTML5, CSS3 e JavaScript vanilla, deployed na Netlify.
 
-- HTML5 semântico
-- CSS3 (Design System com variáveis customizadas)
-- JavaScript vanilla
-- Fontes: DM Sans, Inter (Google Fonts)
+---
 
-## Autor
+## 🚀 Setup Local
 
-**Makyneta Unipessoal, Lda.**
+Repositório privado — não disponível para clonagem pública.
 
-## Licença
+---
 
-All Rights Reserved.
+## 📁 Estrutura
+
+```
+├── index.html                   # Página inicial
+├── sobre.html                   # História e cronologia
+├── inscricoes.html              # Inscrição para o ano letivo
+├── contacto.html                # Contactos e redes sociais
+├── termos-condicoes.html        # Termos e condições
+├── politica-privacidade.html    # Política de privacidade
+├── politica-cookies.html        # Política de cookies
+├── 404.html                     # Página de erro
+├── assets/
+│   ├── css/                     # Folhas de estilo
+│   ├── js/                      # Scripts
+│   └── images/                  # Imagens e ícones
+├── favicon.svg
+└── robots.txt
+```
+
+---
+
+## 🛠️ Stack
+
+| Tecnologia | Utilização |
+|-----------|------------|
+| HTML5 | Estrutura semântica |
+| CSS3 | Design System com custom properties + responsivo |
+| JavaScript (Vanilla) | Interatividade e validação |
+| Google Fonts | DM Sans, Inter |
+| Netlify | Deploy contínuo |
+
+---
+
+## 🤝 Contribuir
+
+Este é um repositório privado. Contribuições não são esperadas.
+
+---
+
+## 📄 Licença
+
+**All Rights Reserved.** © Makyneta Unipessoal, Lda.
