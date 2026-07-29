@@ -150,7 +150,7 @@ function closeSidebar() {
 // ============================================
 async function loadAll() {
   await loadSubjects();
-  await Promise.all([loadVideos(), loadFolders(), loadTestimonials(), loadNews(), loadProducts(), loadLogins()]);
+  await Promise.all([loadVideos(), loadFolders(), loadTestimonials(), loadNews(), loadProducts(), loadLogins(), loadFaq()]);
 }
 
 async function loadSubjects() {
@@ -233,6 +233,7 @@ function updateStats() {
   document.getElementById('statNews').textContent = document.getElementById('newsEmpty').style.display === 'none' ? document.querySelectorAll('#newsList .admin-list-item').length : 0;
   document.getElementById('statProducts').textContent = document.getElementById('productsEmpty').style.display === 'none' ? document.querySelectorAll('#productsList .admin-list-item').length : 0;
   document.getElementById('statLogins').textContent = document.getElementById('loginsEmpty').style.display === 'none' ? document.querySelectorAll('#loginsList .admin-list-item').length : 0;
+  document.getElementById('statFaq').textContent = window._adminFaqCount || 0;
 }
 
 // ============================================
@@ -1420,4 +1421,165 @@ function showToast(msg, type) {
   toast.textContent = msg;
   container.appendChild(toast);
   setTimeout(() => toast.remove(), 3500);
+}
+
+// ============================================
+// CHATBOT FAQ CRUD
+// ============================================
+async function loadFaq() {
+  const { data, error } = await db.from('chatbot_faq').select('*').order('order', { ascending: true });
+  if (error) { showToast('Erro ao carregar FAQs', 'error'); return; }
+  renderFaq(data || []);
+  updateStats();
+}
+
+function renderFaq(items) {
+  const list = document.getElementById('faqList');
+  const empty = document.getElementById('faqEmpty');
+  if (!items.length) { list.innerHTML = ''; list.style.display = 'none'; empty.style.display = 'flex'; return; }
+  empty.style.display = 'none';
+  list.style.display = 'block';
+
+  let html = '<div class="admin-list-header faq">'
+    + '<span>Pergunta/Resposta</span><span>Palavras-chave</span><span>Estado</span><span style="text-align:right">Ações</span>'
+    + '</div>';
+
+  html += items.map(f => {
+    const preview = f.answer ? f.answer.substring(0, 80) + (f.answer.length > 80 ? '...' : '') : '';
+    const keywords = (f.keywords || []).slice(0, 4).join(', ') + ((f.keywords || []).length > 4 ? '...' : '');
+    return `<div class="admin-list-item faq">
+      <div class="admin-list-info">
+        <h4>${esc(preview)}</h4>
+        <p>${esc(keywords)}</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;max-width:200px">
+        ${(f.keywords || []).slice(0, 6).map(k => '<span style="background:var(--c-primary-light);padding:2px 8px;border-radius:12px;font-size:0.72rem;color:var(--c-primary)">' + esc(k) + '</span>').join('')}
+      </div>
+      <span class="admin-badge ${f.active !== false ? 'active' : 'inactive'}">${f.active !== false ? 'Ativo' : 'Inativo'}</span>
+      <div class="admin-list-actions">
+        <button class="admin-action-btn" onclick="openFaqModal('${f.id}')">Editar</button>
+        <button class="admin-action-btn danger" onclick="deleteFaq('${f.id}')">Apagar</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  list.innerHTML = html;
+  window._adminFaqCount = items.length;
+  updateStats();
+}
+
+async function openFaqModal(id) {
+  let data = null;
+  if (id) {
+    const { data: row } = await db.from('chatbot_faq').select('*').eq('id', id).single();
+    data = row;
+  }
+  const f = data || {};
+
+  document.getElementById('modalTitle').textContent = id ? 'Editar FAQ' : 'Adicionar FAQ';
+  const formEl = document.getElementById('modalForm');
+
+  formEl.innerHTML = `
+    <div class="admin-field"><label>Resposta *</label><textarea id="field_faq_answer" required placeholder="Escreve a resposta do chatbot..." style="min-height:120px">${esc(f.answer || '')}</textarea></div>
+    <div class="admin-field"><label>Palavras-chave *</label><div style="display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;border:1px solid var(--admin-border);border-radius:8px;min-height:42px" id="keywordContainer">
+      <input type="text" id="field_faq_keyword_input" placeholder="Escreve e pressiona Enter..." style="border:none;outline:none;flex:1;min-width:100px;font-size:0.85rem;background:transparent">
+    </div>
+    <p style="font-size:0.75rem;color:var(--admin-text-tertiary);margin-top:4px">Escreve cada palavra-chave e pressiona Enter. Ex: "preço", "custo", "€"</p></div>
+    <div class="admin-field" style="display:flex;align-items:center;gap:8px">
+      <input type="hidden" id="field_faq_keywords" value="">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.85rem">
+        <input type="checkbox" id="field_faq_active" ${f.active !== false ? 'checked' : ''}> FAQ ativa
+      </label>
+    </div>
+    <div class="admin-field"><label>Ordem</label><input type="number" id="field_faq_order" value="${f.order || 0}" style="max-width:100px"></div>
+    <div class="admin-modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" id="modalSubmitBtn">Guardar</button>
+    </div>`;
+
+  const keywordInput = document.getElementById('field_faq_keyword_input');
+  const keywordContainer = document.getElementById('keywordContainer');
+  const hiddenField = document.getElementById('field_faq_keywords');
+  let keywords = [...(f.keywords || [])];
+
+  function renderKeywords() {
+    document.querySelectorAll('.faq-keyword-tag').forEach(el => el.remove());
+    const input = keywordContainer.querySelector('input');
+    keywords.forEach(kw => {
+      const tag = document.createElement('span');
+      tag.className = 'faq-keyword-tag';
+      tag.style.cssText = 'display:inline-flex;align-items:center;gap:4px;background:var(--c-primary-light);color:var(--c-primary);padding:2px 10px;border-radius:12px;font-size:0.78rem';
+      tag.innerHTML = esc(kw) + '<button type="button" style="background:none;border:none;cursor:pointer;font-size:1rem;line-height:1;color:inherit;padding:0" onclick="removeKeyword(\'' + esc(kw) + '\')">&times;</button>';
+      keywordContainer.insertBefore(tag, input);
+    });
+    hiddenField.value = JSON.stringify(keywords);
+  }
+  renderKeywords();
+
+  window.removeKeyword = function(kw) {
+    keywords = keywords.filter(k => k !== kw);
+    renderKeywords();
+  };
+
+  keywordInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const val = this.value.trim().toLowerCase();
+      if (val && !keywords.includes(val)) {
+        keywords.push(val);
+        renderKeywords();
+      }
+      this.value = '';
+    }
+  });
+
+  formEl.onsubmit = (e) => { e.preventDefault(); saveFaq(id, keywords); };
+  document.getElementById('modal').style.display = 'flex';
+  setTimeout(() => keywordInput.focus(), 100);
+}
+
+async function saveFaq(editId, keywords) {
+  const btn = document.getElementById('modalSubmitBtn');
+  btn.innerHTML = '<span class="admin-spinner"></span>';
+  btn.disabled = true;
+
+  const obj = {
+    answer: document.getElementById('field_faq_answer').value.trim(),
+    keywords: keywords,
+    active: document.getElementById('field_faq_active').checked,
+    order: parseInt(document.getElementById('field_faq_order').value) || 0
+  };
+
+  if (!obj.answer || !obj.keywords.length) {
+    showToast('Preenche a resposta e pelo menos uma palavra-chave.', 'error');
+    btn.innerHTML = 'Guardar';
+    btn.disabled = false;
+    return;
+  }
+
+  let result;
+  if (editId) {
+    result = await db.from('chatbot_faq').update(obj).eq('id', editId);
+  } else {
+    result = await db.from('chatbot_faq').insert(obj);
+  }
+
+  if (result.error) {
+    showToast('Erro: ' + result.error.message, 'error');
+    btn.innerHTML = 'Guardar';
+    btn.disabled = false;
+    return;
+  }
+
+  showToast(editId ? 'FAQ atualizada!' : 'FAQ criada!', 'success');
+  closeModal();
+  loadFaq();
+}
+
+async function deleteFaq(id) {
+  if (!confirm('Tem certeza que queres apagar esta FAQ?')) return;
+  const { error } = await db.from('chatbot_faq').delete().eq('id', id);
+  if (error) { showToast('Erro ao apagar: ' + error.message, 'error'); return; }
+  showToast('FAQ apagada!', 'success');
+  loadFaq();
 }
