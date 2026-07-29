@@ -996,10 +996,12 @@ async function openNewsModal(id) {
   document.getElementById('modalTitle').textContent = id ? 'Editar Notícia' : 'Adicionar Notícia';
   const formEl = document.getElementById('modalForm');
 
+  const dateValue = n.created_at ? new Date(n.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
   const hasImage = n.image_url && n.image_url.trim();
 
   formEl.innerHTML = `
     <div class="admin-field"><label>Título *</label><input type="text" id="field_news_title" value="${esc(n.title || '')}" required placeholder="Título da notícia"></div>
+    <div class="admin-field"><label>Data</label><input type="date" id="field_news_date" value="${dateValue}"></div>
     <div class="admin-field"><label>Conteúdo *</label><textarea id="field_news_content" required placeholder="Escreve o conteúdo da notícia..." style="min-height:180px">${esc(n.content || '')}</textarea></div>
     <div class="admin-field">
       <label>Imagem</label>
@@ -1032,6 +1034,11 @@ async function saveNews() {
     title: document.getElementById('field_news_title').value,
     content: document.getElementById('field_news_content').value
   };
+
+  const dateVal = document.getElementById('field_news_date').value;
+  if (dateVal) {
+    obj.created_at = new Date(dateVal + 'T12:00:00').toISOString();
+  }
 
   if (removeImageFlag && !pendingImageFile) {
     if (editingId) {
