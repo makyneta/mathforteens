@@ -398,12 +398,13 @@ function renderVideos(items) {
     const badges = [];
     if (v.featured) badges.push('<span class="admin-badge info">Destaque</span>');
     if (v.draft) badges.push('<span class="admin-badge inactive">Rascunho</span>');
+    const pdfCount = getPdfUrls(v).length;
     return `<div class="admin-list-item videos">
       <div style="display:flex;align-items:center;gap:12px;min-width:0">
         ${thumb ? `<img src="${thumb}" class="admin-list-thumb" alt="${v.title}" onerror="this.style.display='none'">` : ''}
         <div class="admin-list-info">
           <h4>${esc(v.title)}</h4>
-          <p>${v.topic ? esc(v.topic) : ''}${folder ? ' · ' + esc(folder.name) : ''}${v.pdf_url ? ' · PDF' : ''}</p>
+          <p>${v.topic ? esc(v.topic) : ''}${folder ? ' · ' + esc(folder.name) : ''}${pdfCount ? ' · ' + pdfCount + ' PDF' + (pdfCount !== 1 ? 's' : '') : ''}</p>
         </div>
       </div>
       <div style="font-size:0.8rem;color:var(--admin-text-secondary)">${esc(v.subject || 'Matemática')}<br>${esc(v.grade || '')}</div>
@@ -1096,7 +1097,6 @@ async function deleteNews(id) {
 // ============================================
 function getVideoFormHtml(data) {
   const v = data || {};
-  const hasPdf = v.pdf_url && v.pdf_url.trim();
 
   const currentSubject = v.subject || (adminSubjects.length ? adminSubjects[0].name : 'Matemática');
   const currentGrade = v.grade || (getGradesForSubject(currentSubject)[0] || '7.º Ano');
@@ -1134,16 +1134,15 @@ function getVideoFormHtml(data) {
     <div class="admin-field"><label>Tópico</label><input type="text" id="field_topic" value="${esc(v.topic || '')}" placeholder="Ex: Derivadas"></div>
     <div class="admin-field"><label>Descrição</label><textarea id="field_description" placeholder="Descrição da aula...">${esc(v.description || '')}</textarea></div>
     <div class="admin-field">
-      <label>PDF da aula</label>
+      <label>PDFs da aula (máx. 5)</label>
       <div class="admin-pdf-upload">
-        <input type="file" id="field_pdf_file" accept=".pdf" style="display:none" onchange="handlePdfPreview(this)">
-        <button type="button" class="btn btn-secondary admin-btn-full" onclick="document.getElementById('field_pdf_file').click()">
+        <input type="file" id="field_pdf_files" accept=".pdf" multiple style="display:none" onchange="handlePdfFiles(this)">
+        <button type="button" class="btn btn-secondary admin-btn-full" id="pdfAddBtn" onclick="document.getElementById('field_pdf_files').click()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          ${hasPdf ? 'Substituir PDF' : 'Carregar PDF'}
+          Adicionar PDF
         </button>
-        <div id="pdfPreview" class="admin-pdf-preview">
-          ${hasPdf ? `<div class="admin-pdf-file"><a href="${esc(v.pdf_url)}" target="_blank">PDF atual</a><button type="button" class="admin-action-btn danger" onclick="removePdf()">Remover</button></div>` : ''}
-        </div>
+        <p class="admin-pdf-hint" id="pdfHint"></p>
+        <div id="pdfPreview" class="admin-pdf-preview"></div>
       </div>
     </div>
     <div class="admin-field-row">
@@ -1222,22 +1221,73 @@ function getPlatformLoginFormHtml(data) {
     <div class="admin-field"><label>Notas</label><textarea id="field_login_notes" placeholder="Notas adicionais...">${esc(l.notes || '')}</textarea></div>`;
 }
 
-let pendingPdfFile = null;
-let removePdfFlag = false;
+const MAX_PDFS = 5;
+let pdfFiles = [];
+let pdfKeepUrls = [];
+let pdfRemoveUrls = [];
 
-function handlePdfPreview(input) {
-  const file = input.files[0];
-  if (!file) return;
-  pendingPdfFile = file;
-  removePdfFlag = false;
-  document.getElementById('pdfPreview').innerHTML = `<div class="admin-pdf-file"><span>${esc(file.name)} (${(file.size / 1024).toFixed(0)} KB)</span><button type="button" class="admin-action-btn danger" onclick="removePdf()">Remover</button></div>`;
+function getPdfUrls(v) {
+  if (!v) return [];
+  if (Array.isArray(v.pdf_urls) && v.pdf_urls.length) return v.pdf_urls.filter(u => u && u.trim());
+  if (v.pdf_url && v.pdf_url.trim()) return [v.pdf_url];
+  return [];
 }
 
-function removePdf() {
-  pendingPdfFile = null;
-  removePdfFlag = true;
-  document.getElementById('pdfPreview').innerHTML = '';
-  document.getElementById('field_pdf_file').value = '';
+function renderPdfPreview() {
+  const preview = document.getElementById('pdfPreview');
+  const hint = document.getElementById('pdfHint');
+  if (!preview) return;
+
+  let html = '';
+  pdfKeepUrls.forEach((url, i) => {
+    html += `<div class="admin-pdf-file"><a href="${esc(url)}" target="_blank" rel="noopener">${i + 1}. ${esc(url.split('/').pop())}</a><button type="button" class="admin-action-btn danger" onclick="removePdfUrl(${i})">Remover</button></div>`;
+  });
+  pdfFiles.forEach((file, i) => {
+    html += `<div class="admin-pdf-file"><span>${i + 1 + pdfKeepUrls.length}. ${esc(file.name)} (${(file.size / 1024).toFixed(0)} KB)</span><button type="button" class="admin-action-btn danger" onclick="removePdfFile(${i})">Remover</button></div>`;
+  });
+  preview.innerHTML = html;
+
+  const total = pdfKeepUrls.length + pdfFiles.length;
+  const remaining = MAX_PDFS - total;
+  const addBtn = document.getElementById('pdfAddBtn');
+  if (addBtn) addBtn.style.display = remaining > 0 ? '' : 'none';
+  if (hint) {
+    hint.textContent = remaining > 0
+      ? (total > 0 ? total + ' de ' + MAX_PDFS + ' PDFs adicionados · ' : '') + 'Podes adicionar até ' + remaining + ' PDF' + (remaining !== 1 ? 's' : '')
+      : 'Limite de ' + MAX_PDFS + ' PDFs atingido.';
+  }
+}
+
+function handlePdfFiles(input) {
+  const files = Array.from(input.files || []);
+  input.value = '';
+  if (!files.length) return;
+  let added = 0;
+  files.forEach(file => {
+    if (pdfKeepUrls.length + pdfFiles.length >= MAX_PDFS) return;
+    if (pdfFiles.some(f => f === file)) return;
+    pdfFiles.push(file);
+    added++;
+  });
+  if (added < files.length) showToast('Máximo de ' + MAX_PDFS + ' PDFs por aula.', 'error');
+  renderPdfPreview();
+}
+
+function removePdfUrl(i) {
+  pdfRemoveUrls.push(pdfKeepUrls[i]);
+  pdfKeepUrls.splice(i, 1);
+  renderPdfPreview();
+}
+
+function removePdfFile(i) {
+  pdfFiles.splice(i, 1);
+  renderPdfPreview();
+}
+
+function resetPdfState() {
+  pdfFiles = [];
+  pdfKeepUrls = [];
+  pdfRemoveUrls = [];
 }
 
 function togglePasswordField(fieldId, btn) {
@@ -1254,8 +1304,7 @@ function togglePasswordField(fieldId, btn) {
 async function openModal(type, id) {
   editingType = type;
   editingId = id || null;
-  pendingPdfFile = null;
-  removePdfFlag = false;
+  resetPdfState();
 
   let data = null;
   if (id) {
@@ -1268,12 +1317,16 @@ async function openModal(type, id) {
   document.getElementById('modalTitle').textContent = id ? 'Editar ' + titles[type] : 'Adicionar ' + titles[type];
 
   const formEl = document.getElementById('modalForm');
-  if (type === 'video') formEl.innerHTML = getVideoFormHtml(data);
+  if (type === 'video') {
+    pdfKeepUrls = getPdfUrls(data);
+    formEl.innerHTML = getVideoFormHtml(data);
+  }
   else if (type === 'testimonial') formEl.innerHTML = getTestimonialFormHtml(data);
   else if (type === 'product') formEl.innerHTML = getProductFormHtml(data);
   else if (type === 'platform_login') formEl.innerHTML = getPlatformLoginFormHtml(data);
 
   formEl.innerHTML += `<div class="admin-modal-footer"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button><button type="submit" class="btn btn-primary" id="modalSubmitBtn">Guardar</button></div>`;
+  if (type === 'video') renderPdfPreview();
   formEl.onsubmit = (e) => { e.preventDefault(); saveItem(); };
   document.getElementById('modal').style.display = 'flex';
 }
@@ -1282,8 +1335,7 @@ function closeModal() {
   document.getElementById('modal').style.display = 'none';
   editingId = null;
   editingType = null;
-  pendingPdfFile = null;
-  removePdfFlag = false;
+  resetPdfState();
 }
 
 // ============================================
@@ -1309,25 +1361,22 @@ async function saveItem() {
     const folderVal = document.getElementById('field_folder_id')?.value;
     obj.folder_id = folderVal || null;
 
-    if (removePdfFlag && !pendingPdfFile) {
-      if (editingId && obj.pdf_url !== undefined) {
-        const old = await db.from('videos').select('pdf_url').eq('id', editingId).single();
-        if (old.data?.pdf_url) await deletePdf(old.data.pdf_url);
+    for (const url of pdfRemoveUrls) {
+      try { if (url) await deletePdf(url); } catch(e) {}
+    }
+    try {
+      const newUrls = [];
+      for (const file of pdfFiles) {
+        newUrls.push(await uploadPdf(file));
       }
-      obj.pdf_url = null;
-    } else if (pendingPdfFile) {
-      try {
-        if (editingId) {
-          const old = await db.from('videos').select('pdf_url').eq('id', editingId).single();
-          if (old.data?.pdf_url) await deletePdf(old.data.pdf_url);
-        }
-        obj.pdf_url = await uploadPdf(pendingPdfFile);
-      } catch(e) {
-        showToast('Erro ao upload PDF: ' + e.message, 'error');
-        btn.innerHTML = 'Guardar';
-        btn.disabled = false;
-        return;
-      }
+      const finalUrls = pdfKeepUrls.concat(newUrls);
+      obj.pdf_urls = finalUrls;
+      obj.pdf_url = finalUrls[0] || null;
+    } catch(e) {
+      showToast('Erro ao upload PDF: ' + e.message, 'error');
+      btn.innerHTML = 'Guardar';
+      btn.disabled = false;
+      return;
     }
   } else if (editingType === 'testimonial') {
     obj.author_name = document.getElementById('field_author_name').value;
@@ -1382,8 +1431,8 @@ async function deleteItem(table, id) {
   if (!confirm('Tem certeza que queres apagar este item?')) return;
 
   if (table === 'videos') {
-    const { data } = await db.from('videos').select('pdf_url').eq('id', id).single();
-    if (data?.pdf_url) await deletePdf(data.pdf_url);
+    const { data } = await db.from('videos').select('pdf_url, pdf_urls').eq('id', id).single();
+    getPdfUrls(data).forEach(url => deletePdf(url));
   }
 
   const { error } = await db.from(table).delete().eq('id', id);

@@ -1033,6 +1033,16 @@
   min-height: 0;
 }
 
+.admin-pdf-preview .admin-pdf-file + .admin-pdf-file {
+  margin-top: 8px;
+}
+
+.admin-pdf-hint {
+  font-size: 0.78rem;
+  color: var(--admin-text-tertiary);
+  margin: 0;
+}
+
 .admin-pdf-file {
   display: flex;
   align-items: center;

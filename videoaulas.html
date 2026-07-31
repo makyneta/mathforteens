@@ -570,6 +570,11 @@
   function ytId(u){ if(!u) return null; var m=u.match(/(?:v=|youtu\.be\/|embed\/|\/v\/)([a-zA-Z0-9_-]{11})/); return m?m[1]:null; }
   function thumb(u,q){ var id=ytId(u); return id?'https://img.youtube.com/vi/'+id+'/'+(q||'hqdefault')+'.jpg':''; }
   function esc(s){ if(!s)return''; var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+  function getPdfUrls(v){
+    if(Array.isArray(v.pdf_urls)&&v.pdf_urls.length) return v.pdf_urls.filter(function(u){ return u&&u.trim(); });
+    if(v.pdf_url&&v.pdf_url.trim()) return [v.pdf_url];
+    return [];
+  }
 
   function hide() {
     $folders.style.display='none';
@@ -599,11 +604,10 @@
     hide();
     var html='';
     for(var i=0;i<subjectsData.length;i++) {
-      var n=subjectsData[i].name, col=subjectsData[i].color, ii=subjectsData[i].icon_index, grades=getGradesForSubject(n), cnt=count(n);
+      var n=subjectsData[i].name, col=subjectsData[i].color, ii=subjectsData[i].icon_index;
       html+='<button class="va-folder" data-nav="grades|'+esc(n)+'">'
         +'<div class="va-folder-icon" style="color:'+col+'">'+(SUBJECT_ICONS[ii]||SUBJECT_ICONS[0])+'</div>'
-        +'<div class="va-folder-body"><div class="va-folder-title">'+n+'</div>'
-        +'<div class="va-folder-meta">'+grades.length+' anos · '+cnt+' aula'+(cnt!==1?'s':'')+'</div></div>'
+        +'<div class="va-folder-body"><div class="va-folder-title">'+n+'</div></div>'
         +'<div class="va-folder-arrow">'+ARROW+'</div></button>';
     }
     $folders.innerHTML=html;
@@ -712,7 +716,10 @@
     /* Grid — all videos same size */
     var cards='';
     for(var k=0;k<list.length;k++) {
-      var r=list[k], hp2=r.pdf_url&&r.pdf_url.trim();
+      var r=list[k], pdfs=getPdfUrls(r), pdfActions='';
+      for(var pi=0;pi<pdfs.length;pi++){
+        pdfActions+=(pi>0?'<span class="va-action-sep"></span>':'')+'<a href="'+esc(pdfs[pi])+'" target="_blank" rel="noopener" class="va-action-pdf">'+PDF_SVG+(pdfs.length>1?' PDF '+(pi+1):' PDF')+'</a>';
+      }
       cards+='<div class="va-card">'
         +'<a href="'+esc(r.youtube_url)+'" target="_blank" rel="noopener" class="va-card-thumb">'
           +'<img src="'+thumb(r.youtube_url,'hqdefault')+'" alt="'+esc(r.title)+'" loading="lazy" onerror="this.onerror=null;this.src=\''+thumb(r.youtube_url,'sddefault')+'\'">'
@@ -725,7 +732,7 @@
           +(r.description?'<p class="va-card-desc">'+esc(r.description)+'</p>':'')
           +'<div class="va-card-actions">'
             +'<a href="'+esc(r.youtube_url)+'" target="_blank" rel="noopener" class="va-action-yt">'+YT_SVG+' YouTube</a>'
-            +(hp2?'<span class="va-action-sep"></span><a href="'+esc(r.pdf_url)+'" target="_blank" rel="noopener" class="va-action-pdf">'+PDF_SVG+' PDF</a>':'')
+            +pdfActions
           +'</div>'
         +'</div>'
       +'</div>';
@@ -759,7 +766,7 @@
       videos=(res.data||[]).filter(function(v){ return v.youtube_url && !v.draft; });
       allFolders=fRes.data||[];
       document.getElementById('totalCount').textContent=videos.length;
-      document.getElementById('pdfCount').textContent=videos.filter(function(v){ return v.pdf_url; }).length;
+      document.getElementById('pdfCount').textContent=videos.reduce(function(n,v){ return n+getPdfUrls(v).length; },0);
       showSubjects();
     } catch(e) {
       $loading.style.display='none';

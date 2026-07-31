@@ -538,6 +538,98 @@ p { overflow-wrap: break-word; }
   fill: var(--c-bg);
 }
 
+/* ═══════════════════════════════════════════
+   NOTICE BANNER (inscrições)
+   ═══════════════════════════════════════════ */
+
+.notice-banner {
+  background: linear-gradient(135deg, var(--c-primary-dark), var(--c-primary), var(--c-primary-dark));
+  position: relative;
+  overflow: hidden;
+}
+
+.notice-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  pointer-events: none;
+}
+
+.notice-banner-inner {
+  position: relative;
+  z-index: 1;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.notice-banner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  background: var(--c-accent);
+  color: var(--c-secondary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.notice-banner-text {
+  color: #ffffff;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.notice-banner-text strong {
+  color: var(--c-accent);
+  font-weight: 700;
+}
+
+.btn-notice {
+  background: var(--c-accent);
+  color: var(--c-secondary);
+  white-space: nowrap;
+}
+
+.btn-notice:hover {
+  background: #ffffff;
+  color: var(--c-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+@media (max-width: 640px) {
+  .notice-banner-inner {
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-md);
+  }
+
+  .notice-banner-text {
+    font-size: 0.9rem;
+  }
+
+  .btn-notice {
+    padding: 9px 18px;
+    font-size: 0.82rem;
+  }
+}
+
 .hero-inner {
   position: relative;
   z-index: 1;
@@ -859,6 +951,10 @@ p { overflow-wrap: break-word; }
   padding: var(--space-4xl) var(--space-lg);
 }
 
+.page-index .section {
+  padding: var(--space-3xl) var(--space-lg);
+}
+
 .section-inner {
   max-width: var(--max-width);
   margin: 0 auto;
@@ -910,6 +1006,15 @@ p { overflow-wrap: break-word; }
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-xs);
+}
+
+@media (min-width: 769px) {
+  .section-stats {
+    padding: var(--space-xl) var(--space-lg);
+  }
+  .section-stats .section-inner {
+    max-width: 720px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -3691,7 +3796,7 @@ p { overflow-wrap: break-word; }
 
 .vid-hero {
   position: relative;
-  padding: calc(var(--header-h) + var(--space-4xl)) var(--space-lg) calc(var(--space-4xl) + 20px);
+  padding: calc(var(--header-h) + var(--space-xl)) var(--space-lg) var(--space-2xl);
   background: linear-gradient(160deg, #0D7174 0%, #0F7879 30%, #107D80 60%, #0E7478 100%);
   background-size: 200% 200%;
   animation: gradientShift 12s ease infinite;
@@ -3802,7 +3907,7 @@ p { overflow-wrap: break-word; }
   color: rgba(255,255,255,0.7);
   font-size: 0.78rem;
   font-weight: 600;
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
   backdrop-filter: blur(8px);
   letter-spacing: 0.01em;
 }
@@ -3812,7 +3917,7 @@ p { overflow-wrap: break-word; }
   font-size: clamp(2rem, 4.5vw, 3.2rem);
   font-weight: 800;
   line-height: 1.08;
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-sm);
   letter-spacing: -0.025em;
 }
 
@@ -3828,9 +3933,9 @@ p { overflow-wrap: break-word; }
 .vid-hero p {
   font-size: 1.02rem;
   opacity: 0.6;
-  line-height: 1.75;
+  line-height: 1.6;
   max-width: 520px;
-  margin: 0 auto var(--space-xl);
+  margin: 0 auto var(--space-lg);
 }
 
 .vid-hero-stats {
@@ -4364,6 +4469,7 @@ p { overflow-wrap: break-word; }
   .hero-visual { margin-top: var(--space-md); }
   .about-split { gap: var(--space-xl); }
   .section { padding: var(--space-2xl) var(--space-md); }
+  .page-index .section { padding: var(--space-xl) var(--space-md); }
   .footer { padding: var(--space-lg) var(--space-md); }
   .vid-hero-stats { gap: var(--space-sm); }
   .vid-hero-stat-value { font-size: 0.82rem; }
