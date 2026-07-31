@@ -10,16 +10,41 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 function initNav() {
-  const toggle = document.getElementById('mobileToggle')
-  const nav = document.getElementById('nav')
-  toggle?.addEventListener('click', () => {
-    nav?.classList.toggle('open')
+  const toggle = document.getElementById('menuToggle')
+  const close = document.getElementById('menuClose')
+  const overlay = document.getElementById('menuOverlay')
+  if (!toggle || !overlay) return
+
+  function openMenu() {
+    overlay.classList.add('open')
+    overlay.setAttribute('aria-hidden', 'false')
+    toggle.setAttribute('aria-expanded', 'true')
+    document.documentElement.classList.add('no-scroll')
+    document.body.classList.add('no-scroll')
+    close?.focus()
+  }
+
+  function closeMenu() {
+    overlay.classList.remove('open')
+    overlay.setAttribute('aria-hidden', 'true')
+    toggle.setAttribute('aria-expanded', 'false')
+    document.documentElement.classList.remove('no-scroll')
+    document.body.classList.remove('no-scroll')
+    toggle.focus()
+  }
+
+  toggle.addEventListener('click', openMenu)
+  close?.addEventListener('click', closeMenu)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu()
   })
-  nav?.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => nav?.classList.remove('open'))
+
+  overlay.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', closeMenu)
   })
+
   const path = window.location.pathname
-  nav?.querySelectorAll('a').forEach(a => {
+  overlay.querySelectorAll('a[href]').forEach(a => {
     const h = a.getAttribute('href')
     if (h && path.endsWith(h)) a.classList.add('active')
   })
