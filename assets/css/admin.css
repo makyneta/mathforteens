@@ -665,6 +665,7 @@
 .admin-list-header.news { grid-template-columns: 1fr 160px 120px; }
 .admin-list-header.products { grid-template-columns: 1fr 120px 100px 120px; }
 .admin-list-header.logins { grid-template-columns: 1fr 1fr 120px; }
+.admin-list-header.municipalities { grid-template-columns: 1fr 1fr 120px; }
 
 .admin-list-item {
   display: grid;
@@ -688,6 +689,7 @@
 .admin-list-item.news { grid-template-columns: 1fr 160px 120px; }
 .admin-list-item.products { grid-template-columns: 1fr 120px 100px 120px; }
 .admin-list-item.logins { grid-template-columns: 1fr 1fr 120px; }
+.admin-list-item.municipalities { grid-template-columns: 1fr 1fr 120px; }
 
 .admin-list-thumb {
   width: 72px;
@@ -802,6 +804,12 @@
   background: var(--admin-info-light);
   color: var(--admin-info);
   border: 1px solid rgba(59,130,246,0.15);
+}
+
+.admin-badge.district {
+  background: var(--c-primary-light);
+  color: var(--c-primary);
+  border: 1px solid rgba(14,140,143,0.2);
 }
 
 /* ── Empty States ── */
@@ -1386,4 +1394,106 @@ button.admin-folder-item:hover {
     display: block;
     animation: overlayIn 0.2s ease;
   }
+}
+
+/* ═══════════════════════════════════════════
+   DISTRITOS — Mapa de Presença
+   ═══════════════════════════════════════════ */
+.admin-district-summary {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--admin-text-secondary);
+  margin-bottom: 14px;
+}
+
+.admin-district-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.admin-district-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border-light);
+  border-radius: var(--admin-radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all var(--admin-transition);
+}
+
+.admin-district-card:hover {
+  border-color: var(--admin-border);
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.admin-district-card.pinned {
+  border-color: rgba(225, 29, 72, 0.45);
+  background: linear-gradient(180deg, #FFF7F7 0%, var(--admin-surface) 60%);
+}
+
+.admin-district-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-district-type {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--admin-text-tertiary);
+  background: var(--admin-surface-hover);
+  padding: 3px 10px;
+  border-radius: var(--admin-radius-full);
+}
+
+.admin-district-card.pinned .admin-district-type {
+  color: var(--admin-danger);
+  background: var(--admin-danger-light);
+}
+
+.admin-district-pin {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--admin-text-tertiary);
+  background: var(--admin-surface-hover);
+  transition: all var(--admin-transition);
+}
+
+.admin-district-pin.active {
+  color: #fff;
+  background: linear-gradient(180deg, #ff4d6d, #e11d48);
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.35);
+}
+
+.admin-district-name {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--admin-text);
+}
+
+.admin-district-btn {
+  width: 100%;
+  justify-content: center;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+}
+
+.admin-btn-remove {
+  color: var(--admin-danger);
+  background: var(--admin-danger-light);
+  border: 1px solid rgba(225, 29, 72, 0.25);
+}
+
+.admin-btn-remove:hover {
+  background: var(--admin-danger);
+  color: #fff;
 }

@@ -150,7 +150,7 @@ function closeSidebar() {
 // ============================================
 async function loadAll() {
   await loadSubjects();
-  await Promise.all([loadVideos(), loadFolders(), loadTestimonials(), loadNews(), loadProducts(), loadLogins(), loadFaq()]);
+  await Promise.all([loadVideos(), loadFolders(), loadTestimonials(), loadNews(), loadProducts(), loadLogins(), loadFaq(), loadDistricts(), loadMunicipalities()]);
 }
 
 async function loadSubjects() {
@@ -1090,6 +1090,190 @@ async function deleteNews(id) {
   if (error) { showToast('Erro ao apagar: ' + error.message, 'error'); return; }
   showToast('Notícia apagada!', 'success');
   loadNews();
+}
+
+// ============================================
+// DISTRITOS CRUD (Mapa de Presença)
+// ============================================
+let adminDistricts = [];
+
+async function loadDistricts() {
+  const { data, error } = await db.from('student_districts').select('*').order('created_at', { ascending: true });
+  if (error) { showToast('Erro ao carregar distritos', 'error'); return; }
+  adminDistricts = data || [];
+  renderDistricts();
+}
+
+function renderDistricts() {
+  const list = document.getElementById('districtsList');
+  const empty = document.getElementById('districtsEmpty');
+  const summary = document.getElementById('districtsSummary');
+  const pinnedNames = adminDistricts.map(d => d.district);
+  const total = PORTUGAL_DISTRICTS.length;
+  const count = adminDistricts.length;
+
+  if (summary) summary.textContent = count + ' de ' + total + ' distritos e ilhas com alunos';
+
+  if (!total) { list.style.display = 'none'; empty.style.display = 'flex'; return; }
+  empty.style.display = 'none';
+  list.style.display = 'grid';
+
+  list.innerHTML = PORTUGAL_DISTRICTS.map(d => {
+    const pinned = pinnedNames.indexOf(d.name) !== -1;
+    const typeLabel = d.label || (d.type !== 'main' ? 'Ilha' : 'Distrito');
+    return `
+      <div class="admin-district-card ${pinned ? 'pinned' : ''}">
+        <div class="admin-district-card-top">
+          <span class="admin-district-type">${typeLabel}</span>
+          <span class="admin-district-pin ${pinned ? 'active' : ''}" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          </span>
+        </div>
+        <h4 class="admin-district-name">${esc(d.name)}</h4>
+        <button class="btn admin-district-btn ${pinned ? 'admin-btn-remove' : 'btn-primary'}" onclick="toggleDistrict('${esc(d.name)}')">
+          ${pinned ? 'Remover pin' : 'Adicionar pin'}
+        </button>
+      </div>`;
+  }).join('');
+}
+
+async function toggleDistrict(name) {
+  const existing = adminDistricts.find(d => d.district === name);
+  if (existing) {
+    if (!confirm('Remover o pin de ' + name + '?')) return;
+    const { error } = await db.from('student_districts').delete().eq('id', existing.id);
+    if (error) { showToast('Erro ao remover: ' + error.message, 'error'); return; }
+    showToast('Pin removido de ' + name + '.', 'success');
+  } else {
+    const { error } = await db.from('student_districts').insert({ district: name });
+    if (error) { showToast('Erro ao adicionar: ' + error.message, 'error'); return; }
+    showToast('Pin adicionado em ' + name + '!', 'success');
+  }
+  loadDistricts();
+}
+
+// ============================================
+// CONSELHOS CRUD (Mapa de Presença)
+// ============================================
+let adminMunicipalities = [];
+
+async function loadMunicipalities() {
+  const { data, error } = await db.from('student_municipalities')
+    .select('*')
+    .order('district', { ascending: true })
+    .order('municipality', { ascending: true });
+  if (error) { showToast('Erro ao carregar conselhos', 'error'); return; }
+  adminMunicipalities = data || [];
+  renderMunicipalities();
+}
+
+function renderMunicipalities() {
+  const list = document.getElementById('municipalitiesList');
+  const empty = document.getElementById('municipalitiesEmpty');
+  const summary = document.getElementById('municipalitiesSummary');
+  const count = adminMunicipalities.length;
+
+  if (summary) summary.textContent = count === 0 ? 'Nenhum conselho adicionado' : count + ' conselho' + (count !== 1 ? 's' : '') + ' com alunos';
+
+  if (!count) {
+    list.innerHTML = '';
+    list.style.display = 'none';
+    empty.style.display = 'flex';
+    return;
+  }
+  empty.style.display = 'none';
+  list.style.display = 'block';
+
+  let html = '<div class="admin-list-header municipalities">'
+    + '<span>Conselho</span><span>Distrito</span><span style="text-align:right">Ações</span>'
+    + '</div>';
+
+  html += adminMunicipalities.map(m => `
+    <div class="admin-list-item municipalities">
+      <div class="admin-list-info">
+        <h4>${esc(m.municipality)}</h4>
+      </div>
+      <span class="admin-badge district">${esc(m.district)}</span>
+      <div class="admin-list-actions">
+        <button class="admin-action-btn" onclick="openMunicipalityModal('${m.id}')">Editar</button>
+        <button class="admin-action-btn danger" onclick="deleteMunicipality('${m.id}')">Apagar</button>
+      </div>
+    </div>`).join('');
+
+  list.innerHTML = html;
+}
+
+function getMunicipalityFormHtml(data) {
+  const m = data || {};
+  const districtOptions = PORTUGAL_DISTRICTS.filter(d => d.label !== 'Ilha').map(d =>
+    `<option value="${esc(d.name)}" ${m.district === d.name ? 'selected' : ''}>${esc(d.name)}</option>`
+  ).join('');
+  return `
+    <div class="admin-field"><label>Nome do conselho *</label><input type="text" id="field_municipality" value="${esc(m.municipality || '')}" required placeholder="Ex: Sintra"></div>
+    <div class="admin-field"><label>Distrito *</label><select id="field_municipality_district" required>
+      ${districtOptions}
+    </select></div>`;
+}
+
+async function openMunicipalityModal(id) {
+  let data = null;
+  if (id) {
+    const { data: row } = await db.from('student_municipalities').select('*').eq('id', id).single();
+    data = row;
+  }
+
+  document.getElementById('modalTitle').textContent = id ? 'Editar Conselho' : 'Adicionar Conselho';
+  const formEl = document.getElementById('modalForm');
+  formEl.innerHTML = getMunicipalityFormHtml(data)
+    + '<div class="admin-modal-footer"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button><button type="submit" class="btn btn-primary" id="modalSubmitBtn">Guardar</button></div>';
+
+  formEl.onsubmit = (e) => { e.preventDefault(); saveMunicipality(id); };
+  document.getElementById('modal').style.display = 'flex';
+  setTimeout(() => document.getElementById('field_municipality').focus(), 100);
+}
+
+async function saveMunicipality(editId) {
+  const btn = document.getElementById('modalSubmitBtn');
+  btn.innerHTML = '<span class="admin-spinner"></span>';
+  btn.disabled = true;
+
+  const municipality = document.getElementById('field_municipality').value.trim();
+  const district = document.getElementById('field_municipality_district').value;
+
+  if (!municipality) {
+    showToast('Indica o nome do conselho.', 'error');
+    btn.innerHTML = 'Guardar';
+    btn.disabled = false;
+    return;
+  }
+
+  const obj = { municipality, district };
+
+  let result;
+  if (editId) {
+    result = await db.from('student_municipalities').update(obj).eq('id', editId);
+  } else {
+    result = await db.from('student_municipalities').insert(obj);
+  }
+
+  if (result.error) {
+    showToast('Erro: ' + result.error.message, 'error');
+    btn.innerHTML = 'Guardar';
+    btn.disabled = false;
+    return;
+  }
+
+  showToast(editId ? 'Conselho atualizado!' : 'Conselho adicionado!', 'success');
+  closeModal();
+  loadMunicipalities();
+}
+
+async function deleteMunicipality(id) {
+  if (!confirm('Tem certeza que queres apagar este conselho?')) return;
+  const { error } = await db.from('student_municipalities').delete().eq('id', id);
+  if (error) { showToast('Erro ao apagar: ' + error.message, 'error'); return; }
+  showToast('Conselho apagado!', 'success');
+  loadMunicipalities();
 }
 
 // ============================================

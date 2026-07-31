@@ -12,8 +12,13 @@
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="stylesheet" href="assets/css/reset.css">
 <link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script defer src="assets/js/supabase-config.js"></script>
+<script defer src="assets/js/districts.js"></script>
+<script defer src="assets/js/map.js"></script>
+<script defer src="assets/js/municipalities.js"></script>
 <script defer src="assets/js/chatbot.js"></script>
 <script defer src="assets/js/components.js"></script>
 <script defer src="assets/js/main.js"></script>
@@ -76,6 +81,49 @@
           <div class="timeline-title">Primeiras mentorias gratuitas</div>
           <div class="timeline-desc">Começou a dar explicações de alunos para alunos, totalmente gratuitas.</div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="presenca-section">
+    <div class="section-inner">
+      <div class="text-center" style="margin-bottom:48px">
+        <div class="section-label" style="justify-content:center">Presença</div>
+        <h2 class="section-title">Onde já houve alunos</h2>
+        <p class="section-subtitle" style="margin:0 auto">Do norte ao sul, das ilhas ao continente — cada marca representa um distrito onde já passaram alunos do Math For Teens.</p>
+      </div>
+
+      <div class="pt-map-layout">
+        <div id="ptMainlandMap" class="pt-map pt-map-main" role="region" aria-label="Mapa satélite de Portugal continental"></div>
+        <div class="pt-map-islands">
+          <div class="pt-map-island">
+            <span class="pt-map-island-label">Açores</span>
+            <div id="ptAzoresMap" class="pt-map pt-map-mini" role="region" aria-label="Mapa satélite dos Açores"></div>
+          </div>
+          <div class="pt-map-island">
+            <span class="pt-map-island-label">Madeira</span>
+            <div id="ptMadeiraMap" class="pt-map pt-map-mini" role="region" aria-label="Mapa satélite da Madeira"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-map-footer">
+        <span class="pt-map-legend">
+          <span class="pt-map-legend-pin"></span>
+          <span id="ptMapCount">A carregar...</span>
+        </span>
+        <span class="pt-map-hint">Passa o rato sobre um distrito para veres o nome.</span>
+      </div>
+
+      <div id="municipalitiesSection" class="pt-municipalities-section" style="display:none">
+        <div class="pt-municipalities-header">
+          <div>
+            <h3>Conselhos com alunos</h3>
+            <p>Conselhos (concelhos) onde já passaram alunos do Math For Teens.</p>
+          </div>
+          <span class="pt-municipalities-count" id="municipalitiesCount"></span>
+        </div>
+        <div id="municipalitiesList" class="pt-municipalities-grid"></div>
       </div>
     </div>
   </section>
