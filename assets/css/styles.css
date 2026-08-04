@@ -4589,8 +4589,6 @@ body.no-scroll {
   inset: 0;
   z-index: 300;
   display: flex;
-  align-items: center;
-  justify-content: center;
   padding: var(--space-lg);
   visibility: hidden;
   opacity: 0;
@@ -4614,7 +4612,8 @@ body.no-scroll {
   z-index: 1;
   width: 100%;
   max-width: 860px;
-  max-height: calc(100vh - 64px);
+  max-height: 100%;
+  margin: auto;
   display: flex;
   flex-direction: column;
   background: var(--c-white);
@@ -4669,6 +4668,7 @@ body.no-scroll {
 }
 
 .svc-modal-body {
+  min-height: 0;
   overflow-y: auto;
   padding: var(--space-2xl);
   -webkit-overflow-scrolling: touch;
@@ -5333,7 +5333,6 @@ body.no-scroll {
   .svc-card { flex: 1 1 100%; max-width: none; }
   .svc-modal { padding: var(--space-sm); }
   .svc-modal-body { padding: var(--space-lg) var(--space-md); }
-  .svc-modal-panel { max-height: calc(100vh - 24px); }
 
   .hero { padding: calc(var(--header-h) + var(--space-2xl)) var(--space-md) var(--space-2xl); }
   .hero-visual { margin-top: var(--space-md); }
