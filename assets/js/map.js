@@ -1,6 +1,6 @@
 // ============================================
 // Math For Teens — Mapa de Presença
-// Mapa satélite: Portugal continental + ilhas
+// Mapa "desenho à mão": Portugal continental + ilhas
 // Pins vermelhos nos distritos com alunos
 // ============================================
 let mapDb;
@@ -16,13 +16,7 @@ const PT_MAINLAND_BOUNDS = [[36.85, -9.68], [42.2, -6.08]];
 const PT_AZORES_BOUNDS   = [[36.8, -31.4], [39.85, -24.9]];
 const PT_MADEIRA_BOUNDS  = [[32.5, -17.35], [33.2, -16.08]];
 
-const SATELLITE_LAYER = {
-  url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-  opts: {
-    maxZoom: 18,
-    attribution: 'Imagery &copy; Esri, Maxar, Earthstar Geographics e comunidade GIS'
-  }
-};
+const DRAW_FONT = "'Caveat', 'Comic Sans MS', cursive";
 
 let ptGeoData = null;
 let ptLookupByKey = {};
@@ -47,13 +41,34 @@ async function initPortugalMap() {
     }
     ptPinned = pinsRes.error ? [] : (pinsRes.data || []).map(r => r.district).filter(Boolean);
 
-    buildMainlandMap();
-    buildIslandMap('ptAzoresMap', DISTRICT_TYPES.azores, PT_AZORES_BOUNDS, 5);
-    buildIslandMap('ptMadeiraMap', DISTRICT_TYPES.madeira, PT_MADEIRA_BOUNDS, 6);
-    updatePinCount();
+    await ensureLabelFont();
+    scheduleMapBuild();
   } catch (err) {
     console.error('Erro ao carregar o mapa:', err);
   }
+}
+
+function scheduleMapBuild() {
+  const build = () => {
+    buildMainlandMap();
+    buildIslandMap('ptAzoresMap', DISTRICT_TYPES.azores, PT_AZORES_BOUNDS, 5, 10);
+    buildIslandMap('ptMadeiraMap', DISTRICT_TYPES.madeira, PT_MADEIRA_BOUNDS, 6, 10);
+    updatePinCount();
+  };
+  if (window.requestIdleCallback) {
+    window.requestIdleCallback(build, { timeout: 3000 });
+  } else {
+    setTimeout(build, 120);
+  }
+}
+
+function ensureLabelFont() {
+  if (!document.fonts || !document.fonts.load) return Promise.resolve();
+  const load = Promise.all([
+    document.fonts.load('600 40px Caveat').catch(() => {}),
+    document.fonts.load('700 40px Caveat').catch(() => {})
+  ]);
+  return Promise.race([load, new Promise(res => setTimeout(res, 1200))]);
 }
 
 function buildDistrictLookup() {
@@ -61,32 +76,58 @@ function buildDistrictLookup() {
   PORTUGAL_DISTRICTS.forEach(d => { ptLookupByKey[d.key] = d; });
 }
 
-function createBaseMap(el, bounds, minZoom) {
+function createBaseMap(el, bounds, minZoom, maxZoom) {
   const map = L.map(el, {
     zoomControl: true,
     attributionControl: false,
     scrollWheelZoom: false,
     doubleClickZoom: true,
     minZoom: minZoom,
-    maxBounds: bounds,
-    maxBoundsViscosity: 0.6
+    maxZoom: maxZoom || 11
   });
   map.zoomControl && map.zoomControl.setPosition('bottomright');
-  L.control.attribution({ prefix: false, position: 'topleft' }).addTo(map);
-  L.tileLayer(SATELLITE_LAYER.url, SATELLITE_LAYER.opts).addTo(map);
   map.fitBounds(bounds, { padding: [8, 8] });
+  map.__overlayBounds = map.getBounds();
+  map.setMaxBounds(map.__overlayBounds);
   ptMaps.push(map);
   return map;
 }
 
-function districtStyle(pinned) {
+function addDrawnOverlay(map, districtsOfType, el) {
+  if (!ptGeoData || typeof window.renderDrawnMap !== 'function') return;
+  const ob = map.__overlayBounds;
+  if (!ob) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  const width = Math.max(640, Math.min(Math.round((el.offsetWidth || 640) * dpr), 1500));
+  const canvas = window.renderDrawnMap(ptGeoData, districtsOfType, ptPinned, {
+    bounds: {
+      north: ob.getNorth(),
+      south: ob.getSouth(),
+      west: ob.getWest(),
+      east: ob.getEast()
+    },
+    width: width,
+    fontFamily: DRAW_FONT
+  });
+  L.imageOverlay(canvas.toDataURL('image/jpeg', 0.88), ob, { interactive: false }).addTo(map);
+}
+
+function districtStyle(state) {
+  if (state === 'hover') {
+    return {
+      color: 'rgba(14,140,143,0.9)',
+      weight: 1.8,
+      opacity: 0.9,
+      fillColor: 'rgba(14,140,143,0.22)',
+      fillOpacity: 1
+    };
+  }
   return {
-    color: '#ffffff',
-    weight: pinned ? 1.6 : 1.1,
-    opacity: 0.95,
-    fillColor: pinned ? '#0E8C8F' : '#ffffff',
-    fillOpacity: pinned ? 0.3 : 0.08,
-    dashArray: '4 3'
+    color: 'rgba(26,56,64,0)',
+    weight: 0,
+    opacity: 0,
+    fillColor: 'rgba(26,56,64,0)',
+    fillOpacity: 0
   };
 }
 
@@ -96,10 +137,7 @@ function addDistrictLayer(map, districtsOfType) {
   const features = ptGeoData.features.filter(f => keys.indexOf(f.properties.name) !== -1);
 
   L.geoJSON(features, {
-    style: f => {
-      const d = ptLookupByKey[f.properties.name];
-      return districtStyle(d && ptPinned.indexOf(d.name) !== -1);
-    },
+    style: () => districtStyle('normal'),
     onEachFeature: (feature, layer) => {
       const d = ptLookupByKey[feature.properties.name];
       if (!d) return;
@@ -109,10 +147,8 @@ function addDistrictLayer(map, districtsOfType) {
         offset: [0, -4],
         className: 'pt-district-tooltip'
       });
-      layer.on('mouseover', () => layer.setStyle(districtStyle(true)));
-      layer.on('mouseout', () => {
-        layer.setStyle(districtStyle(ptPinned.indexOf(d.name) !== -1));
-      });
+      layer.on('mouseover', () => layer.setStyle(districtStyle('hover')));
+      layer.on('mouseout', () => layer.setStyle(districtStyle('normal')));
     }
   }).addTo(map);
 }
@@ -156,15 +192,17 @@ function makePinIcon() {
 function buildMainlandMap() {
   const el = document.getElementById('ptMainlandMap');
   if (!el) return;
-  const map = createBaseMap(el, PT_MAINLAND_BOUNDS, 5);
+  const map = createBaseMap(el, PT_MAINLAND_BOUNDS, 5, 9);
+  addDrawnOverlay(map, DISTRICT_TYPES.main, el);
   addDistrictLayer(map, DISTRICT_TYPES.main);
   addPins(map, DISTRICT_TYPES.main);
 }
 
-function buildIslandMap(containerId, districtsOfType, bounds, minZoom) {
+function buildIslandMap(containerId, districtsOfType, bounds, minZoom, maxZoom) {
   const el = document.getElementById(containerId);
   if (!el) return;
-  const map = createBaseMap(el, bounds, minZoom);
+  const map = createBaseMap(el, bounds, minZoom, maxZoom);
+  addDrawnOverlay(map, districtsOfType, el);
   addDistrictLayer(map, districtsOfType);
   addPins(map, districtsOfType);
 }

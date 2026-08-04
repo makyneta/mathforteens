@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTypewriter()
   initInscPopup()
   initCitacao()
+  initSvcModal()
 })
 
 function initNav() {
@@ -153,4 +154,62 @@ function initTypewriter() {
     }
   }, { threshold: 0.5 })
   obs.observe(el)
+}
+
+function initSvcModal() {
+  const cards = document.querySelectorAll('.svc-card')
+  const modal = document.getElementById('svcModal')
+  if (!cards.length || !modal) return
+  const body = modal.querySelector('.svc-modal-body')
+  const title = modal.querySelector('.svc-modal-title')
+  const closeBtn = modal.querySelector('.svc-modal-close')
+  const backdrop = modal.querySelector('.svc-modal-backdrop')
+
+  let lastScrollY = 0
+  let activeCard = null
+
+  function lockScroll() {
+    lastScrollY = window.scrollY
+    document.documentElement.classList.add('no-scroll')
+    document.body.classList.add('no-scroll')
+    window.scrollTo(0, lastScrollY)
+  }
+
+  function unlockScroll() {
+    document.documentElement.classList.remove('no-scroll')
+    document.body.classList.remove('no-scroll')
+    window.scrollTo(0, lastScrollY)
+  }
+
+  function openModal(card) {
+    const templateId = card.dataset.modal
+    const template = document.getElementById(templateId)
+    if (!template) return
+    activeCard = card
+    body.innerHTML = ''
+    body.appendChild(template.content.cloneNode(true))
+    title.textContent = card.querySelector('.svc-card-title').textContent.trim()
+    modal.classList.add('open')
+    modal.setAttribute('aria-hidden', 'false')
+    lockScroll()
+    body.scrollTop = 0
+    closeBtn.focus()
+  }
+
+  function closeModal() {
+    modal.classList.remove('open')
+    modal.setAttribute('aria-hidden', 'true')
+    unlockScroll()
+    activeCard?.focus()
+    activeCard = null
+  }
+
+  cards.forEach(card => {
+    card.addEventListener('click', () => openModal(card))
+  })
+  closeBtn.addEventListener('click', closeModal)
+  backdrop.addEventListener('click', closeModal)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal()
+  })
 }

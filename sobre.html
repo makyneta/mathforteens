@@ -17,6 +17,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script defer src="assets/js/supabase-config.js"></script>
 <script defer src="assets/js/districts.js"></script>
+<script defer src="assets/js/drawn-map.js"></script>
 <script defer src="assets/js/map.js"></script>
 <script defer src="assets/js/municipalities.js"></script>
 <script defer src="assets/js/chatbot.js"></script>
@@ -94,15 +95,15 @@
       </div>
 
       <div class="pt-map-layout">
-        <div id="ptMainlandMap" class="pt-map pt-map-main" role="region" aria-label="Mapa satélite de Portugal continental"></div>
+        <div id="ptMainlandMap" class="pt-map pt-map-main" role="region" aria-label="Mapa desenhado de Portugal continental"></div>
         <div class="pt-map-islands">
           <div class="pt-map-island">
             <span class="pt-map-island-label">Açores</span>
-            <div id="ptAzoresMap" class="pt-map pt-map-mini" role="region" aria-label="Mapa satélite dos Açores"></div>
+            <div id="ptAzoresMap" class="pt-map pt-map-mini" role="region" aria-label="Mapa desenhado dos Açores"></div>
           </div>
           <div class="pt-map-island">
             <span class="pt-map-island-label">Madeira</span>
-            <div id="ptMadeiraMap" class="pt-map pt-map-mini" role="region" aria-label="Mapa satélite da Madeira"></div>
+            <div id="ptMadeiraMap" class="pt-map pt-map-mini" role="region" aria-label="Mapa desenhado da Madeira"></div>
           </div>
         </div>
       </div>

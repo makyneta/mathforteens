@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Recursos — Math For Teens</title>
-<meta name="description" content="Recursos de Matemática do Math For Teens: explicações, materiais e apoio. Preços acessíveis para todos os anos de escolaridade.">
+<meta name="description" content="Recursos de Matemática do Math For Teens: aulas individuais, em pares e em grupo, palestras e apresentação do livro. Preços acessíveis para todos os anos de escolaridade.">
 <meta name="author" content="Makyneta Unipessoal, Lda.">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="stylesheet" href="assets/css/reset.css">
@@ -31,456 +31,99 @@
     <div class="svc-hero-content">
       <div class="svc-hero-badge">📚 Os nossos serviços</div>
       <h1>Escolhe o teu <span>plano</span></h1>
-      <p>Sessões de 60 minutos, online, com apoio completo. Individual, em par ou em grupo — há sempre uma opção para ti!</p>
+      <p>Sessões de 60 minutos, online, com apoio completo. Individual, em par ou em grupo — clica numa caixa abaixo e descobre tudo!</p>
     </div>
   </section>
 
   <section class="section svc-info">
     <div class="section-inner">
-      <div class="svc-alert anim-fade-in">
-        <div class="svc-alert-icon">⚠️</div>
-        <div class="svc-alert-content">
-          <h3>Informações Gerais e Oferta</h3>
-          <p>Os valores tabelados são referentes a sessões de 60 minutos, mas <strong>não incluem apenas o tempo de aula</strong>. O que oferecemos:</p>
-          <ul>
-            <li>Uma pasta na plataforma <strong>Google Classroom</strong> com materiais de apoio ao estudo (fichas, resumos, etc.), de acesso livre;</li>
-            <li><strong>Apoio constante</strong>, sempre que o aluno necessitar, por <strong>WhatsApp</strong>;</li>
-            <li><strong>Descontos</strong> em produtos comercializados no projeto (resumos, o livro do Tomás Correia, entre outros);</li>
-            <li><strong>Relatório</strong> do trabalho desenvolvido ao longo do ano letivo, elaborado pelo respetivo explicador, em junho/julho.</li>
-          </ul>
-          <div class="svc-note">
-            <strong>NOTA:</strong> A inscrição no projeto tem um custo de <strong>10 euros</strong>.
-          </div>
-        </div>
-      </div>
+      <div class="svc-cards anim-fade-in">
 
-      <div class="svc-free-cta anim-fade-in anim-fade-in-d1">
-        <div class="svc-free-icon">🎉</div>
-        <div class="svc-free-content">
-          <h3>AH! MAS HÁ MAIS...</h3>
-          <p>A primeira aula é completamente <strong>GRATUITA!</strong></p>
-          <p>E não, não é uma aula apenas para conversar: será a apresentação inicial entre aluno e explicador, mas haverá já esclarecimento de dúvidas! Uma aula normal, a custo zero.</p>
-          <p class="svc-free-highlight">Vamos a isto?!</p>
-        </div>
-      </div>
-    </div>
-  </section>
+        <!-- 1 · AULAS INDIVIDUAIS -->
+        <button class="svc-card" id="individual" data-modal="svcTemplateIndividual" style="--card-accent:#0E8C8F;--card-accent-dark:#0B7073;--card-accent-soft:#E0F5F5" aria-haspopup="dialog">
+          <span class="svc-card-num">01</span>
+          <span class="svc-card-icon">👤</span>
+          <span class="svc-card-title">Aulas Individuais</span>
+          <span class="svc-card-sub">1 aluno · atenção máxima, zero distrações e 100% de foco</span>
+          <span class="svc-card-feats">
+            <span class="svc-card-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>100% de atenção no aluno</span>
+            <span class="svc-card-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Materiais no Google Classroom</span>
+            <span class="svc-card-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Apoio constante no WhatsApp</span>
+          </span>
+          <span class="svc-card-divider"></span>
+          <span class="svc-card-cta">Ver detalhes
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </button>
 
-  <section class="section svc-pricing" id="individual">
-    <div class="section-inner">
-      <div class="text-center" style="margin-bottom:40px">
-        <div class="section-label" style="justify-content:center">1</div>
-        <h2 class="section-title">Sessões Individuais</h2>
-        <p class="section-subtitle" style="margin:0 auto">Ideal para quem precisa de atenção <strong>MÁXIMA</strong>, com um total de <strong>ZERO distrações</strong> e <strong>100% de atenção</strong>.</p>
-      </div>
+        <!-- 2 · AULAS EM PARES -->
+        <button class="svc-card" id="pares" data-modal="svcTemplatePares" style="--card-accent:#4F46E5;--card-accent-dark:#4338CA;--card-accent-soft:#EEF2FF" aria-haspopup="dialog">
+          <span class="svc-card-num">02</span>
+          <span class="svc-card-icon">👥</span>
+          <span class="svc-card-title">Aulas em Pares</span>
+          <span class="svc-card-sub">2 alunos · aprende em conjunto e poupa uns trocos</span>
+          <span class="svc-card-feats">
+            <span class="svc-card-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>2 alunos por sessão</span>
+            <span class="svc-card-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Preço mais baixo por aluno</span>
+            <span class="svc-card-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Apoio constante no WhatsApp</span>
+          </span>
+          <span class="svc-card-divider"></span>
+          <span class="svc-card-cta">Ver detalhes
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </button>
 
-      <div class="svc-table-group anim-fade-in">
-        <h3 class="svc-subject-title">📐 Matemática (A)</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>7.º ano</td><td class="svc-price">13,00€</td></tr>
-              <tr><td>8.º ano</td><td class="svc-price">13,00€</td></tr>
-              <tr><td>9.º ano</td><td class="svc-price">15,00€</td></tr>
-              <tr><td>10.º ano</td><td class="svc-price">16,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">17,00€</td></tr>
-              <tr><td>12.º ano</td><td class="svc-price">18,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadores: Tomás Correia, Joana Campos, Ana Sofia Fontes</p>
-      </div>
+        <!-- 3 · AULAS EM GRUPO -->
+        <button class="svc-card" id="grupo" data-modal="svcTemplateGrupo" style="--card-accent:#7C3AED;--card-accent-dark:#6D28D9;--card-accent-soft:#F5F3FF" aria-haspopup="dialog">
+          <span class="svc-card-num">03</span>
+          <span class="svc-card-icon">🧑‍🤝‍🧑</span>
+          <span class="svc-card-title">Aulas em Grupo</span>
+          <span class="svc-card-sub">3 ou mais alunos · a opção mais económica</span>
+          <span class="svc-card-feats">
+            <span class="svc-card-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Grupos de 3 ou mais alunos</span>
+            <span class="svc-card-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Opção mais económica</span>
+            <span class="svc-card-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Apoio constante no WhatsApp</span>
+          </span>
+          <span class="svc-card-divider"></span>
+          <span class="svc-card-cta">Ver detalhes
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </button>
 
-      <div class="svc-table-group anim-fade-in anim-fade-in-d1">
-        <h3 class="svc-subject-title">📐 Matemática B</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>10.º ano</td><td class="svc-price">15,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">16,50€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadores: Tomás Correia, Ana Sofia Fontes</p>
-      </div>
+        <!-- 4 · PALESTRAS -->
+        <button class="svc-card" id="palestras" data-modal="svcTemplatePalestras" style="--card-accent:#D97706;--card-accent-dark:#B45309;--card-accent-soft:#FEF3C7" aria-haspopup="dialog">
+          <span class="svc-card-num">04</span>
+          <span class="svc-card-icon">🎤</span>
+          <span class="svc-card-title">Palestras</span>
+          <span class="svc-card-sub">Matemática e educação para escolas e eventos</span>
+          <span class="svc-card-feats">
+            <span class="svc-card-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Escolas, bibliotecas e eventos</span>
+            <span class="svc-card-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Matemática e educação</span>
+            <span class="svc-card-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Resposta rápida</span>
+          </span>
+          <span class="svc-card-divider"></span>
+          <span class="svc-card-cta">Ver detalhes
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </button>
 
-      <div class="svc-table-group anim-fade-in anim-fade-in-d2">
-        <h3 class="svc-subject-title">🔬 Física e Química (A)</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>7.º ano</td><td class="svc-price">14,00€</td></tr>
-              <tr><td>8.º ano</td><td class="svc-price">14,00€</td></tr>
-              <tr><td>9.º ano</td><td class="svc-price">14,00€</td></tr>
-              <tr><td>10.º ano</td><td class="svc-price">16,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">17,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadora: Joana Campos</p>
-      </div>
+        <!-- 5 · APRESENTAÇÃO DO LIVRO -->
+        <button class="svc-card" id="apresentacao-livro" data-modal="svcTemplateLivro" style="--card-accent:#059669;--card-accent-dark:#047857;--card-accent-soft:#ECFDF5" aria-haspopup="dialog">
+          <span class="svc-card-num">05</span>
+          <span class="svc-card-icon">📖</span>
+          <span class="svc-card-title">Apresentação do Livro</span>
+          <span class="svc-card-sub">Crónicas d'Adolescente, de Tomás Correia</span>
+          <span class="svc-card-feats">
+            <span class="svc-card-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Crónicas d'Adolescente</span>
+            <span class="svc-card-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Escolas, bibliotecas e eventos</span>
+            <span class="svc-card-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Resposta rápida</span>
+          </span>
+          <span class="svc-card-divider"></span>
+          <span class="svc-card-cta">Ver detalhes
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </button>
 
-      <div class="svc-table-group anim-fade-in">
-        <h3 class="svc-subject-title">📖 Português</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>7.º ano</td><td class="svc-price">13,00€</td></tr>
-              <tr><td>8.º ano</td><td class="svc-price">13,00€</td></tr>
-              <tr><td>9.º ano</td><td class="svc-price">14,00€</td></tr>
-              <tr><td>10.º ano</td><td class="svc-price">15,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">16,00€</td></tr>
-              <tr><td>12.º ano</td><td class="svc-price">17,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadores: Catarina Costa, Carolina Pinto</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in anim-fade-in-d1">
-        <h3 class="svc-subject-title">💭 Filosofia</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>10.º ano</td><td class="svc-price">15,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">16,50€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadora: Carolina Pinto</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in anim-fade-in-d2">
-        <h3 class="svc-subject-title">💼 Economia A</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>10.º ano</td><td class="svc-price">15,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">16,50€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicador: Miguel Almeida</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in">
-        <h3 class="svc-subject-title">⚛️ Física</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>12.º ano</td><td class="svc-price">18,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadora: Joana Campos</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in anim-fade-in-d1">
-        <h3 class="svc-subject-title">🧪 Química</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>12.º ano</td><td class="svc-price">18,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadora: Joana Campos</p>
-      </div>
-
-      <div class="svc-table-group svc-highlight-table anim-fade-in anim-fade-in-d2">
-        <h3 class="svc-subject-title">🎓 Matemática no Ensino Superior*</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>Preço</td><td class="svc-price">21,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicador: Tomás Correia</p>
-        <p class="svc-footnote">*O projeto dispõe de sessões para cadeiras de Matemática do Ensino Superior específicas, não envolvendo todas as disciplinas. É necessário averiguar, em cada caso, a possibilidade da ocorrência das aulas.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section svc-pricing svc-pricing-alt" id="pares">
-    <div class="section-inner">
-      <div class="text-center" style="margin-bottom:40px">
-        <div class="section-label" style="justify-content:center">2</div>
-        <h2 class="section-title">Sessões em Pares</h2>
-        <p class="section-subtitle" style="margin:0 auto">Ideal para quem precisa de apoio e deseja fazê-lo em conjunto e, em simultâneo, <strong>POUPAR uns trocos</strong>! Traz um colega da tua turma para caminharem <strong>JUNTOS</strong>!</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in">
-        <h3 class="svc-subject-title">📐 Matemática (A)</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>7.º ano</td><td class="svc-price">10,00€</td></tr>
-              <tr><td>8.º ano</td><td class="svc-price">10,00€</td></tr>
-              <tr><td>9.º ano</td><td class="svc-price">12,00€</td></tr>
-              <tr><td>10.º ano</td><td class="svc-price">13,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">14,00€</td></tr>
-              <tr><td>12.º ano</td><td class="svc-price">15,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadores: Tomás Correia, Joana Campos, Ana Sofia Fontes</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in anim-fade-in-d1">
-        <h3 class="svc-subject-title">📐 Matemática B</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>10.º ano</td><td class="svc-price">12,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">13,50€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadores: Tomás Correia, Ana Sofia Fontes</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in anim-fade-in-d2">
-        <h3 class="svc-subject-title">🔬 Física e Química (A)</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>7.º ano</td><td class="svc-price">11,00€</td></tr>
-              <tr><td>8.º ano</td><td class="svc-price">11,00€</td></tr>
-              <tr><td>9.º ano</td><td class="svc-price">11,00€</td></tr>
-              <tr><td>10.º ano</td><td class="svc-price">13,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">14,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadora: Joana Campos</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in">
-        <h3 class="svc-subject-title">📖 Português</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>7.º ano</td><td class="svc-price">10,00€</td></tr>
-              <tr><td>8.º ano</td><td class="svc-price">10,00€</td></tr>
-              <tr><td>9.º ano</td><td class="svc-price">11,00€</td></tr>
-              <tr><td>10.º ano</td><td class="svc-price">12,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">13,00€</td></tr>
-              <tr><td>12.º ano</td><td class="svc-price">14,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadores: Catarina Costa, Carolina Pinto</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in anim-fade-in-d1">
-        <h3 class="svc-subject-title">💭 Filosofia</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>10.º ano</td><td class="svc-price">12,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">13,50€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicador: Carolina Pinto</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in anim-fade-in-d2">
-        <h3 class="svc-subject-title">💼 Economia A</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>10.º ano</td><td class="svc-price">12,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">13,50€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicador: Miguel Almeida</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in">
-        <h3 class="svc-subject-title">⚛️ Física</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>12.º ano</td><td class="svc-price">15,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadora: Joana Campos</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in anim-fade-in-d1">
-        <h3 class="svc-subject-title">🧪 Química</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>12.º ano</td><td class="svc-price">15,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicador: Joana Campos</p>
-      </div>
-
-      <div class="svc-table-group svc-highlight-table anim-fade-in anim-fade-in-d2">
-        <h3 class="svc-subject-title">🎓 Matemática no Ensino Superior*</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>Preço</td><td class="svc-price">18,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicador: Tomás Correia</p>
-        <p class="svc-footnote">*O projeto dispõe de sessões para cadeiras de Matemática do Ensino Superior específicas, não envolvendo todas as disciplinas. É necessário averigurar, em cada caso, a possibilidade da ocorrência das aulas.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section svc-pricing" id="grupo">
-    <div class="section-inner">
-      <div class="text-center" style="margin-bottom:40px">
-        <div class="section-label" style="justify-content:center">3</div>
-        <h2 class="section-title">Sessões em Grupo (3 ou Mais)</h2>
-        <p class="section-subtitle" style="margin:0 auto">Ideal para quem procura uma opção <strong>MAIS ECONÓMICA</strong>, sem deixar de aprender e obter <strong>ÓTIMOS resultados</strong>! Junta o teu grupo de colegas de turma e vem trabalhar <strong>NO DURO</strong>!</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in">
-        <h3 class="svc-subject-title">📐 Matemática (A)</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>7.º ano</td><td class="svc-price">8,00€</td></tr>
-              <tr><td>8.º ano</td><td class="svc-price">8,00€</td></tr>
-              <tr><td>9.º ano</td><td class="svc-price">10,00€</td></tr>
-              <tr><td>10.º ano</td><td class="svc-price">11,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">12,00€</td></tr>
-              <tr><td>12.º ano</td><td class="svc-price">13,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadores: Tomás Correia, Joana Campos, Ana Sofia Fontes</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in anim-fade-in-d1">
-        <h3 class="svc-subject-title">📐 Matemática B</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>10.º ano</td><td class="svc-price">10,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">11,50€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadores: Tomás Correia, Ana Sofia Fontes</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in anim-fade-in-d2">
-        <h3 class="svc-subject-title">🔬 Física e Química (A)</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>7.º ano</td><td class="svc-price">9,00€</td></tr>
-              <tr><td>8.º ano</td><td class="svc-price">9,00€</td></tr>
-              <tr><td>9.º ano</td><td class="svc-price">9,00€</td></tr>
-              <tr><td>10.º ano</td><td class="svc-price">11,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">12,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadora: Joana Campos</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in">
-        <h3 class="svc-subject-title">📖 Português</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>7.º ano</td><td class="svc-price">8,00€</td></tr>
-              <tr><td>8.º ano</td><td class="svc-price">8,00€</td></tr>
-              <tr><td>9.º ano</td><td class="svc-price">9,00€</td></tr>
-              <tr><td>10.º ano</td><td class="svc-price">10,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">11,00€</td></tr>
-              <tr><td>12.º ano</td><td class="svc-price">12,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadores: Catarina Costa, Carolina Pinto</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in anim-fade-in-d1">
-        <h3 class="svc-subject-title">💭 Filosofia</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>10.º ano</td><td class="svc-price">10,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">11,50€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadora: Carolina Pinto</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in anim-fade-in-d2">
-        <h3 class="svc-subject-title">💼 Economia A</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>10.º ano</td><td class="svc-price">10,00€</td></tr>
-              <tr><td>11.º ano</td><td class="svc-price">11,50€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicador: Miguel Almeida</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in">
-        <h3 class="svc-subject-title">⚛️ Física</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>12.º ano</td><td class="svc-price">13,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadora: Joana Campos</p>
-      </div>
-
-      <div class="svc-table-group anim-fade-in anim-fade-in-d1">
-        <h3 class="svc-subject-title">🧪 Química</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>12.º ano</td><td class="svc-price">13,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicadora: Joana Campos</p>
-      </div>
-
-      <div class="svc-table-group svc-highlight-table anim-fade-in anim-fade-in-d2">
-        <h3 class="svc-subject-title">🎓 Matemática no Ensino Superior*</h3>
-        <div class="svc-table-wrap">
-          <table class="svc-table">
-            <tbody>
-              <tr><td>Preço</td><td class="svc-price">15,00€</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="svc-explicadores">Explicador: Tomás Correia</p>
-        <p class="svc-footnote">*O projeto dispõe de sessões para cadeiras de Matemática do Ensino Superior específicas, não envolvendo todas as disciplinas. É necessário averigurar, em cada caso, a possibilidade da ocorrência das aulas.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" style="background:var(--c-white)">
-    <div class="section-inner text-center">
-      <h2 class="section-title">Vamos começar?</h2>
-      <p style="font-size:1rem;color:var(--c-text-secondary);margin-bottom:24px">Garante já a tua vaga no Math For Teens!</p>
-      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-        <a href="inscricoes" class="btn btn-primary btn-lg">🚀 INSCREVE-TE AGORA</a>
-         <!-- <a href="https://wa.me/351910256373" target="_blank" class="btn btn-whatsapp">Falar no WhatsApp</a>-->
       </div>
     </div>
   </section>
@@ -514,6 +157,574 @@
 </div>
 
 <div id="footer"></div>
+
+<div class="svc-modal" id="svcModal" aria-hidden="true">
+  <div class="svc-modal-backdrop"></div>
+  <div class="svc-modal-panel" role="dialog" aria-modal="true" aria-labelledby="svcModalTitle">
+    <div class="svc-modal-bar">
+      <h3 class="svc-modal-title" id="svcModalTitle"></h3>
+      <button class="svc-modal-close" aria-label="Fechar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="svc-modal-body" id="svcModalBody"></div>
+  </div>
+</div>
+
+<template id="svcTemplateIndividual">
+  <div class="svc-alert">
+    <div class="svc-alert-icon">⚠️</div>
+    <div class="svc-alert-content">
+      <h3>Informações Gerais e Oferta</h3>
+      <p>Os valores tabelados são referentes a sessões de 60 minutos, mas <strong>não incluem apenas o tempo de aula</strong>. O que oferecemos:</p>
+      <ul>
+        <li>Uma pasta na plataforma <strong>Google Classroom</strong> com materiais de apoio ao estudo (fichas, resumos, etc.), de acesso livre;</li>
+        <li><strong>Apoio constante</strong>, sempre que o aluno necessitar, por <strong>WhatsApp</strong>;</li>
+        <li><strong>Descontos</strong> em produtos comercializados no projeto (resumos, o livro do Tomás Correia, entre outros);</li>
+        <li><strong>Relatório</strong> do trabalho desenvolvido ao longo do ano letivo, elaborado pelo respetivo explicador, em junho/julho.</li>
+      </ul>
+      <div class="svc-note">
+        <strong>NOTA:</strong> A inscrição no projeto tem um custo de <strong>10 euros</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="svc-free-cta">
+    <div class="svc-free-icon">🎉</div>
+    <div class="svc-free-content">
+      <h3>AH! MAS HÁ MAIS...</h3>
+      <p>A primeira aula é completamente <strong>GRATUITA!</strong></p>
+      <p>E não, não é uma aula apenas para conversar: será a apresentação inicial entre aluno e explicador, mas haverá já esclarecimento de dúvidas! Uma aula normal, a custo zero.</p>
+      <p class="svc-free-highlight">Vamos a isto?!</p>
+    </div>
+  </div>
+
+  <div class="svc-box-section">
+    <div class="section-label" style="justify-content:center">1</div>
+    <h3 class="svc-box-section-title">Sessões Individuais</h3>
+    <p class="svc-box-section-sub">Ideal para quem precisa de atenção <strong>MÁXIMA</strong>, com um total de <strong>ZERO distrações</strong> e <strong>100% de atenção</strong>.</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">📐 Matemática (A)</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>7.º ano</td><td class="svc-price">13,00€</td></tr>
+          <tr><td>8.º ano</td><td class="svc-price">13,00€</td></tr>
+          <tr><td>9.º ano</td><td class="svc-price">15,00€</td></tr>
+          <tr><td>10.º ano</td><td class="svc-price">16,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">17,00€</td></tr>
+          <tr><td>12.º ano</td><td class="svc-price">18,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadores: Tomás Correia, Joana Campos, Ana Sofia Fontes</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">📐 Matemática B</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>10.º ano</td><td class="svc-price">15,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">16,50€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadores: Tomás Correia, Ana Sofia Fontes</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">🔬 Física e Química (A)</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>7.º ano</td><td class="svc-price">14,00€</td></tr>
+          <tr><td>8.º ano</td><td class="svc-price">14,00€</td></tr>
+          <tr><td>9.º ano</td><td class="svc-price">14,00€</td></tr>
+          <tr><td>10.º ano</td><td class="svc-price">16,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">17,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadora: Joana Campos</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">📖 Português</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>7.º ano</td><td class="svc-price">13,00€</td></tr>
+          <tr><td>8.º ano</td><td class="svc-price">13,00€</td></tr>
+          <tr><td>9.º ano</td><td class="svc-price">14,00€</td></tr>
+          <tr><td>10.º ano</td><td class="svc-price">15,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">16,00€</td></tr>
+          <tr><td>12.º ano</td><td class="svc-price">17,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadores: Catarina Costa, Carolina Pinto</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">💭 Filosofia</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>10.º ano</td><td class="svc-price">15,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">16,50€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadora: Carolina Pinto</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">💼 Economia A</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>10.º ano</td><td class="svc-price">15,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">16,50€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicador: Miguel Almeida</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">⚛️ Física</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>12.º ano</td><td class="svc-price">18,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadora: Joana Campos</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">🧪 Química</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>12.º ano</td><td class="svc-price">18,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadora: Joana Campos</p>
+  </div>
+
+  <div class="svc-table-group svc-highlight-table">
+    <h3 class="svc-subject-title">🎓 Matemática no Ensino Superior*</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>Preço</td><td class="svc-price">21,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicador: Tomás Correia</p>
+    <p class="svc-footnote">*O projeto dispõe de sessões para cadeiras de Matemática do Ensino Superior específicas, não envolvendo todas as disciplinas. É necessário averiguar, em cada caso, a possibilidade da ocorrência das aulas.</p>
+  </div>
+</template>
+
+<template id="svcTemplatePares">
+  <div class="svc-alert">
+    <div class="svc-alert-icon">⚠️</div>
+    <div class="svc-alert-content">
+      <h3>Informações Gerais e Oferta</h3>
+      <p>Os valores tabelados são referentes a sessões de 60 minutos, mas <strong>não incluem apenas o tempo de aula</strong>. O que oferecemos:</p>
+      <ul>
+        <li>Uma pasta na plataforma <strong>Google Classroom</strong> com materiais de apoio ao estudo (fichas, resumos, etc.), de acesso livre;</li>
+        <li><strong>Apoio constante</strong>, sempre que o aluno necessitar, por <strong>WhatsApp</strong>;</li>
+        <li><strong>Descontos</strong> em produtos comercializados no projeto (resumos, o livro do Tomás Correia, entre outros);</li>
+        <li><strong>Relatório</strong> do trabalho desenvolvido ao longo do ano letivo, elaborado pelo respetivo explicador, em junho/julho.</li>
+      </ul>
+      <div class="svc-note">
+        <strong>NOTA:</strong> A inscrição no projeto tem um custo de <strong>10 euros</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="svc-free-cta">
+    <div class="svc-free-icon">🎉</div>
+    <div class="svc-free-content">
+      <h3>AH! MAS HÁ MAIS...</h3>
+      <p>A primeira aula é completamente <strong>GRATUITA!</strong></p>
+      <p>E não, não é uma aula apenas para conversar: será a apresentação inicial entre aluno e explicador, mas haverá já esclarecimento de dúvidas! Uma aula normal, a custo zero.</p>
+      <p class="svc-free-highlight">Vamos a isto?!</p>
+    </div>
+  </div>
+
+  <div class="svc-box-section">
+    <div class="section-label" style="justify-content:center">2</div>
+    <h3 class="svc-box-section-title">Sessões em Pares</h3>
+    <p class="svc-box-section-sub">Ideal para quem precisa de apoio e deseja fazê-lo em conjunto e, em simultâneo, <strong>POUPAR uns trocos</strong>! Traz um colega da tua turma para caminharem <strong>JUNTOS</strong>!</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">📐 Matemática (A)</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>7.º ano</td><td class="svc-price">10,00€</td></tr>
+          <tr><td>8.º ano</td><td class="svc-price">10,00€</td></tr>
+          <tr><td>9.º ano</td><td class="svc-price">12,00€</td></tr>
+          <tr><td>10.º ano</td><td class="svc-price">13,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">14,00€</td></tr>
+          <tr><td>12.º ano</td><td class="svc-price">15,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadores: Tomás Correia, Joana Campos, Ana Sofia Fontes</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">📐 Matemática B</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>10.º ano</td><td class="svc-price">12,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">13,50€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadores: Tomás Correia, Ana Sofia Fontes</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">🔬 Física e Química (A)</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>7.º ano</td><td class="svc-price">11,00€</td></tr>
+          <tr><td>8.º ano</td><td class="svc-price">11,00€</td></tr>
+          <tr><td>9.º ano</td><td class="svc-price">11,00€</td></tr>
+          <tr><td>10.º ano</td><td class="svc-price">13,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">14,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadora: Joana Campos</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">📖 Português</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>7.º ano</td><td class="svc-price">10,00€</td></tr>
+          <tr><td>8.º ano</td><td class="svc-price">10,00€</td></tr>
+          <tr><td>9.º ano</td><td class="svc-price">11,00€</td></tr>
+          <tr><td>10.º ano</td><td class="svc-price">12,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">13,00€</td></tr>
+          <tr><td>12.º ano</td><td class="svc-price">14,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadores: Catarina Costa, Carolina Pinto</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">💭 Filosofia</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>10.º ano</td><td class="svc-price">12,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">13,50€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicador: Carolina Pinto</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">💼 Economia A</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>10.º ano</td><td class="svc-price">12,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">13,50€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicador: Miguel Almeida</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">⚛️ Física</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>12.º ano</td><td class="svc-price">15,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadora: Joana Campos</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">🧪 Química</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>12.º ano</td><td class="svc-price">15,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicador: Joana Campos</p>
+  </div>
+
+  <div class="svc-table-group svc-highlight-table">
+    <h3 class="svc-subject-title">🎓 Matemática no Ensino Superior*</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>Preço</td><td class="svc-price">18,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicador: Tomás Correia</p>
+    <p class="svc-footnote">*O projeto dispõe de sessões para cadeiras de Matemática do Ensino Superior específicas, não envolvendo todas as disciplinas. É necessário averigurar, em cada caso, a possibilidade da ocorrência das aulas.</p>
+  </div>
+</template>
+
+<template id="svcTemplateGrupo">
+  <div class="svc-alert">
+    <div class="svc-alert-icon">⚠️</div>
+    <div class="svc-alert-content">
+      <h3>Informações Gerais e Oferta</h3>
+      <p>Os valores tabelados são referentes a sessões de 60 minutos, mas <strong>não incluem apenas o tempo de aula</strong>. O que oferecemos:</p>
+      <ul>
+        <li>Uma pasta na plataforma <strong>Google Classroom</strong> com materiais de apoio ao estudo (fichas, resumos, etc.), de acesso livre;</li>
+        <li><strong>Apoio constante</strong>, sempre que o aluno necessitar, por <strong>WhatsApp</strong>;</li>
+        <li><strong>Descontos</strong> em produtos comercializados no projeto (resumos, o livro do Tomás Correia, entre outros);</li>
+        <li><strong>Relatório</strong> do trabalho desenvolvido ao longo do ano letivo, elaborado pelo respetivo explicador, em junho/julho.</li>
+      </ul>
+      <div class="svc-note">
+        <strong>NOTA:</strong> A inscrição no projeto tem um custo de <strong>10 euros</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="svc-free-cta">
+    <div class="svc-free-icon">🎉</div>
+    <div class="svc-free-content">
+      <h3>AH! MAS HÁ MAIS...</h3>
+      <p>A primeira aula é completamente <strong>GRATUITA!</strong></p>
+      <p>E não, não é uma aula apenas para conversar: será a apresentação inicial entre aluno e explicador, mas haverá já esclarecimento de dúvidas! Uma aula normal, a custo zero.</p>
+      <p class="svc-free-highlight">Vamos a isto?!</p>
+    </div>
+  </div>
+
+  <div class="svc-box-section">
+    <div class="section-label" style="justify-content:center">3</div>
+    <h3 class="svc-box-section-title">Sessões em Grupo (3 ou Mais)</h3>
+    <p class="svc-box-section-sub">Ideal para quem procura uma opção <strong>MAIS ECONÓMICA</strong>, sem deixar de aprender e obter <strong>ÓTIMOS resultados</strong>! Junta o teu grupo de colegas de turma e vem trabalhar <strong>NO DURO</strong>!</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">📐 Matemática (A)</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>7.º ano</td><td class="svc-price">8,00€</td></tr>
+          <tr><td>8.º ano</td><td class="svc-price">8,00€</td></tr>
+          <tr><td>9.º ano</td><td class="svc-price">10,00€</td></tr>
+          <tr><td>10.º ano</td><td class="svc-price">11,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">12,00€</td></tr>
+          <tr><td>12.º ano</td><td class="svc-price">13,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadores: Tomás Correia, Joana Campos, Ana Sofia Fontes</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">📐 Matemática B</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>10.º ano</td><td class="svc-price">10,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">11,50€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadores: Tomás Correia, Ana Sofia Fontes</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">🔬 Física e Química (A)</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>7.º ano</td><td class="svc-price">9,00€</td></tr>
+          <tr><td>8.º ano</td><td class="svc-price">9,00€</td></tr>
+          <tr><td>9.º ano</td><td class="svc-price">9,00€</td></tr>
+          <tr><td>10.º ano</td><td class="svc-price">11,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">12,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadora: Joana Campos</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">📖 Português</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>7.º ano</td><td class="svc-price">8,00€</td></tr>
+          <tr><td>8.º ano</td><td class="svc-price">8,00€</td></tr>
+          <tr><td>9.º ano</td><td class="svc-price">9,00€</td></tr>
+          <tr><td>10.º ano</td><td class="svc-price">10,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">11,00€</td></tr>
+          <tr><td>12.º ano</td><td class="svc-price">12,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadores: Catarina Costa, Carolina Pinto</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">💭 Filosofia</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>10.º ano</td><td class="svc-price">10,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">11,50€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadora: Carolina Pinto</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">💼 Economia A</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>10.º ano</td><td class="svc-price">10,00€</td></tr>
+          <tr><td>11.º ano</td><td class="svc-price">11,50€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicador: Miguel Almeida</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">⚛️ Física</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>12.º ano</td><td class="svc-price">13,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadora: Joana Campos</p>
+  </div>
+
+  <div class="svc-table-group">
+    <h3 class="svc-subject-title">🧪 Química</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>12.º ano</td><td class="svc-price">13,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicadora: Joana Campos</p>
+  </div>
+
+  <div class="svc-table-group svc-highlight-table">
+    <h3 class="svc-subject-title">🎓 Matemática no Ensino Superior*</h3>
+    <div class="svc-table-wrap">
+      <table class="svc-table">
+        <tbody>
+          <tr><td>Preço</td><td class="svc-price">15,00€</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="svc-explicadores">Explicador: Tomás Correia</p>
+    <p class="svc-footnote">*O projeto dispõe de sessões para cadeiras de Matemática do Ensino Superior específicas, não envolvendo todas as disciplinas. É necessário averigurar, em cada caso, a possibilidade da ocorrência das aulas.</p>
+  </div>
+</template>
+
+<template id="svcTemplatePalestras">
+  <div class="svc-box-section">
+    <div class="section-label" style="justify-content:center">🎤</div>
+    <h3 class="svc-box-section-title">Palestras de Matemática e Educação</h3>
+    <p class="svc-box-section-sub">Escolas, bibliotecas, associações e empresas. Levamos a Matemática a mais pessoas.</p>
+  </div>
+
+  <div class="svc-box-intro">
+    <p>Queres levar a <strong>Matemática</strong> a mais pessoas? O Math For Teens dinamiza <strong>palestras de matemática e educação</strong> para escolas, bibliotecas, associações e empresas.</p>
+    <p>Preenche o formulário abaixo e entramos em contacto contigo para agendar a palestra.</p>
+  </div>
+
+  <form class="contact-form svc-form" action="https://formspree.io/f/mojgybrv" method="POST">
+    <input type="hidden" name="_subject" value="Pedido de Palestra — Math For Teens">
+    <h2>🎤 Agenda uma palestra</h2>
+    <div class="form-group">
+      <label for="palestra-nome">Nome</label>
+      <input type="text" id="palestra-nome" name="nome" required placeholder="O teu nome">
+    </div>
+    <div class="form-group">
+      <label for="palestra-email">Email</label>
+      <input type="email" id="palestra-email" name="email" required placeholder="O teu email">
+    </div>
+    <div class="form-group">
+      <label for="palestra-instituicao">Instituição / Escola</label>
+      <input type="text" id="palestra-instituicao" name="instituicao" placeholder="Nome da escola, associação ou empresa">
+    </div>
+    <div class="form-group">
+      <label for="palestra-mensagem">Mensagem</label>
+      <textarea id="palestra-mensagem" name="mensagem" required placeholder="Conta-nos para quem é a palestra, o tema pretendido, a data e o local..."></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">📨 Pedir palestra</button>
+    <p style="font-size:0.78rem;color:var(--c-text-tertiary);margin-top:12px;text-align:center">Preferes resposta rápida? <a href="https://wa.me/351910256373" target="_blank" style="color:var(--c-primary);font-weight:600">Fala no WhatsApp</a></p>
+  </form>
+</template>
+
+<template id="svcTemplateLivro">
+  <div class="svc-box-section">
+    <div class="section-label" style="justify-content:center">📖</div>
+    <h3 class="svc-box-section-title">Apresentação do Livro</h3>
+    <p class="svc-box-section-sub">Crónicas d'Adolescente, de Tomás Correia — publicado pela Chiado Books.</p>
+  </div>
+
+  <div class="svc-box-intro">
+    <p>Queres organizar a apresentação de <strong><em>Crónicas d'Adolescente</em></strong>, de Tomás Correia, na tua escola, biblioteca ou evento?</p>
+    <p>Preenche o formulário abaixo e entramos em contacto contigo para agendar a apresentação.</p>
+  </div>
+
+  <form class="contact-form svc-form" action="https://formspree.io/f/mojgybrv" method="POST">
+    <input type="hidden" name="_subject" value="Apresentação do Livro — Math For Teens">
+    <h2>📖 Agenda a apresentação</h2>
+    <div class="form-group">
+      <label for="livro-nome">Nome</label>
+      <input type="text" id="livro-nome" name="nome" required placeholder="O teu nome">
+    </div>
+    <div class="form-group">
+      <label for="livro-email">Email</label>
+      <input type="email" id="livro-email" name="email" required placeholder="O teu email">
+    </div>
+    <div class="form-group">
+      <label for="livro-instituicao">Instituição / Escola</label>
+      <input type="text" id="livro-instituicao" name="instituicao" placeholder="Nome da escola, biblioteca ou evento">
+    </div>
+    <div class="form-group">
+      <label for="livro-mensagem">Mensagem</label>
+      <textarea id="livro-mensagem" name="mensagem" required placeholder="Conta-nos onde e quando gostarias de fazer a apresentação..."></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">📨 Pedir apresentação</button>
+    <p style="font-size:0.78rem;color:var(--c-text-tertiary);margin-top:12px;text-align:center">Preferes resposta rápida? <a href="https://wa.me/351910256373" target="_blank" style="color:var(--c-primary);font-weight:600">Fala no WhatsApp</a></p>
+  </form>
+</template>
 
 </body>
 </html>
