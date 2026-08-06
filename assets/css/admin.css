@@ -698,7 +698,6 @@
 .admin-list-header.news { grid-template-columns: 1fr 160px 120px; }
 .admin-list-header.products { grid-template-columns: 1fr 120px 100px 120px; }
 .admin-list-header.logins { grid-template-columns: 1fr 1fr 120px; }
-.admin-list-header.municipalities { grid-template-columns: 1fr 1fr 120px; }
 
 .admin-list-item {
   display: grid;
@@ -722,7 +721,6 @@
 .admin-list-item.news { grid-template-columns: 1fr 160px 120px; }
 .admin-list-item.products { grid-template-columns: 1fr 120px 100px 120px; }
 .admin-list-item.logins { grid-template-columns: 1fr 1fr 120px; }
-.admin-list-item.municipalities { grid-template-columns: 1fr 1fr 120px; }
 
 .admin-list-thumb {
   width: 72px;

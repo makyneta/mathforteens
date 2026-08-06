@@ -63,10 +63,6 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         Loja
       </a>
-      <a href="#" class="admin-nav-link" data-tab="municipalities">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M2 20h20"/></svg>
-        Conselhos
-      </a>
       <span class="admin-nav-section">Sistema</span>
       <a href="#" class="admin-nav-link" data-tab="logins">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -275,30 +271,6 @@
       </div>
     </div>
 
-    <!-- TAB: CONSELHOS (Presença) -->
-    <div id="tab-municipalities" class="admin-tab">
-      <div class="admin-tab-header">
-        <h3>Presença — Conselhos</h3>
-        <button class="btn btn-primary admin-btn-add" onclick="openMunicipalityModal()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Adicionar Conselho
-        </button>
-      </div>
-      <div class="admin-info-card" style="margin-bottom:20px;padding:14px 16px;background:var(--admin-surface-hover);border-radius:10px;font-size:0.85rem;color:var(--admin-text-secondary);display:flex;align-items:center;gap:8px">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M2 20h20"/></svg>
-        Cada conselho está associado a um distrito. A lista aparece agrupada por distrito na página <strong>Sobre</strong>.
-      </div>
-      <div class="admin-district-summary" id="municipalitiesSummary">A carregar...</div>
-      <div id="municipalitiesList" class="admin-list"></div>
-      <div id="municipalitiesEmpty" class="admin-empty" style="display:none">
-        <div class="admin-empty-icon">
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M2 20h20"/></svg>
-        </div>
-        <h3>Nenhum conselho adicionado</h3>
-        <p>Adiciona o primeiro conselho onde já houve alunos.</p>
-      </div>
-    </div>
-
     <!-- TAB: LOGINS -->
     <div id="tab-logins" class="admin-tab">
       <div class="admin-tab-header">
@@ -362,7 +334,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="assets/js/supabase-config.js"></script>
-<script src="assets/js/districts.js"></script>
 <script src="assets/js/admin.js"></script>
 </body>
 </html>

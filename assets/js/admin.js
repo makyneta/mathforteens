@@ -157,7 +157,7 @@ function closeSidebar() {
 // ============================================
 async function loadAll() {
   await loadSubjects();
-  await Promise.all([loadVideos(), loadFolders(), loadTestimonials(), loadNews(), loadProducts(), loadLogins(), loadFaq(), loadMunicipalities()]);
+  await Promise.all([loadVideos(), loadFolders(), loadTestimonials(), loadNews(), loadProducts(), loadLogins(), loadFaq()]);
 }
 
 async function loadSubjects() {
@@ -1107,130 +1107,6 @@ async function deleteNews(id) {
   if (error) { showToast('Erro ao apagar: ' + error.message, 'error'); return; }
   showToast('Notícia apagada!', 'success');
   loadNews();
-}
-
-// ============================================
-// CONSELHOS CRUD (Presença)
-// ============================================
-let adminMunicipalities = [];
-
-async function loadMunicipalities() {
-  const { data, error } = await db.from('student_municipalities')
-    .select('*')
-    .order('district', { ascending: true })
-    .order('municipality', { ascending: true });
-  if (error) { showToast('Erro ao carregar conselhos', 'error'); return; }
-  adminMunicipalities = data || [];
-  renderMunicipalities();
-}
-
-function renderMunicipalities() {
-  const list = document.getElementById('municipalitiesList');
-  const empty = document.getElementById('municipalitiesEmpty');
-  const summary = document.getElementById('municipalitiesSummary');
-  const count = adminMunicipalities.length;
-
-  if (summary) summary.textContent = count === 0 ? 'Nenhum conselho adicionado' : count + ' conselho' + (count !== 1 ? 's' : '') + ' com alunos';
-
-  if (!count) {
-    list.innerHTML = '';
-    list.style.display = 'none';
-    empty.style.display = 'flex';
-    return;
-  }
-  empty.style.display = 'none';
-  list.style.display = 'block';
-
-  let html = '<div class="admin-list-header municipalities">'
-    + '<span>Conselho</span><span>Distrito</span><span style="text-align:right">Ações</span>'
-    + '</div>';
-
-  html += adminMunicipalities.map(m => `
-    <div class="admin-list-item municipalities">
-      <div class="admin-list-info">
-        <h4>${esc(m.municipality)}</h4>
-      </div>
-      <span class="admin-badge district">${esc(m.district)}</span>
-      <div class="admin-list-actions">
-        <button class="admin-action-btn" onclick="openMunicipalityModal('${m.id}')">Editar</button>
-        <button class="admin-action-btn danger" onclick="deleteMunicipality('${m.id}')">Apagar</button>
-      </div>
-    </div>`).join('');
-
-  list.innerHTML = html;
-}
-
-function getMunicipalityFormHtml(data) {
-  const m = data || {};
-  const districtOptions = PORTUGAL_DISTRICTS.filter(d => d.label !== 'Ilha').map(d =>
-    `<option value="${esc(d.name)}" ${m.district === d.name ? 'selected' : ''}>${esc(d.name)}</option>`
-  ).join('');
-  return `
-    <div class="admin-field"><label>Nome do conselho *</label><input type="text" id="field_municipality" value="${esc(m.municipality || '')}" required placeholder="Ex: Sintra"></div>
-    <div class="admin-field"><label>Distrito *</label><select id="field_municipality_district" required>
-      ${districtOptions}
-    </select></div>`;
-}
-
-async function openMunicipalityModal(id) {
-  let data = null;
-  if (id) {
-    const { data: row } = await db.from('student_municipalities').select('*').eq('id', id).single();
-    data = row;
-  }
-
-  document.getElementById('modalTitle').textContent = id ? 'Editar Conselho' : 'Adicionar Conselho';
-  const formEl = document.getElementById('modalForm');
-  formEl.innerHTML = getMunicipalityFormHtml(data)
-    + '<div class="admin-modal-footer"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button><button type="submit" class="btn btn-primary" id="modalSubmitBtn">Guardar</button></div>';
-
-  formEl.onsubmit = (e) => { e.preventDefault(); saveMunicipality(id); };
-  document.getElementById('modal').style.display = 'flex';
-  setTimeout(() => document.getElementById('field_municipality').focus(), 100);
-}
-
-async function saveMunicipality(editId) {
-  const btn = document.getElementById('modalSubmitBtn');
-  btn.innerHTML = '<span class="admin-spinner"></span>';
-  btn.disabled = true;
-
-  const municipality = document.getElementById('field_municipality').value.trim();
-  const district = document.getElementById('field_municipality_district').value;
-
-  if (!municipality) {
-    showToast('Indica o nome do conselho.', 'error');
-    btn.innerHTML = 'Guardar';
-    btn.disabled = false;
-    return;
-  }
-
-  const obj = { municipality, district };
-
-  let result;
-  if (editId) {
-    result = await db.from('student_municipalities').update(obj).eq('id', editId);
-  } else {
-    result = await db.from('student_municipalities').insert(obj);
-  }
-
-  if (result.error) {
-    showToast('Erro: ' + result.error.message, 'error');
-    btn.innerHTML = 'Guardar';
-    btn.disabled = false;
-    return;
-  }
-
-  showToast(editId ? 'Conselho atualizado!' : 'Conselho adicionado!', 'success');
-  closeModal();
-  loadMunicipalities();
-}
-
-async function deleteMunicipality(id) {
-  if (!confirm('Tem certeza que queres apagar este conselho?')) return;
-  const { error } = await db.from('student_municipalities').delete().eq('id', id);
-  if (error) { showToast('Erro ao apagar: ' + error.message, 'error'); return; }
-  showToast('Conselho apagado!', 'success');
-  loadMunicipalities();
 }
 
 // ============================================
