@@ -16,6 +16,13 @@ let allFolders = [];
 let adminSubjects = [];
 let adminGrades = [];
 let adminNav = { level: 'subjects' };
+let allTestimonials = [];
+let testimonialTab = 'aulas';
+
+const TESTIMONIAL_CATEGORIES = {
+  aulas: 'Feedback das Aulas',
+  livro: 'Feedback do Livro'
+};
 
 const FOLDER_ICONS = [
   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
@@ -150,7 +157,7 @@ function closeSidebar() {
 // ============================================
 async function loadAll() {
   await loadSubjects();
-  await Promise.all([loadVideos(), loadFolders(), loadTestimonials(), loadNews(), loadProducts(), loadLogins(), loadFaq(), loadDistricts(), loadMunicipalities()]);
+  await Promise.all([loadVideos(), loadFolders(), loadTestimonials(), loadNews(), loadProducts(), loadLogins(), loadFaq(), loadMunicipalities()]);
 }
 
 async function loadSubjects() {
@@ -198,8 +205,17 @@ async function loadFolders() {
 async function loadTestimonials() {
   const { data, error } = await db.from('testimonials').select('*').order('order', { ascending: true });
   if (error) { showToast('Erro ao carregar testemunhos', 'error'); return; }
-  renderTestimonials(data || []);
+  allTestimonials = data || [];
+  renderTestimonials();
   updateStats();
+}
+
+function switchTestimonialTab(tab) {
+  testimonialTab = tab;
+  document.querySelectorAll('#testimonialTabs .admin-subtab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.cat === tab);
+  });
+  renderTestimonials();
 }
 
 async function loadProducts() {
@@ -229,7 +245,7 @@ async function loadNews() {
 function updateStats() {
   const videos = window._adminVideos || [];
   document.getElementById('statVideos').textContent = videos.length;
-  document.getElementById('statTestimonials').textContent = document.getElementById('testimonialsEmpty').style.display === 'none' ? document.querySelectorAll('#testimonialsList .admin-list-item').length : 0;
+  document.getElementById('statTestimonials').textContent = allTestimonials.filter(t => t.active !== false).length;
   document.getElementById('statNews').textContent = document.getElementById('newsEmpty').style.display === 'none' ? document.querySelectorAll('#newsList .admin-list-item').length : 0;
   document.getElementById('statProducts').textContent = document.getElementById('productsEmpty').style.display === 'none' ? document.querySelectorAll('#productsList .admin-list-item').length : 0;
   document.getElementById('statLogins').textContent = document.getElementById('loginsEmpty').style.display === 'none' ? document.querySelectorAll('#loginsList .admin-list-item').length : 0;
@@ -420,9 +436,10 @@ function renderVideos(items) {
   updateStats();
 }
 
-function renderTestimonials(items) {
+function renderTestimonials() {
   const list = document.getElementById('testimonialsList');
   const empty = document.getElementById('testimonialsEmpty');
+  const items = allTestimonials.filter(t => (t.category || 'aulas') === testimonialTab);
   if (!items.length) { list.innerHTML = ''; list.style.display = 'none'; empty.style.display = 'flex'; updateStats(); return; }
   empty.style.display = 'none';
   list.style.display = 'block';
@@ -1093,67 +1110,7 @@ async function deleteNews(id) {
 }
 
 // ============================================
-// DISTRITOS CRUD (Mapa de Presença)
-// ============================================
-let adminDistricts = [];
-
-async function loadDistricts() {
-  const { data, error } = await db.from('student_districts').select('*').order('created_at', { ascending: true });
-  if (error) { showToast('Erro ao carregar distritos', 'error'); return; }
-  adminDistricts = data || [];
-  renderDistricts();
-}
-
-function renderDistricts() {
-  const list = document.getElementById('districtsList');
-  const empty = document.getElementById('districtsEmpty');
-  const summary = document.getElementById('districtsSummary');
-  const pinnedNames = adminDistricts.map(d => d.district);
-  const total = PORTUGAL_DISTRICTS.length;
-  const count = adminDistricts.length;
-
-  if (summary) summary.textContent = count + ' de ' + total + ' distritos e ilhas com alunos';
-
-  if (!total) { list.style.display = 'none'; empty.style.display = 'flex'; return; }
-  empty.style.display = 'none';
-  list.style.display = 'grid';
-
-  list.innerHTML = PORTUGAL_DISTRICTS.map(d => {
-    const pinned = pinnedNames.indexOf(d.name) !== -1;
-    const typeLabel = d.label || (d.type !== 'main' ? 'Ilha' : 'Distrito');
-    return `
-      <div class="admin-district-card ${pinned ? 'pinned' : ''}">
-        <div class="admin-district-card-top">
-          <span class="admin-district-type">${typeLabel}</span>
-          <span class="admin-district-pin ${pinned ? 'active' : ''}" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-          </span>
-        </div>
-        <h4 class="admin-district-name">${esc(d.name)}</h4>
-        <button class="btn admin-district-btn ${pinned ? 'admin-btn-remove' : 'btn-primary'}" onclick="toggleDistrict('${esc(d.name)}')">
-          ${pinned ? 'Remover pin' : 'Adicionar pin'}
-        </button>
-      </div>`;
-  }).join('');
-}
-
-async function toggleDistrict(name) {
-  const existing = adminDistricts.find(d => d.district === name);
-  if (existing) {
-    if (!confirm('Remover o pin de ' + name + '?')) return;
-    const { error } = await db.from('student_districts').delete().eq('id', existing.id);
-    if (error) { showToast('Erro ao remover: ' + error.message, 'error'); return; }
-    showToast('Pin removido de ' + name + '.', 'success');
-  } else {
-    const { error } = await db.from('student_districts').insert({ district: name });
-    if (error) { showToast('Erro ao adicionar: ' + error.message, 'error'); return; }
-    showToast('Pin adicionado em ' + name + '!', 'success');
-  }
-  loadDistricts();
-}
-
-// ============================================
-// CONSELHOS CRUD (Mapa de Presença)
+// CONSELHOS CRUD (Presença)
 // ============================================
 let adminMunicipalities = [];
 
@@ -1357,14 +1314,83 @@ function updateFolderOptions() {
     + matchingFolders.map(f => `<option value="${f.id}" ${currentFolder === f.id ? 'selected' : ''}>${esc(f.name)}</option>`).join('');
 }
 
+const STAR_ICON = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--admin-warning)" stroke-width="1.5" stroke-linejoin="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>';
+
+function initStarInput(initial) {
+  const widget = document.getElementById('starInput');
+  const label = document.getElementById('starValueLabel');
+  const hidden = document.getElementById('field_rating');
+  if (!widget || !hidden) return;
+  let committed = Math.min(5, Math.max(1, parseFloat(initial) || 5));
+
+  const starSVG = (full) => full
+    ? '<svg width="26" height="26" viewBox="0 0 24 24" fill="var(--admin-warning)" stroke="var(--admin-warning)" stroke-width="1.5" stroke-linejoin="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>'
+    : STAR_ICON;
+
+  const halfSVG = (i) => `<svg width="26" height="26" viewBox="0 0 24 24" stroke="var(--admin-warning)" stroke-width="1.5" stroke-linejoin="round"><defs><linearGradient id="starHalf${i}" x1="0" y1="0" x2="1" y2="0"><stop offset="50%" stop-color="var(--admin-warning)"/><stop offset="50%" stop-color="transparent"/></linearGradient></defs><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#starHalf${i})"/></svg>`;
+
+  function render(v) {
+    widget.querySelectorAll('.star-btn').forEach((btn, i) => {
+      if (i < Math.floor(v)) btn.innerHTML = starSVG(true);
+      else if (i === Math.floor(v) && v % 1 >= 0.5) btn.innerHTML = halfSVG(i);
+      else btn.innerHTML = starSVG(false);
+    });
+    if (label) label.textContent = v + ' / 5';
+  }
+
+  function valueFromEvent(e, btn) {
+    const i = parseInt(btn.dataset.i, 10);
+    const rect = btn.getBoundingClientRect();
+    const x = typeof e.offsetX === 'number' ? e.offsetX : (e.clientX - rect.left);
+    if (x <= rect.width / 2 && i > 0) return i + 0.5;
+    return i + 1;
+  }
+
+  widget.addEventListener('mousemove', (e) => {
+    const btn = e.target.closest('.star-btn');
+    if (btn) render(valueFromEvent(e, btn));
+  });
+  widget.addEventListener('mouseleave', () => render(committed));
+  widget.addEventListener('click', (e) => {
+    const btn = e.target.closest('.star-btn');
+    if (!btn) return;
+    const i = parseInt(btn.dataset.i, 10);
+    const rect = btn.getBoundingClientRect();
+    if (typeof e.offsetX === 'number' && rect.width > 0) {
+      committed = valueFromEvent(e, btn);
+    } else {
+      committed = (committed === i + 1 && i > 0) ? i + 0.5 : i + 1;
+    }
+    hidden.value = committed;
+    render(committed);
+  });
+
+  hidden.value = committed;
+  render(committed);
+}
+
 function getTestimonialFormHtml(data) {
   const t = data || {};
+  const currentCat = t.category || testimonialTab || 'aulas';
+  const categoryOptions = Object.keys(TESTIMONIAL_CATEGORIES).map(c =>
+    `<option value="${c}" ${currentCat === c ? 'selected' : ''}>${TESTIMONIAL_CATEGORIES[c]}</option>`
+  ).join('');
   return `
+    <div class="admin-field"><label>Pertence a *</label><select id="field_category">
+      ${categoryOptions}
+    </select></div>
     <div class="admin-field"><label>Nome do autor *</label><input type="text" id="field_author_name" value="${esc(t.author_name || '')}" required></div>
     <div class="admin-field"><label>Cargo/Funcao</label><input type="text" id="field_author_role" value="${esc(t.author_role || '')}" placeholder="Ex: Aluno do 10. ano"></div>
-    <div class="admin-field"><label>Testemunho *</label><textarea id="field_content" required placeholder="Escreve o testemunho...">${esc(t.content || '')}</textarea></div>
+    <div class="admin-field"><label>Feedback *</label><textarea id="field_content" required placeholder="Escreve o feedback...">${esc(t.content || '')}</textarea></div>
     <div class="admin-field-row">
-      <div class="admin-field"><label>Avaliação (1-5)</label><input type="number" id="field_rating" value="${t.rating || 5}" min="1" max="5"></div>
+      <div class="admin-field" style="flex:1.6">
+        <label>Avaliação (com meias estrelas)</label>
+        <div class="star-input" id="starInput">
+          ${Array.from({length:5}, (_, i) => `<span class="star-btn" data-i="${i}" data-full="${i+1}">${STAR_ICON}</span>`).join('')}
+        </div>
+        <div class="star-value" id="starValueLabel"></div>
+        <input type="hidden" id="field_rating" value="${t.rating || 5}">
+      </div>
       <div class="admin-field"><label>Ordem</label><input type="number" id="field_order" value="${t.order || 0}"></div>
     </div>
     <div class="admin-check-row"><input type="checkbox" id="field_active" ${t.active !== false ? 'checked' : ''}><label for="field_active">Ativo</label></div>`;
@@ -1497,7 +1523,7 @@ async function openModal(type, id) {
     data = row;
   }
 
-  const titles = { video: 'Vídeo YouTube', testimonial: 'Testemunho', product: 'Produto da Loja', platform_login: 'Login de Plataforma' };
+  const titles = { video: 'Vídeo YouTube', testimonial: 'Feedback', product: 'Produto da Loja', platform_login: 'Login de Plataforma' };
   document.getElementById('modalTitle').textContent = id ? 'Editar ' + titles[type] : 'Adicionar ' + titles[type];
 
   const formEl = document.getElementById('modalForm');
@@ -1510,6 +1536,7 @@ async function openModal(type, id) {
   else if (type === 'platform_login') formEl.innerHTML = getPlatformLoginFormHtml(data);
 
   formEl.innerHTML += `<div class="admin-modal-footer"><button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button><button type="submit" class="btn btn-primary" id="modalSubmitBtn">Guardar</button></div>`;
+  if (type === 'testimonial') initStarInput((data && data.rating) || 5);
   if (type === 'video') renderPdfPreview();
   formEl.onsubmit = (e) => { e.preventDefault(); saveItem(); };
   document.getElementById('modal').style.display = 'flex';
@@ -1563,10 +1590,11 @@ async function saveItem() {
       return;
     }
   } else if (editingType === 'testimonial') {
+    obj.category = document.getElementById('field_category').value;
     obj.author_name = document.getElementById('field_author_name').value;
     obj.author_role = document.getElementById('field_author_role').value;
     obj.content = document.getElementById('field_content').value;
-    obj.rating = parseInt(document.getElementById('field_rating').value) || 5;
+    obj.rating = parseFloat(document.getElementById('field_rating').value) || 5;
     obj.order = parseInt(document.getElementById('field_order').value) || 0;
     obj.active = document.getElementById('field_active').checked;
   } else if (editingType === 'product') {

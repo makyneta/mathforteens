@@ -205,7 +205,18 @@ function initSvcModal() {
   }
 
   cards.forEach(card => {
-    card.addEventListener('click', () => openModal(card))
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.svc-card-enroll')) return
+      openModal(card)
+    })
+    if (card.tagName !== 'BUTTON') {
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          openModal(card)
+        }
+      })
+    }
   })
   closeBtn.addEventListener('click', closeModal)
   backdrop.addEventListener('click', closeModal)

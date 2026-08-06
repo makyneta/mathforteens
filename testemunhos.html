@@ -69,6 +69,10 @@
 
   <section class="section">
     <div class="section-inner">
+      <div class="shop-filters" id="testimonialFilters">
+        <button class="shop-filter-btn active" data-cat="aulas">Feedback das Aulas</button>
+        <button class="shop-filter-btn" data-cat="livro">Feedback do Livro</button>
+      </div>
       <div id="testimonialsGrid" class="testimonials-grid-full"></div>
       <div id="testimonialsEmpty" class="vid-empty" style="display:none">
         <div class="vid-empty-icon">
@@ -126,10 +130,15 @@
 <script>
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-function renderStars(count) {
-  return Array.from({length: 5}, (_, i) =>
-    `<svg width="16" height="16" viewBox="0 0 24 24" fill="${i < count ? 'var(--c-primary)' : 'none'}" stroke="var(--c-primary)" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`
-  ).join('');
+function renderStars(rating) {
+  rating = Math.max(0, Math.min(5, parseFloat(rating) || 0));
+  const star = '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>';
+  return Array.from({length: 5}, (_, i) => {
+    if (i === Math.floor(rating) && rating % 1 >= 0.5) {
+      return `<svg width="16" height="16" viewBox="0 0 24 24" stroke="var(--c-primary)" stroke-width="2"><defs><linearGradient id="halfStar${i}" x1="0" y1="0" x2="1" y2="0"><stop offset="50%" stop-color="var(--c-primary)"/><stop offset="50%" stop-color="transparent"/></linearGradient></defs><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#halfStar${i})"/></svg>`;
+    }
+    return `<svg width="16" height="16" viewBox="0 0 24 24" fill="${i < Math.floor(rating) ? 'var(--c-primary)' : 'none'}" stroke="var(--c-primary)" stroke-width="2">${star}</svg>`;
+  }).join('');
 }
 
 async function loadTestimonials() {
@@ -141,25 +150,54 @@ async function loadTestimonials() {
 
   loading.style.display = 'none';
 
-  if (error || !data.length) {
+  if (error) {
     grid.style.display = 'none';
     empty.style.display = 'flex';
     return;
   }
 
-  grid.innerHTML = data.map((t, i) => `
-    <div class="testimonial-card-full anim-fade-in" style="transition-delay:${(i % 6) * 0.08}s">
-      <div class="testimonial-stars">${renderStars(t.rating)}</div>
-      <p class="testimonial-text">"${t.content}"</p>
-      <div class="testimonial-author">
-        <div class="testimonial-avatar">${t.author_name.charAt(0)}</div>
-        <div>
-          <div class="testimonial-name">${t.author_name}</div>
-          ${t.author_role ? `<div class="testimonial-role">${t.author_role}</div>` : ''}
+  const all = data || [];
+  let activeCat = 'aulas';
+
+  const filters = document.getElementById('testimonialFilters');
+  filters.querySelectorAll('.shop-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      filters.querySelectorAll('.shop-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCat = btn.dataset.cat;
+      renderTestimonials(all);
+    });
+  });
+
+  renderTestimonials(all);
+
+  function renderTestimonials(items) {
+    const filtered = items.filter(t => (t.category || 'aulas') === activeCat);
+
+    if (!filtered.length) {
+      grid.style.display = 'none';
+      empty.style.display = 'flex';
+      return;
+    }
+    empty.style.display = 'none';
+    grid.style.display = 'block';
+
+    grid.innerHTML = filtered.map((t, i) => `
+      <div class="testimonial-card-full anim-fade-in" style="transition-delay:${(i % 6) * 0.08}s">
+        <div class="testimonial-stars">${renderStars(t.rating)}</div>
+        <p class="testimonial-text">"${t.content}"</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">${t.author_name.charAt(0)}</div>
+          <div>
+            <div class="testimonial-name">${t.author_name}</div>
+            ${t.author_role ? `<div class="testimonial-role">${t.author_role}</div>` : ''}
+          </div>
         </div>
       </div>
-    </div>
-  `).join('');
+    `).join('');
+
+    grid.querySelectorAll('.anim-fade-in').forEach(el => el.classList.add('visible'));
+  }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

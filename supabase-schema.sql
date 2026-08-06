@@ -22,9 +22,10 @@ CREATE TABLE IF NOT EXISTS testimonials (
   author_name TEXT NOT NULL,
   author_role TEXT,
   content TEXT NOT NULL,
-  rating INTEGER DEFAULT 5 CHECK (rating >= 1 AND rating <= 5),
+  rating NUMERIC(2,1) DEFAULT 5 CHECK (rating IN (1,1.5,2,2.5,3,3.5,4,4.5,5)),
   avatar_url TEXT,
   active BOOLEAN DEFAULT true,
+  category TEXT NOT NULL DEFAULT 'aulas',
   "order" INTEGER DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT now()
 );
@@ -63,6 +64,7 @@ CREATE INDEX IF NOT EXISTS idx_videos_featured ON videos(featured);
 CREATE INDEX IF NOT EXISTS idx_videos_order ON videos("order");
 CREATE INDEX IF NOT EXISTS idx_testimonials_active ON testimonials(active);
 CREATE INDEX IF NOT EXISTS idx_testimonials_order ON testimonials("order");
+CREATE INDEX IF NOT EXISTS idx_testimonials_category ON testimonials(category);
 CREATE INDEX IF NOT EXISTS idx_products_slug ON products(slug);
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
 CREATE INDEX IF NOT EXISTS idx_products_active ON products(active);
@@ -112,7 +114,7 @@ ON CONFLICT DO NOTHING;
 -- Testemunhos de exemplo
 INSERT INTO testimonials (author_name, author_role, content, rating, active, "order") VALUES
 ('Ana Silva', 'Aluna do 10.º ano', 'Graças às explicações do Tomás, passei de 10 a 18 a Matemática!', 5, true, 1),
-('Carlos Santos', 'Pai de aluno', 'O meu filho melhorou imenso desde que começou as aulas. Recomendo!', 5, true, 2),
+('Carlos Santos', 'Pai de aluno', 'O meu filho melhorou imenso desde que começou as aulas. Recomendo!', 4.5, true, 2),
 ('Maria Ferreira', 'Aluna do 12.º ano', 'As aulas são muito claras e o apoio no WhatsApp é incrível.', 5, true, 3)
 ON CONFLICT DO NOTHING;
 

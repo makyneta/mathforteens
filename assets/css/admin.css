@@ -614,6 +614,39 @@
   letter-spacing: -0.01em;
 }
 
+.admin-subtabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--admin-surface-hover);
+  border: 1px solid var(--admin-border-light);
+  border-radius: var(--admin-radius);
+  margin-bottom: 20px;
+}
+
+.admin-subtab {
+  padding: 8px 18px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--admin-text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all var(--admin-transition);
+  white-space: nowrap;
+}
+
+.admin-subtab:hover {
+  color: var(--admin-primary);
+}
+
+.admin-subtab.active {
+  background: var(--admin-surface);
+  color: var(--admin-primary);
+  box-shadow: var(--admin-shadow-sm);
+}
+
 .admin-btn-add {
   display: inline-flex;
   align-items: center;
@@ -982,6 +1015,45 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+}
+
+/* ── Star rating input (meias estrelas) ── */
+.star-input {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  background: var(--admin-surface);
+  transition: border-color var(--admin-transition);
+}
+
+.star-input:focus-within {
+  border-color: var(--admin-primary);
+  box-shadow: 0 0 0 3px var(--admin-primary-light);
+}
+
+.star-input .star-btn {
+  display: inline-flex;
+  cursor: pointer;
+  line-height: 0;
+  transition: transform var(--admin-transition);
+}
+
+.star-input .star-btn:hover {
+  transform: scale(1.12);
+}
+
+.star-input .star-btn svg {
+  display: block;
+}
+
+.star-value {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--admin-text-secondary);
 }
 
 /* ═══════════════════════════════════════════

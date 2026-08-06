@@ -29,14 +29,7 @@ const headerHTML = `
   </div>
 </header>
 <div id="menuOverlay" class="menu-overlay" aria-hidden="true">
-  <div class="menu-overlay-bg">
-    <div class="menu-overlay-glow menu-overlay-glow-1"></div>
-    <div class="menu-overlay-glow menu-overlay-glow-2"></div>
-    <div class="menu-overlay-grid"></div>
-    <div class="menu-overlay-symbols">
-      <span>∑</span><span>∫</span><span>π</span><span>√</span><span>∞</span><span>ƒ</span>
-    </div>
-  </div>
+  <div class="menu-overlay-bg"></div>
   <div class="menu-overlay-inner">
     <div class="menu-overlay-header">
       <a href="index" class="logo logo--light">
@@ -48,11 +41,9 @@ const headerHTML = `
       </button>
     </div>
     <nav id="menuNav" class="menu-nav">
-      ${navItems.map((item, i) => `
+      ${navItems.map(item => `
       <a href="${item.href}" class="menu-link">
-        <span class="menu-link-index">${String(i + 1).padStart(2, '0')}</span>
         <span class="menu-link-label">${item.label}</span>
-        <span class="menu-link-arrow">→</span>
       </a>`).join('')}
     </nav>
     <div class="menu-overlay-footer">

@@ -23,7 +23,6 @@
 <script defer src="assets/js/chatbot.js"></script>
 <script defer src="assets/js/components.js"></script>
 <script defer src="assets/js/main.js"></script>
-<script defer src="assets/js/news.js"></script>
 </head>
 <body>
 
@@ -45,7 +44,7 @@
       </div>
       <div class="about-photo">
         <img src="assets/images/persons/tomas-correia/IMG_8685-1-2-1024x768.webp" alt="Tomás Correia" width="360" height="450" onerror="this.src='assets/images/placeholder.svg'">
-        <div class="about-photo-badge">🏆 100% de Excelência</div>
+        <div class="about-photo-badge">🏆 100% Excelência Garantida</div>
       </div>
     </div>
   </section>
@@ -78,8 +77,8 @@
           <div class="timeline-desc">Maio de 2024: lançamento do projeto. Quase 18 mil seguidores em semanas. Conta banida e recomeço do zero.</div>
         </div>
         <div class="timeline-item">
-          <div class="timeline-year">11 anos</div>
-          <div class="timeline-title">Primeiras mentorias gratuitas</div>
+          <div class="timeline-year">2021</div>
+          <div class="timeline-title">Primeiras mentorias gratuitas, aos 11 anos</div>
           <div class="timeline-desc">Começou a dar explicações de alunos para alunos, totalmente gratuitas.</div>
         </div>
       </div>
@@ -94,28 +93,6 @@
         <p class="section-subtitle" style="margin:0 auto">Do norte ao sul, das ilhas ao continente — cada marca representa um distrito onde já passaram alunos do Math For Teens.</p>
       </div>
 
-      <div class="pt-map-layout">
-        <div id="ptMainlandMap" class="pt-map pt-map-main" role="region" aria-label="Mapa desenhado de Portugal continental"></div>
-        <div class="pt-map-islands">
-          <div class="pt-map-island">
-            <span class="pt-map-island-label">Açores</span>
-            <div id="ptAzoresMap" class="pt-map pt-map-mini" role="region" aria-label="Mapa desenhado dos Açores"></div>
-          </div>
-          <div class="pt-map-island">
-            <span class="pt-map-island-label">Madeira</span>
-            <div id="ptMadeiraMap" class="pt-map pt-map-mini" role="region" aria-label="Mapa desenhado da Madeira"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="pt-map-footer">
-        <span class="pt-map-legend">
-          <span class="pt-map-legend-pin"></span>
-          <span id="ptMapCount">A carregar...</span>
-        </span>
-        <span class="pt-map-hint">Passa o rato sobre um distrito para veres o nome.</span>
-      </div>
-
       <div id="municipalitiesSection" class="pt-municipalities-section" style="display:none">
         <div class="pt-municipalities-header">
           <div>
@@ -128,51 +105,6 @@
       </div>
     </div>
   </section>
-
-  <section class="section" style="background:var(--c-white)" id="news-section">
-    <div class="section-inner">
-      <div class="text-center" style="margin-bottom:48px">
-        <div class="section-label" style="justify-content:center">Por onde anda o Tomás?</div>
-        <h2 class="section-title">Últimas novidades</h2>
-      </div>
-      <div id="newsGrid" class="news-grid"></div>
-      <div class="text-center" style="margin-top:36px">
-        <button id="viewAllNewsBtn" class="btn btn-secondary" style="display:none">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h12"/></svg>
-          Ver todas as notícias
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Modal: Todas as Notícias -->
-  <div id="allNewsModal" class="news-modal-overlay" style="display:none">
-    <div class="news-modal-backdrop" onclick="closeAllNewsModal()"></div>
-    <div class="news-modal-container">
-      <div class="news-modal-header">
-        <h3>Todas as Notícias</h3>
-        <button class="news-modal-close" onclick="closeAllNewsModal()">&times;</button>
-      </div>
-      <div class="news-modal-body">
-        <div id="allNewsGrid" class="news-grid"></div>
-        <div id="allNewsEmpty" class="news-empty" style="display:none">
-          <p>Ainda não há notícias publicadas.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal: Detalhe da Notícia -->
-  <div id="newsDetailModal" class="news-modal-overlay" style="display:none">
-    <div class="news-modal-backdrop" onclick="closeNewsDetail()"></div>
-    <div class="news-modal-container news-detail-container">
-      <div class="news-modal-header">
-        <h3 id="newsDetailTitle">Notícia</h3>
-        <button class="news-modal-close" onclick="closeNewsDetail()">&times;</button>
-      </div>
-      <div class="news-modal-body" id="newsDetailBody"></div>
-    </div>
-  </div>
 
   <section class="section" style="background:var(--c-white)">
     <div class="section-inner text-center">
