@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="assets/css/styles.css">
 <script defer src="assets/js/components.js"></script>
 <script defer src="assets/js/main.js"></script>
+<script defer src="assets/js/inscricoes.js"></script>
 </head>
 <body>
 
@@ -37,157 +38,214 @@
   <section class="section" style="padding-top:0;margin-top:-24px">
     <div class="insc-form-wrap">
 
-      <div class="insc-progress">
-        <span class="insc-progress-step active"></span>
-        <span class="insc-progress-step active"></span>
-        <span class="insc-progress-step"></span>
-        <span class="insc-progress-step"></span>
-        <span class="insc-progress-step"></span>
+      <div class="insc-progress" id="inscProgress" role="presentation">
+        <span class="insc-progress-step" data-step="1"></span>
+        <span class="insc-progress-step" data-step="2"></span>
+        <span class="insc-progress-step" data-step="3"></span>
+        <span class="insc-progress-step" data-step="4"></span>
       </div>
 
-      <form id="formInscricao" action="https://formspree.io/f/mykrlvor" method="post">
+      <form id="formInscricao" action="https://formspree.io/f/mykrlvor" method="post" novalidate>
 
-        <div class="insc-card">
+        <div class="insc-card" data-card="1">
           <div class="insc-card-header">
             <span class="insc-card-step">1</span>
             <span class="insc-card-title">📋 Dados do Aluno</span>
           </div>
 
-          <div class="insc-form-group">
-            <label>Email <span class="required-star">*</span></label>
+          <div class="insc-form-group" data-group>
+            <label for="email">Email <span class="required-star">*</span></label>
             <div class="input-wrap">
               <span class="input-icon">✉️</span>
-              <input type="email" name="email" required placeholder="aluno@email.com">
+              <input type="email" id="email" name="email" required data-validate="email" inputmode="email" autocomplete="email" placeholder="aluno@email.com" maxlength="80">
             </div>
+            <p class="field-error" id="erro-email" aria-live="polite"></p>
           </div>
 
-          <div class="insc-form-group">
-            <label>Nome do aluno <span class="required-star">*</span></label>
+          <div class="insc-form-group" data-group>
+            <label for="nome_aluno">Nome do aluno <span class="required-star">*</span></label>
             <div class="input-wrap">
               <span class="input-icon">👤</span>
-              <input type="text" name="nome_aluno" required placeholder="Nome completo do aluno">
+              <input type="text" id="nome_aluno" name="nome_aluno" required data-validate="text" autocomplete="given-name" placeholder="Nome completo do aluno" minlength="3" maxlength="80">
             </div>
+            <p class="field-error" id="erro-nome_aluno" aria-live="polite"></p>
           </div>
 
-          <div class="insc-form-group">
-            <label>Contacto telefónico do aluno <span class="required-star">*</span></label>
+          <div class="insc-form-group" data-group>
+            <label for="tel_aluno">Contacto telefónico do aluno <span class="required-star">*</span></label>
             <div class="input-wrap">
               <span class="input-icon">📞</span>
-              <input type="tel" name="tel_aluno" required placeholder="91 345 67 89">
+              <input type="tel" id="tel_aluno" name="tel_aluno" required data-validate="tel" data-tel inputmode="tel" autocomplete="tel-national" placeholder="912 345 678" maxlength="11">
             </div>
+            <p class="field-error" id="erro-tel_aluno" aria-live="polite"></p>
           </div>
 
-          <div class="insc-form-group">
+          <div class="insc-form-group" data-group data-radio="frequentou">
             <label>Já frequentaste o projeto noutro ano? <span class="required-star">*</span></label>
             <div class="insc-pills">
-              <label class="insc-pill"><input type="radio" name="frequentou" value="Sim" required><span class="pill-dot"></span> Sim</label>
-              <label class="insc-pill"><input type="radio" name="frequentou" value="Nao"><span class="pill-dot"></span> Não</label>
+              <label class="insc-pill"><input type="radio" name="frequentou" value="Sim" required>Sim</label>
+              <label class="insc-pill"><input type="radio" name="frequentou" value="Nao">Não</label>
             </div>
+            <div class="insc-conditional" id="anoFrequentado" hidden>
+              <label for="ano_frequentado">Em que ano letivo frequentaste?</label>
+              <select id="ano_frequentado" name="ano_frequentado">
+                <option value="">Seleciona o ano</option>
+                <option value="2024/2025">2024/2025</option>
+                <option value="2025/2026">2025/2026</option>
+              </select>
+            </div>
+            <p class="field-error" id="erro-frequentou" aria-live="polite"></p>
           </div>
 
-          <div class="insc-form-group">
+          <div class="insc-form-group" data-group data-radio="ano">
             <label>Ano de escolaridade em 2026/2027 <span class="required-star">*</span></label>
             <div class="insc-pills">
-              <label class="insc-pill"><input type="radio" name="ano" value="7" required><span class="pill-dot"></span> 7.º ano</label>
-              <label class="insc-pill"><input type="radio" name="ano" value="8"><span class="pill-dot"></span> 8.º ano</label>
-              <label class="insc-pill"><input type="radio" name="ano" value="9"><span class="pill-dot"></span> 9.º ano</label>
-              <label class="insc-pill"><input type="radio" name="ano" value="10"><span class="pill-dot"></span> 10.º ano</label>
-              <label class="insc-pill"><input type="radio" name="ano" value="11"><span class="pill-dot"></span> 11.º ano</label>
-              <label class="insc-pill"><input type="radio" name="ano" value="12"><span class="pill-dot"></span> 12.º ano</label>
-              <label class="insc-pill"><input type="radio" name="ano" value="superior"><span class="pill-dot"></span> Ensino Superior</label>
+              <label class="insc-pill"><input type="radio" name="ano" value="7" required>7.º ano</label>
+              <label class="insc-pill"><input type="radio" name="ano" value="8">8.º ano</label>
+              <label class="insc-pill"><input type="radio" name="ano" value="9">9.º ano</label>
+              <label class="insc-pill"><input type="radio" name="ano" value="10">10.º ano</label>
+              <label class="insc-pill"><input type="radio" name="ano" value="11">11.º ano</label>
+              <label class="insc-pill"><input type="radio" name="ano" value="12">12.º ano</label>
+              <label class="insc-pill"><input type="radio" name="ano" value="superior">Ensino Superior</label>
             </div>
+            <p class="field-error" id="erro-ano" aria-live="polite"></p>
           </div>
 
-          <div class="insc-form-group">
+          <div class="insc-form-group" data-group data-checkbox="disciplinas">
             <label>Disciplina(s) pretendida(s) <span class="required-star">*</span></label>
-            <div class="insc-pills">
-              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="mat_basico"><span class="pill-dot"></span> Matemática (Ensino Básico)</label>
-              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="mat_a"><span class="pill-dot"></span> Matemática A</label>
-              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="mat_b"><span class="pill-dot"></span> Matemática B</label>
-              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="mat_prof"><span class="pill-dot"></span> Matemática (Ensino Profissional)</label>
-              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="fqa"><span class="pill-dot"></span> Física e Química A</label>
-              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="econ_a"><span class="pill-dot"></span> Economia A</label>
-              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="fisica12"><span class="pill-dot"></span> Física (12.º ano)</label>
-              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="quimica12"><span class="pill-dot"></span> Química (12.º ano)</label>
-              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="filosofia"><span class="pill-dot"></span> Filosofia</label>
-              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="portugues"><span class="pill-dot"></span> Português</label>
-              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="algebra"><span class="pill-dot"></span> Tópicos de Álgebra e Funções</label>
-              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="outra_superior"><span class="pill-dot"></span> Outra cadeira do Ensino Superior</label>
-              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="bio_geo"><span class="pill-dot"></span> Biologia e Geologia</label>
-              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="biologia"><span class="pill-dot"></span> Biologia</label>
-              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="geologia"><span class="pill-dot"></span> Geologia</label>
+            <div class="insc-pills insc-pills--many">
+              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="mat_basico">Matemática (Ensino Básico)</label>
+              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="mat_a">Matemática A</label>
+              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="mat_b">Matemática B</label>
+              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="mat_prof">Matemática (Ensino Profissional)</label>
+              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="fqa">Física e Química A</label>
+              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="econ_a">Economia A</label>
+              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="fisica12">Física (12.º ano)</label>
+              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="quimica12">Química (12.º ano)</label>
+              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="filosofia">Filosofia</label>
+              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="portugues">Português</label>
+              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="algebra">Tópicos de Álgebra e Funções</label>
+              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="bio_geo">Biologia e Geologia</label>
+              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="biologia">Biologia</label>
+              <label class="insc-pill"><input type="checkbox" name="disciplinas" value="geologia">Geologia</label>
+              <label class="insc-pill" data-conditional-check><input type="checkbox" name="disciplinas" value="outra_superior">Outra cadeira do Ensino Superior</label>
             </div>
+            <div class="insc-conditional" id="outraDisciplina" hidden>
+              <label for="outra_disciplina">Indica a cadeira pretendida <span class="required-star">*</span></label>
+              <div class="input-wrap">
+                <span class="input-icon">🎓</span>
+                <input type="text" id="outra_disciplina" name="outra_disciplina" data-validate="text" placeholder="Ex: Cálculo I, Álgebra Linear, ..." maxlength="80">
+              </div>
+            </div>
+            <p class="field-error" id="erro-disciplinas" aria-live="polite"></p>
           </div>
 
-          <div class="insc-form-group">
+          <div class="insc-form-group" data-group data-radio="horas">
             <label>Quantas horas por semana pretendem? <span class="required-star">*</span></label>
             <div class="insc-pills">
-              <label class="insc-pill"><input type="radio" name="horas" value="1" required><span class="pill-dot"></span> 1 hora</label>
-              <label class="insc-pill"><input type="radio" name="horas" value="1.5"><span class="pill-dot"></span> 1,5 hora</label>
-              <label class="insc-pill"><input type="radio" name="horas" value="2"><span class="pill-dot"></span> 2 horas</label>
-              <label class="insc-pill"><input type="radio" name="horas" value="3"><span class="pill-dot"></span> 3 horas</label>
-              <label class="insc-pill"><input type="radio" name="horas" value="mais"><span class="pill-dot"></span> Mais de 3 horas</label>
+              <label class="insc-pill"><input type="radio" name="horas" value="1" required>1 hora</label>
+              <label class="insc-pill"><input type="radio" name="horas" value="1.5">1,5 hora</label>
+              <label class="insc-pill"><input type="radio" name="horas" value="2">2 horas</label>
+              <label class="insc-pill"><input type="radio" name="horas" value="3">3 horas</label>
+              <label class="insc-pill"><input type="radio" name="horas" value="mais">Mais de 3 horas</label>
             </div>
+            <p class="field-error" id="erro-horas" aria-live="polite"></p>
           </div>
         </div>
 
-        <div class="insc-card" style="--accent-color:var(--c-accent)">
+        <div class="insc-card" data-card="2">
           <div class="insc-card-header">
-            <span class="insc-card-step">🎯</span>
-            <span class="insc-card-title">Modalidade</span>
+            <span class="insc-card-step">2</span>
+            <span class="insc-card-title">🎯 Modalidade</span>
           </div>
 
-          <div class="insc-form-group">
+          <div class="insc-form-group" data-group data-radio="modalidade">
             <label>Qual a modalidade de acompanhamento pretendida? <span class="required-star">*</span></label>
             <div class="insc-pills">
-              <label class="insc-pill"><input type="radio" name="modalidade" value="individual" required><span class="pill-dot"></span> Individual</label>
-              <label class="insc-pill"><input type="radio" name="modalidade" value="par"><span class="pill-dot"></span> Par</label>
-              <label class="insc-pill"><input type="radio" name="modalidade" value="grupo"><span class="pill-dot"></span> Grupo de 3 ou mais</label>
+              <label class="insc-pill"><input type="radio" name="modalidade" value="individual" required>Individual</label>
+              <label class="insc-pill"><input type="radio" name="modalidade" value="par">Par</label>
+              <label class="insc-pill"><input type="radio" name="modalidade" value="grupo">Grupo de 3 ou mais</label>
             </div>
+            <p class="field-error" id="erro-modalidade" aria-live="polite"></p>
           </div>
         </div>
 
-        <div class="insc-card">
+        <div class="insc-card" data-card="3">
           <div class="insc-card-header">
-            <span class="insc-card-step">5</span>
+            <span class="insc-card-step">3</span>
             <span class="insc-card-title">👪 Encarregado de Educação</span>
           </div>
 
-          <div class="insc-form-group">
-            <label>Nome do Encarregado de Educação (EE) <span class="required-star">*</span></label>
+          <div class="insc-form-group" data-group>
+            <label for="nome_ee">Nome do Encarregado de Educação (EE) <span class="required-star">*</span></label>
             <div class="input-wrap">
               <span class="input-icon">👤</span>
-              <input type="text" name="nome_ee" required placeholder="Nome completo do EE">
+              <input type="text" id="nome_ee" name="nome_ee" required data-validate="text" autocomplete="name" placeholder="Nome completo do EE" minlength="3" maxlength="80">
             </div>
+            <p class="field-error" id="erro-nome_ee" aria-live="polite"></p>
           </div>
 
-          <div class="insc-form-group">
-            <label>Contacto telefónico do EE <span class="required-star">*</span></label>
+          <div class="insc-form-group" data-group>
+            <label for="tel_ee">Contacto telefónico do EE <span class="required-star">*</span></label>
             <div class="input-wrap">
               <span class="input-icon">📞</span>
-              <input type="tel" name="tel_ee" required placeholder="91 345 67 89">
+              <input type="tel" id="tel_ee" name="tel_ee" required data-validate="tel" data-tel inputmode="tel" autocomplete="tel-national" placeholder="912 345 678" maxlength="11">
             </div>
+            <p class="field-error" id="erro-tel_ee" aria-live="polite"></p>
           </div>
         </div>
 
-        <div class="insc-card">
+        <div class="insc-card" data-card="4">
           <div class="insc-card-header">
-            <span class="insc-card-step">📝</span>
-            <span class="insc-card-title">Notas</span>
+            <span class="insc-card-step">4</span>
+            <span class="insc-card-title">📝 Notas</span>
           </div>
 
-          <div class="insc-form-group">
-            <label>Deixe aqui alguma nota/apontamento importante, se quiser:</label>
-            <textarea name="notas" placeholder="Ex: preferências de horário, necessidades específicas, ..."></textarea>
+          <div class="insc-form-group" data-group>
+            <label for="notas">Deixe aqui alguma nota/apontamento importante, se quiser:</label>
+            <textarea id="notas" name="notas" data-validate="optional-text" placeholder="Ex: preferências de horário, necessidades específicas, ..." maxlength="500"></textarea>
+            <p class="insc-char-count" id="notasCount" aria-live="polite"></p>
+            <p class="field-error" id="erro-notas" aria-live="polite"></p>
           </div>
         </div>
 
         <div class="insc-submit-wrap">
-          <p style="font-size:0.82rem;color:var(--c-text-tertiary);margin-bottom:var(--space-md)">Muito obrigado pela preferência! 🚀</p>
-          <button type="submit" class="btn btn-primary">📨 Enviar Inscrição</button>
+
+          <div class="insc-consent" data-group>
+            <div class="insc-consent-inner">
+              <input type="checkbox" id="consentimento" name="consentimento" required>
+              <label for="consentimento">Autorizo o tratamento dos dados pessoais fornecidos para a gestão da minha inscrição e contacto, de acordo com a <a href="politica-privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>. <span class="required-star">*</span></label>
+            </div>
+            <p class="field-error" id="erro-consentimento" aria-live="polite"></p>
+          </div>
+
+          <p class="insc-submit-note">Muito obrigado pela preferência! 🚀</p>
+
+          <button type="submit" id="btnInsc" class="btn btn-primary">
+            <span class="btn-spinner" aria-hidden="true"></span>
+            <span class="btn-label">📨 Enviar Inscrição</span>
+          </button>
+
+        </div>
+
+        <div class="hp-field" aria-hidden="true">
+          <label for="website">Não preencher este campo</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
         </div>
 
       </form>
+
+      <div id="inscSuccess" class="insc-status insc-status-success" role="status" hidden>
+        <span class="insc-status-icon">🎉</span>
+        <h3>Inscrição enviada!</h3>
+        <p>Recebemos a tua inscrição para o ano letivo 2026/2027. O teu Encarregado de Educação será contactado pela nossa equipa em breve.</p>
+      </div>
+
+      <div id="inscError" class="insc-status insc-status-error" role="alert" hidden>
+        <span class="insc-status-icon">😕</span>
+        <h3>Algo correu mal…</h3>
+        <p>Não conseguimos enviar a tua inscrição. Tenta novamente dentro de momentos ou fala connosco por <a href="https://wa.me/351910256373" target="_blank" rel="noopener">WhatsApp</a>.</p>
+      </div>
 
     </div>
   </section>
