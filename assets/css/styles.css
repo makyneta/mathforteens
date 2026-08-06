@@ -2662,6 +2662,154 @@ body.no-scroll {
 
 .field-error.visible { display: block; }
 
+/* ═══════════════════════════════════════════
+   STAR RATING INPUT (formulário público de testemunhos)
+   ═══════════════════════════════════════════ */
+
+.star-input {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  background: var(--c-bg);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.star-input:focus-within {
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(14,140,143,0.1);
+}
+
+.star-input .star-btn {
+  display: inline-flex;
+  cursor: pointer;
+  line-height: 0;
+  transition: transform 0.15s;
+}
+
+.star-input .star-btn:hover {
+  transform: scale(1.12);
+}
+
+.star-input .star-btn svg {
+  display: block;
+}
+
+.star-value {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--c-text-secondary);
+}
+
+.testimonial-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: -3px;
+  margin-right: 8px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: testimonialSpin 0.7s linear infinite;
+}
+
+@keyframes testimonialSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ═══════════════════════════════════════════
+   CTA BAR (testemunhos do livro) + POPUP FORM
+   ═══════════════════════════════════════════ */
+
+.testimonial-cta {
+  display: none;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  margin-top: 20px;
+  padding: 16px 20px;
+  background: var(--c-primary-light);
+  border: 1px dashed var(--c-primary);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.testimonial-cta:hover {
+  background: var(--c-primary-lighter);
+  border-color: var(--c-primary);
+  transform: translateY(-1px);
+}
+
+.testimonial-cta-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--c-white);
+  color: var(--c-primary);
+  box-shadow: var(--shadow-xs);
+}
+
+.testimonial-cta-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.testimonial-cta-text strong {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--c-secondary);
+}
+
+.testimonial-cta-text small {
+  font-size: 0.8rem;
+  color: var(--c-text-secondary);
+}
+
+.testimonial-cta-arrow {
+  flex-shrink: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--c-primary);
+  white-space: nowrap;
+}
+
+.testimonial-popup .popup-card {
+  max-width: 560px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+.testimonial-popup .popup-content {
+  text-align: left;
+  padding: 40px 36px 32px;
+}
+
+.testimonial-popup .form-section-title {
+  margin-bottom: 8px;
+}
+
+.testimonial-popup .form-section-desc {
+  margin-bottom: 24px;
+}
+
+@media (max-width: 480px) {
+  .testimonial-cta-arrow { display: none; }
+  .testimonial-popup .popup-content { padding: 40px 22px 28px; }
+}
+
 .insc-conditional {
   margin-top: var(--space-md);
   padding: var(--space-md);

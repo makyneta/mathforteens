@@ -73,6 +73,16 @@
         <button class="shop-filter-btn active" data-cat="aulas">Feedback das Aulas</button>
         <button class="shop-filter-btn" data-cat="livro">Feedback do Livro</button>
       </div>
+      <button type="button" class="testimonial-cta" id="testimonialCta" onclick="openTForm()">
+        <span class="testimonial-cta-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </span>
+        <span class="testimonial-cta-text">
+          <strong>Já leste o Crónicas d'Adolescente?</strong>
+          <small>Deixa o teu testemunho sobre o livro</small>
+        </span>
+        <span class="testimonial-cta-arrow">Deixar testemunho →</span>
+      </button>
       <div id="testimonialsGrid" class="testimonials-grid-full"></div>
       <div id="testimonialsEmpty" class="vid-empty" style="display:none">
         <div class="vid-empty-icon">
@@ -87,13 +97,53 @@
     </div>
   </section>
 
-  <section class="section" style="background:var(--c-white)">
-    <div class="section-inner text-center">
-      <h2 class="section-title">Tens uma história para partilhar?</h2>
-      <p style="font-size:1rem;color:var(--c-text-secondary);margin-bottom:24px">Se és aluno ou pai de aluno,partilha a tua experiência connosco!</p>
-      <a href="https://wa.me/351910256373?text=Olá!%20Gostava%20de%20deixar%20um%20testemunho%20sobre%20as%20explicações%20do%20Math%20For%20Teens." target="_blank" class="btn btn-primary">Contactar no WhatsApp</a>
+  <!-- Popup: formulário de testemunho do livro -->
+  <div id="tFormModal" class="popup-overlay testimonial-popup" role="dialog" aria-modal="true" aria-labelledby="tFormTitle">
+    <div class="popup-overlay-bg" onclick="closeTForm()"></div>
+    <div class="popup-card">
+      <button class="popup-close" onclick="closeTForm()" aria-label="Fechar">&times;</button>
+      <div class="popup-content">
+        <div class="form-section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          <span id="tFormTitle">Deixa o teu testemunho sobre o livro</span>
+        </div>
+        <p class="form-section-desc" id="tFormDesc">Já leste o <em>Crónicas d'Adolescente</em>? Partilha a tua opinião sobre o livro. O teu testemunho fica publicado de imediato nesta secção.</p>
+        <form id="testimonialForm" novalidate>
+          <div class="form-group">
+            <label for="tFieldName">Nome *</label>
+            <input type="text" id="tFieldName" required maxlength="80" placeholder="O teu nome" autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label for="tFieldRole">Cargo / Função</label>
+            <input type="text" id="tFieldRole" maxlength="80" placeholder="Ex: Leitor do livro / Aluno do 10.º ano">
+          </div>
+          <div class="form-group">
+            <label for="tStarInput">Avaliação</label>
+            <div class="star-input" id="tStarInput" role="radiogroup" aria-label="Avaliação em estrelas">
+              <span class="star-btn" data-i="0" data-full="1"></span>
+              <span class="star-btn" data-i="1" data-full="2"></span>
+              <span class="star-btn" data-i="2" data-full="3"></span>
+              <span class="star-btn" data-i="3" data-full="4"></span>
+              <span class="star-btn" data-i="4" data-full="5"></span>
+            </div>
+            <div class="star-value" id="tStarValue">5,0 / 5</div>
+            <input type="hidden" id="tFieldRating" value="5">
+          </div>
+          <div class="form-group">
+            <label for="tFieldContent">O teu testemunho *</label>
+            <textarea id="tFieldContent" required maxlength="600" placeholder="Escreve aqui o teu testemunho..."></textarea>
+            <div class="field-error" id="tFormMsg"></div>
+          </div>
+          <div class="form-submit">
+            <button type="submit" class="btn btn-primary" id="tSubmitBtn">Enviar testemunho</button>
+          </div>
+        </form>
+        <p class="pricing-subtitle" style="text-align:center;margin-bottom:0">
+          Preferes falar connosco? <a href="https://wa.me/351910256373?text=Olá!%20Gostava%20de%20deixar%20um%20testemunho%20sobre%20o%20livro%20do%20Math%20For%20Teens." target="_blank">Contacta-nos no WhatsApp</a>
+        </p>
+      </div>
     </div>
-  </section>
+  </div>
 
 </main>
 
@@ -141,67 +191,224 @@ function renderStars(rating) {
   }).join('');
 }
 
+let publicStar = null;
+
+function initPublicStarInput() {
+  const widget = document.getElementById('tStarInput');
+  const hidden = document.getElementById('tFieldRating');
+  const label = document.getElementById('tStarValue');
+  if (!widget || !hidden || !label) return;
+
+  const api = { set: (v) => { committed = v; hidden.value = v; render(v); } };
+  if (publicStar) { api.set(5); return; }
+  publicStar = api;
+
+  let committed = 5;
+
+  const starSVG = (full) => full
+    ? '<svg width="26" height="26" viewBox="0 0 24 24" fill="var(--c-primary)" stroke="var(--c-primary)" stroke-width="1.5" stroke-linejoin="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>'
+    : '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--c-primary)" stroke-width="1.5" stroke-linejoin="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>';
+
+  const halfSVG = (i) => `<svg width="26" height="26" viewBox="0 0 24 24" stroke="var(--c-primary)" stroke-width="1.5" stroke-linejoin="round"><defs><linearGradient id="tHalfStar${i}" x1="0" y1="0" x2="1" y2="0"><stop offset="50%" stop-color="var(--c-primary)"/><stop offset="50%" stop-color="transparent"/></linearGradient></defs><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#tHalfStar${i})"/></svg>`;
+
+  function render(v) {
+    widget.querySelectorAll('.star-btn').forEach((btn, i) => {
+      if (i < Math.floor(v)) btn.innerHTML = starSVG(true);
+      else if (i === Math.floor(v) && v % 1 >= 0.5) btn.innerHTML = halfSVG(i);
+      else btn.innerHTML = starSVG(false);
+    });
+    label.textContent = v.toFixed(1).replace('.', ',') + ' / 5';
+  }
+
+  function valueFromEvent(e, btn) {
+    const i = parseInt(btn.dataset.i, 10);
+    const rect = btn.getBoundingClientRect();
+    const x = typeof e.offsetX === 'number' ? e.offsetX : (e.clientX - rect.left);
+    if (x <= rect.width / 2 && i > 0) return i + 0.5;
+    return i + 1;
+  }
+
+  widget.addEventListener('mousemove', (e) => {
+    const btn = e.target.closest('.star-btn');
+    if (btn) render(valueFromEvent(e, btn));
+  });
+  widget.addEventListener('mouseleave', () => render(committed));
+  widget.addEventListener('click', (e) => {
+    const btn = e.target.closest('.star-btn');
+    if (!btn) return;
+    const i = parseInt(btn.dataset.i, 10);
+    const rect = btn.getBoundingClientRect();
+    if (typeof e.offsetX === 'number' && rect.width > 0) committed = valueFromEvent(e, btn);
+    else committed = (committed === i + 1 && i > 0) ? i + 0.5 : i + 1;
+    hidden.value = committed;
+    render(committed);
+  });
+
+  hidden.value = committed;
+  render(committed);
+}
+
+function showTFormMsg(text, type) {
+  const msg = document.getElementById('tFormMsg');
+  msg.textContent = text;
+  msg.className = 'field-error visible';
+  msg.style.color = type === 'error' ? 'var(--c-danger, #dc2626)' : 'var(--c-primary)';
+}
+
+async function submitTestimonial(e) {
+  e.preventDefault();
+  const msg = document.getElementById('tFormMsg');
+  const btn = document.getElementById('tSubmitBtn');
+  const name = document.getElementById('tFieldName').value.trim();
+  const role = document.getElementById('tFieldRole').value.trim();
+  const content = document.getElementById('tFieldContent').value.trim();
+  const rating = parseFloat(document.getElementById('tFieldRating').value) || 5;
+  const category = 'livro';
+
+  if (!name) { showTFormMsg('Por favor indica o teu nome.', 'error'); return; }
+  if (content.length < 10) { showTFormMsg('O testemunho precisa de pelo menos 10 caracteres.', 'error'); return; }
+  msg.textContent = '';
+  msg.className = 'field-error';
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="testimonial-spinner" aria-hidden="true"></span> A enviar...';
+
+  const { data, error } = await sb.rpc('submit_testimonial', {
+    p_author_name: name,
+    p_author_role: role,
+    p_content: content,
+    p_rating: rating,
+    p_category: category
+  });
+
+  btn.disabled = false;
+  btn.innerHTML = 'Enviar testemunho';
+
+  if (error) {
+    console.error('Erro ao submeter testemunho:', error);
+    showTFormMsg('Ocorreu um erro ao enviar o teu testemunho. Tenta novamente em breve.', 'error');
+    return;
+  }
+
+  document.getElementById('testimonialForm').reset();
+  if (publicStar) publicStar.set(5);
+  showTFormMsg('Obrigado pelo teu testemunho! Já foi publicado na secção de testemunhos do livro.', 'success');
+  refreshTestimonials();
+}
+
+function openTForm() {
+  const modal = document.getElementById('tFormModal');
+  if (!modal) return;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => { const f = document.getElementById('tFieldName'); if (f) f.focus(); }, 350);
+}
+
+function closeTForm() {
+  const modal = document.getElementById('tFormModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeTForm();
+});
+
+function updateCtaVisibility(cat) {
+  const cta = document.getElementById('testimonialCta');
+  if (cta) cta.style.display = cat === 'livro' ? 'flex' : 'none';
+}
+
+let allTestimonials = [];
+let activeCat = new URLSearchParams(window.location.search).get('cat') === 'livro' ? 'livro' : 'aulas';
+
+async function fetchTestimonials() {
+  const { data, error } = await sb.from('testimonials').select('*').eq('active', true).order('order', { ascending: true });
+  if (error) throw error;
+  return data || [];
+}
+
+function renderTestimonials() {
+  const grid = document.getElementById('testimonialsGrid');
+  const empty = document.getElementById('testimonialsEmpty');
+  const filtered = allTestimonials.filter(t => (t.category || 'aulas') === activeCat);
+
+  if (!filtered.length) {
+    grid.style.display = 'none';
+    empty.style.display = 'flex';
+    return;
+  }
+  empty.style.display = 'none';
+  grid.style.display = 'block';
+
+  grid.innerHTML = filtered.map((t, i) => `
+    <div class="testimonial-card-full anim-fade-in" style="transition-delay:${(i % 6) * 0.08}s">
+      <div class="testimonial-stars">${renderStars(t.rating)}</div>
+      <p class="testimonial-text">"${escTestimonial(t.content)}"</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">${(t.author_name || 'A').charAt(0)}</div>
+        <div>
+          <div class="testimonial-name">${escTestimonial(t.author_name || '')}</div>
+          ${t.author_role ? `<div class="testimonial-role">${escTestimonial(t.author_role)}</div>` : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  grid.querySelectorAll('.anim-fade-in').forEach(el => el.classList.add('visible'));
+}
+
+async function refreshTestimonials() {
+  try {
+    allTestimonials = await fetchTestimonials();
+    renderTestimonials();
+  } catch (e) {}
+}
+
 async function loadTestimonials() {
   const grid = document.getElementById('testimonialsGrid');
   const empty = document.getElementById('testimonialsEmpty');
   const loading = document.getElementById('testimonialsLoading');
 
-  const { data, error } = await sb.from('testimonials').select('*').eq('active', true).order('order', { ascending: true });
-
-  loading.style.display = 'none';
-
-  if (error) {
+  try {
+    allTestimonials = await fetchTestimonials();
+  } catch (e) {
+    loading.style.display = 'none';
     grid.style.display = 'none';
     empty.style.display = 'flex';
     return;
   }
-
-  const all = data || [];
-  let activeCat = 'aulas';
+  loading.style.display = 'none';
 
   const filters = document.getElementById('testimonialFilters');
+  filters.querySelectorAll('.shop-filter-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === activeCat));
   filters.querySelectorAll('.shop-filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      filters.querySelectorAll('.shop-filter-btn').forEach(b => b.classList.remove('active'));
+      filters.querySelectorAll('.shop-filter-btn').forEach(x => x.classList.remove('active'));
       btn.classList.add('active');
       activeCat = btn.dataset.cat;
-      renderTestimonials(all);
+      renderTestimonials();
+      updateCtaVisibility(activeCat);
     });
   });
 
-  renderTestimonials(all);
+  renderTestimonials();
+  updateCtaVisibility(activeCat);
+}
 
-  function renderTestimonials(items) {
-    const filtered = items.filter(t => (t.category || 'aulas') === activeCat);
-
-    if (!filtered.length) {
-      grid.style.display = 'none';
-      empty.style.display = 'flex';
-      return;
-    }
-    empty.style.display = 'none';
-    grid.style.display = 'block';
-
-    grid.innerHTML = filtered.map((t, i) => `
-      <div class="testimonial-card-full anim-fade-in" style="transition-delay:${(i % 6) * 0.08}s">
-        <div class="testimonial-stars">${renderStars(t.rating)}</div>
-        <p class="testimonial-text">"${t.content}"</p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">${t.author_name.charAt(0)}</div>
-          <div>
-            <div class="testimonial-name">${t.author_name}</div>
-            ${t.author_role ? `<div class="testimonial-role">${t.author_role}</div>` : ''}
-          </div>
-        </div>
-      </div>
-    `).join('');
-
-    grid.querySelectorAll('.anim-fade-in').forEach(el => el.classList.add('visible'));
-  }
+function escTestimonial(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadTestimonials();
+  initPublicStarInput();
+  const form = document.getElementById('testimonialForm');
+  if (form) form.addEventListener('submit', submitTestimonial);
   if (typeof initAnimations === 'function') initAnimations();
 });
 </script>
