@@ -13,8 +13,8 @@
 --    (aulas | livro).
 CREATE OR REPLACE FUNCTION public.submit_testimonial(
   p_author_name TEXT,
-  p_author_role TEXT DEFAULT NULL,
   p_content TEXT,
+  p_author_role TEXT DEFAULT NULL,
   p_rating NUMERIC DEFAULT 5,
   p_category TEXT DEFAULT 'livro'
 )
