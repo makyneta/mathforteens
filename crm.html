@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM — Math For Teens</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="stylesheet" href="assets/css/reset.css">
+<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/admin.css">
+<link rel="stylesheet" href="assets/css/crm.css">
+</head>
+<body class="admin-body">
+
+<!-- ================= LOGIN ================= -->
+<div id="loginScreen" class="admin-login">
+  <div class="admin-login-card">
+    <div class="admin-login-header">
+      <img src="favicon.ico" alt="Math For Teens" width="44" height="44">
+      <h1>CRM Math For Teens</h1>
+      <p>Gestão de aulas e alunos</p>
+    </div>
+    <form id="loginForm" class="admin-login-form">
+      <div class="admin-field">
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" required placeholder="admin@mathforteens.com">
+      </div>
+      <div class="admin-field">
+        <label for="loginPassword">Palavra-passe</label>
+        <input type="password" id="loginPassword" required placeholder="••••••••">
+      </div>
+      <div id="loginError" class="admin-error" style="display:none"></div>
+      <button type="submit" class="btn btn-primary admin-btn-full" id="loginBtn">Entrar</button>
+    </form>
+    <p style="text-align:center;margin-top:20px;font-size:0.8rem;color:var(--admin-text-tertiary)">
+      Mesmas credenciais do painel admin.
+    </p>
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="crmApp" class="admin-app" style="display:none">
+  <div id="sidebarBackdrop" class="admin-sidebar-backdrop" onclick="closeSidebar()"></div>
+
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <img src="favicon.ico" alt="MFT" width="30" height="30">
+      <span>CRM</span>
+    </div>
+    <nav class="admin-nav">
+      <span class="admin-nav-section">Principal</span>
+      <a href="#" class="admin-nav-link active" data-tab="dashboard">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="#" class="admin-nav-link" data-tab="agenda">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Agenda
+      </a>
+      <a href="#" class="admin-nav-link" data-tab="lessons">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+        Aulas
+      </a>
+      <a href="#" class="admin-nav-link" data-tab="students">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Alunos
+      </a>
+      <a href="#" class="admin-nav-link" data-tab="tasks">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Tarefas
+      </a>
+      <span class="admin-nav-section">Sistema</span>
+      <a href="admin.html" class="admin-nav-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Painel Admin
+      </a>
+    </nav>
+    <div class="admin-sidebar-footer">
+      <div class="admin-sidebar-user" id="sidebarUser">
+        <div class="admin-sidebar-avatar" id="sidebarAvatar">A</div>
+        <div class="admin-sidebar-user-info">
+          <div class="admin-sidebar-user-name" id="sidebarUserName">Admin</div>
+          <div class="admin-sidebar-user-role">Gestor de Aulas</div>
+        </div>
+      </div>
+      <a href="index.html" target="_blank" class="admin-nav-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Ver Site
+      </a>
+      <a href="#" id="logoutBtn" class="admin-nav-link admin-logout">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sair
+      </a>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <button id="sidebarToggle" class="admin-sidebar-toggle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <h2 id="pageTitle">Dashboard</h2>
+      <div class="admin-topbar-right">
+        <span id="crmEmail" class="admin-user-email"></span>
+      </div>
+    </header>
+
+    <!-- ========== TAB: DASHBOARD ========== -->
+    <div id="tab-dashboard" class="admin-tab active">
+      <div class="admin-welcome-card">
+        <h2 id="welcomeMessage">Bem-vindo de volta!</h2>
+        <p>Visão geral das tuas aulas, alunos e receitas.</p>
+      </div>
+      <div class="admin-stats-grid" id="dashStats"></div>
+      <div class="crm-dash-grid">
+        <div class="crm-dash-col">
+          <div class="crm-dash-card">
+            <div class="crm-dash-card-head">
+              <h3>Aulas de hoje</h3>
+              <span class="crm-dash-card-badge" id="dashTodayCount">0</span>
+            </div>
+            <div id="dashToday" class="crm-dash-list"></div>
+          </div>
+        </div>
+        <div class="crm-dash-col">
+          <div class="crm-dash-card">
+            <div class="crm-dash-card-head">
+              <h3>Próximas aulas</h3>
+              <span class="crm-dash-card-badge" id="dashUpcomingCount">0</span>
+            </div>
+            <div id="dashUpcoming" class="crm-dash-list"></div>
+          </div>
+        </div>
+        <div class="crm-dash-col crm-dash-col-wide">
+          <div class="crm-dash-card">
+            <div class="crm-dash-card-head">
+              <h3>Pagamentos pendentes</h3>
+              <span class="crm-dash-card-badge danger" id="dashUnpaidCount">0</span>
+            </div>
+            <div id="dashUnpaid" class="crm-dash-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== TAB: AGENDA ========== -->
+    <div id="tab-agenda" class="admin-tab">
+      <div class="admin-tab-header">
+        <h3>Agenda Semanal</h3>
+        <div class="crm-agenda-nav">
+          <button class="admin-action-btn" onclick="shiftWeek(-1)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            Semana anterior
+          </button>
+          <button class="admin-action-btn" onclick="goToCurrentWeek()">Hoje</button>
+          <button class="admin-action-btn" onclick="shiftWeek(1)">Semana seguinte
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="agendaWeekTitle" class="crm-agenda-week-title"></div>
+      <div id="agendaBoard" class="crm-agenda-board"></div>
+    </div>
+
+    <!-- ========== TAB: AULAS ========== -->
+    <div id="tab-lessons" class="admin-tab">
+      <div class="admin-tab-header">
+        <h3>Gestão de Aulas</h3>
+        <button class="btn btn-primary admin-btn-add" onclick="openLessonModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Adicionar Aula
+        </button>
+      </div>
+      <div class="crm-toolbar">
+        <div class="crm-search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="lessonSearch" placeholder="Pesquisar por aluno, disciplina ou tema..." oninput="onLessonFilter()">
+        </div>
+        <select id="lessonStatusFilter" class="crm-filter" onchange="onLessonFilter()">
+          <option value="">Todos os estados</option>
+          <option value="agendada">Agendada</option>
+          <option value="realizada">Realizada</option>
+          <option value="falta">Falta</option>
+          <option value="cancelada">Cancelada</option>
+        </select>
+        <select id="lessonStudentFilter" class="crm-filter" onchange="onLessonFilter()">
+          <option value="">Todos os alunos</option>
+        </select>
+      </div>
+      <div id="lessonsList" class="admin-list"></div>
+      <div id="lessonsEmpty" class="admin-empty" style="display:none">
+        <div class="admin-empty-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+        </div>
+        <h3>Nenhuma aula encontrada</h3>
+        <p>Adiciona aulas ou ajusta os filtros.</p>
+      </div>
+    </div>
+
+    <!-- ========== TAB: ALUNOS ========== -->
+    <div id="tab-students" class="admin-tab">
+      <div class="admin-tab-header">
+        <h3>Gestão de Alunos</h3>
+        <button class="btn btn-primary admin-btn-add" onclick="openStudentModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Adicionar Aluno
+        </button>
+      </div>
+      <div class="crm-toolbar">
+        <div class="crm-search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="studentSearch" placeholder="Pesquisar por nome, email ou telefone..." oninput="onStudentFilter()">
+        </div>
+        <select id="studentStatusFilter" class="crm-filter" onchange="onStudentFilter()">
+          <option value="">Todos os estados</option>
+          <option value="ativo">Ativo</option>
+          <option value="pausado">Pausado</option>
+          <option value="ex_aluno">Ex-aluno</option>
+        </select>
+      </div>
+      <div id="studentsList" class="admin-list"></div>
+      <div id="studentsEmpty" class="admin-empty" style="display:none">
+        <div class="admin-empty-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <h3>Nenhum aluno encontrado</h3>
+        <p>Adiciona alunos ou ajusta os filtros.</p>
+      </div>
+    </div>
+
+    <!-- ========== TAB: TAREFAS ========== -->
+    <div id="tab-tasks" class="admin-tab">
+      <div class="admin-tab-header">
+        <h3>Gestão de Tarefas</h3>
+        <button class="btn btn-primary admin-btn-add" onclick="openTaskModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Adicionar Tarefa
+        </button>
+      </div>
+      <div class="admin-subtabs" id="taskTabs">
+        <button class="admin-subtab active" data-f="all" onclick="setTaskFilter('all')">Todas</button>
+        <button class="admin-subtab" data-f="pending" onclick="setTaskFilter('pending')">Pendentes</button>
+        <button class="admin-subtab" data-f="overdue" onclick="setTaskFilter('overdue')">Vencidas</button>
+        <button class="admin-subtab" data-f="done" onclick="setTaskFilter('done')">Concluídas</button>
+      </div>
+      <div id="tasksList" class="admin-list"></div>
+      <div id="tasksEmpty" class="admin-empty" style="display:none">
+        <div class="admin-empty-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <h3>Nenhuma tarefa</h3>
+        <p>Cria tarefas de follow-up para não perderes nenhum aluno.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ================= DRAWER (FICHA DO ALUNO) ================= -->
+<div id="drawerBackdrop" class="crm-drawer-backdrop" style="display:none" onclick="closeDrawer()"></div>
+<aside id="drawer" class="crm-drawer" style="display:none" aria-hidden="true">
+  <div class="crm-drawer-head">
+    <div id="drawerAvatar" class="crm-drawer-avatar">?</div>
+    <div class="crm-drawer-head-info">
+      <h3 id="drawerName"></h3>
+      <div id="drawerMeta"></div>
+    </div>
+    <button class="admin-modal-close" onclick="closeDrawer()">&times;</button>
+  </div>
+  <div class="crm-drawer-body" id="drawerBody"></div>
+</aside>
+
+<!-- ================= MODAL ================= -->
+<div id="modal" class="admin-modal" style="display:none">
+  <div class="admin-modal-overlay" onclick="closeModal()"></div>
+  <div class="admin-modal-card">
+    <div class="admin-modal-header">
+      <h3 id="modalTitle">Adicionar</h3>
+      <button onclick="closeModal()" class="admin-modal-close">&times;</button>
+    </div>
+    <div class="admin-modal-body">
+      <form id="modalForm"></form>
+    </div>
+  </div>
+</div>
+
+<!-- ================= TOAST ================= -->
+<div id="toastContainer" class="admin-toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="assets/js/supabase-config.js"></script>
+<script src="assets/js/crm.js"></script>
+</body>
+</html>
