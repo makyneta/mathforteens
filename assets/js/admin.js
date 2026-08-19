@@ -1197,46 +1197,32 @@ function initStarInput(initial) {
   const label = document.getElementById('starValueLabel');
   const hidden = document.getElementById('field_rating');
   if (!widget || !hidden) return;
-  let committed = Math.min(5, Math.max(1, parseFloat(initial) || 5));
+  let committed = Math.min(5, Math.max(1, Math.round(parseFloat(initial) || 5)));
 
   const starSVG = (full) => full
     ? '<svg width="26" height="26" viewBox="0 0 24 24" fill="var(--admin-warning)" stroke="var(--admin-warning)" stroke-width="1.5" stroke-linejoin="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>'
     : STAR_ICON;
 
-  const halfSVG = (i) => `<svg width="26" height="26" viewBox="0 0 24 24" stroke="var(--admin-warning)" stroke-width="1.5" stroke-linejoin="round"><defs><linearGradient id="starHalf${i}" x1="0" y1="0" x2="1" y2="0"><stop offset="50%" stop-color="var(--admin-warning)"/><stop offset="50%" stop-color="transparent"/></linearGradient></defs><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#starHalf${i})"/></svg>`;
-
   function render(v) {
     widget.querySelectorAll('.star-btn').forEach((btn, i) => {
-      if (i < Math.floor(v)) btn.innerHTML = starSVG(true);
-      else if (i === Math.floor(v) && v % 1 >= 0.5) btn.innerHTML = halfSVG(i);
-      else btn.innerHTML = starSVG(false);
+      btn.innerHTML = starSVG(i < v);
     });
     if (label) label.textContent = v + ' / 5';
   }
 
-  function valueFromEvent(e, btn) {
-    const i = parseInt(btn.dataset.i, 10);
-    const rect = btn.getBoundingClientRect();
-    const x = typeof e.offsetX === 'number' ? e.offsetX : (e.clientX - rect.left);
-    if (x <= rect.width / 2 && i > 0) return i + 0.5;
-    return i + 1;
+  function valueFromBtn(btn) {
+    return parseInt(btn.dataset.full, 10) || (parseInt(btn.dataset.i, 10) + 1);
   }
 
   widget.addEventListener('mousemove', (e) => {
     const btn = e.target.closest('.star-btn');
-    if (btn) render(valueFromEvent(e, btn));
+    if (btn) render(valueFromBtn(btn));
   });
   widget.addEventListener('mouseleave', () => render(committed));
   widget.addEventListener('click', (e) => {
     const btn = e.target.closest('.star-btn');
     if (!btn) return;
-    const i = parseInt(btn.dataset.i, 10);
-    const rect = btn.getBoundingClientRect();
-    if (typeof e.offsetX === 'number' && rect.width > 0) {
-      committed = valueFromEvent(e, btn);
-    } else {
-      committed = (committed === i + 1 && i > 0) ? i + 0.5 : i + 1;
-    }
+    committed = valueFromBtn(btn);
     hidden.value = committed;
     render(committed);
   });
@@ -1260,7 +1246,7 @@ function getTestimonialFormHtml(data) {
     <div class="admin-field"><label>Feedback *</label><textarea id="field_content" required placeholder="Escreve o feedback...">${esc(t.content || '')}</textarea></div>
     <div class="admin-field-row">
       <div class="admin-field" style="flex:1.6">
-        <label>Avaliação (com meias estrelas)</label>
+        <label>Avaliação (1 a 5 estrelas)</label>
         <div class="star-input" id="starInput">
           ${Array.from({length:5}, (_, i) => `<span class="star-btn" data-i="${i}" data-full="${i+1}">${STAR_ICON}</span>`).join('')}
         </div>
@@ -1470,7 +1456,7 @@ async function saveItem() {
     obj.author_name = document.getElementById('field_author_name').value;
     obj.author_role = document.getElementById('field_author_role').value;
     obj.content = document.getElementById('field_content').value;
-    obj.rating = parseFloat(document.getElementById('field_rating').value) || 5;
+    obj.rating = Math.max(1, Math.min(5, Math.round(parseFloat(document.getElementById('field_rating').value) || 5)));
     obj.order = parseInt(document.getElementById('field_order').value) || 0;
     obj.active = document.getElementById('field_active').checked;
   } else if (editingType === 'product') {

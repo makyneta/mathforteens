@@ -1015,7 +1015,7 @@
   gap: 16px;
 }
 
-/* ── Star rating input (meias estrelas) ── */
+/* ── Star rating input ── */
 .star-input {
   display: flex;
   align-items: center;

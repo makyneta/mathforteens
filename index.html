@@ -255,14 +255,11 @@
 const sbHome = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 function renderHomeStars(rating) {
-  rating = Math.max(0, Math.min(5, parseFloat(rating) || 0));
+  rating = Math.max(0, Math.min(5, Math.round(parseFloat(rating) || 0)));
   const star = '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>';
-  return Array.from({length: 5}, (_, i) => {
-    if (i === Math.floor(rating) && rating % 1 >= 0.5) {
-      return `<svg width="16" height="16" viewBox="0 0 24 24" stroke="var(--c-primary)" stroke-width="2"><defs><linearGradient id="halfStar${i}" x1="0" y1="0" x2="1" y2="0"><stop offset="50%" stop-color="var(--c-primary)"/><stop offset="50%" stop-color="transparent"/></linearGradient></defs><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#halfStar${i})"/></svg>`;
-    }
-    return `<svg width="16" height="16" viewBox="0 0 24 24" fill="${i < Math.floor(rating) ? 'var(--c-primary)' : 'none'}" stroke="var(--c-primary)" stroke-width="2">${star}</svg>`;
-  }).join('');
+  return Array.from({length: 5}, (_, i) =>
+    `<svg width="16" height="16" viewBox="0 0 24 24" fill="${i < rating ? 'var(--c-primary)' : 'none'}" stroke="var(--c-primary)" stroke-width="2">${star}</svg>`
+  ).join('');
 }
 
 function escHome(str) {
