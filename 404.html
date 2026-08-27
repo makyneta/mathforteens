@@ -11,6 +11,26 @@
 <link rel="stylesheet" href="assets/css/styles.css">
 <script defer src="assets/js/components.js"></script>
 <script defer src="assets/js/main.js"></script>
+<script>
+  // Redirects
+  (function() {
+    const redirects = {
+      '/instagram': 'https://www.instagram.com/mathforteenss/',
+      '/tiktok': 'https://www.tiktok.com/@mathforteenss',
+      '/youtube': 'https://www.youtube.com/@Mathforteens',
+      '/whatsapp': 'https://api.whatsapp.com/send/?phone=351910256373&text&type=phone_number&app_absent=0',
+      '/mail': 'mailto:geral@mathforteens.pt',
+
+      '/livro':'https://loja.mathforteens.pt/?product=livro-cronicas-dadolescente',
+    };
+
+    const path = window.location.pathname.toLowerCase().replace(/\/$/, '');
+
+    if (redirects[path]) {
+      window.location.replace(redirects[path]);
+    }
+  })();
+</script>
 </head>
 <body>
 
