@@ -1,11 +1,11 @@
 const navItems = [
-  { href: 'index', label: 'Início' },
-  { href: 'sobre', label: 'Sobre' },
-  { href: 'servicos', label: 'Serviços' },
-  { href: 'videoaulas', label: 'Videoaulas' },
-  { href: 'loja', label: 'Loja' },
-  { href: 'testemunhos', label: 'Testemunhos' },
-  { href: 'contacto', label: 'Contacto' },
+  { href: '/', label: 'Início' },
+  { href: '/sobre', label: 'Sobre' },
+  { href: '/servicos', label: 'Serviços' },
+  { href: '/videoaulas', label: 'Videoaulas' },
+  { href: 'https://loja.mathforteens.pt', label: 'Loja' },
+  { href: '/testemunhos', label: 'Testemunhos' },
+  { href: '/contacto', label: 'Contacto' },
 ]
 
 const socialIcons = `
@@ -18,7 +18,7 @@ const socialIcons = `
 const headerHTML = `
 <header class="header">
   <div class="header-inner">
-    <a href="index" class="logo">
+    <a href="/" class="logo">
       <img src="favicon.ico" alt="Math For Teens" width="32" height="32">
       Math For Teens
     </a>
@@ -32,7 +32,7 @@ const headerHTML = `
   <div class="menu-overlay-bg"></div>
   <div class="menu-overlay-inner">
     <div class="menu-overlay-header">
-      <a href="index" class="logo logo--light">
+      <a href="/" class="logo logo--light">
         <img src="favicon.ico" alt="Math For Teens" width="28" height="28">
         Math For Teens
       </a>
