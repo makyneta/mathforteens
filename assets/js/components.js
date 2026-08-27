@@ -76,7 +76,7 @@ const footerHTML = `
       ${socialIcons}
     </div>
   </div>
-  <p class="footer-copy">© 2024 - ${new Date().getFullYear()} Math For Teens · <span class="footer-dev">Desenvolvido por <a href="https://makyneta.github.io" target="_blank" rel="noopener">Makyneta Unipessoal, Lda.</a></span></p>
+  <p class="footer-copy">Copyright © ${new Date().getFullYear()} Math For Teens.<br><span class="footer-dev">Website por <a href="https://makyneta.github.io" target="_blank" rel="noopener">Makyneta Unipessoal, Lda.</a></span></p>
 </footer>
 `
 
