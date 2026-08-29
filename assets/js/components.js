@@ -3,7 +3,7 @@ const navItems = [
   { href: '/sobre', label: 'Sobre' },
   { href: '/servicos', label: 'Serviços' },
   { href: '/videoaulas', label: 'Videoaulas' },
-  { href: 'https://loja.mathforteens.pt', label: 'Loja' },
+  // { href: '/loja', label: 'Loja' },
   { href: '/testemunhos', label: 'Testemunhos' },
   { href: '/contacto', label: 'Contacto' },
 ]
@@ -59,14 +59,14 @@ const headerHTML = `
 const footerHTML = `
 <footer class="footer">
   <div class="footer-inner">
-    <a href="index" class="footer-logo">
+    <a href="/" class="footer-logo">
       <img src="favicon.ico" alt="Math For Teens" width="28" height="28">
       Math For Teens
     </a>
     <nav class="footer-legal" aria-label="Legal">
-      <a href="politica-cookies">Política de Cookies</a>
-      <a href="politica-privacidade">Política de Privacidade</a>
-      <a href="termos-condicoes">Termos e Condições</a>
+      <a href="/politica-cookies">Política de Cookies</a>
+      <a href="/politica-privacidade">Política de Privacidade</a>
+      <a href="/termos-condicoes">Termos e Condições</a>
       <a href="https://www.livroreclamacoes.pt/inicio/reclamacao" target="_blank" rel="noopener" class="footer-livro">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         Livro de Reclamações
