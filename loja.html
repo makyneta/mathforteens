@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Loja — Math For Teens</title>
+<title>Loja | Math For Teens</title>
 <meta name="description" content="Loja Math For Teens: resumos, fichas, livros e materiais de Matemática para o exame.">
 <meta name="author" content="Makyneta Unipessoal, Lda.">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -32,13 +32,13 @@
       <span>Δ</span>
     </div>
     <div class="vid-hero-content">
-      <div class="vid-hero-badge">
+      <!-- <div class="vid-hero-badge">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         Loja
-      </div>
+      </div> -->
       <h1>Materiais para o teu <span>sucesso</span></h1>
       <p>Resumos e o livro, preparados para o teu exame.</p>
-      <div class="vid-hero-stats">
+      <!-- <div class="vid-hero-stats">
         <div class="vid-hero-stat">
           <span class="vid-hero-stat-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
@@ -60,7 +60,7 @@
           <span class="vid-hero-stat-value">100%</span>
           <span class="vid-hero-stat-label">Qualidade</span>
         </div>
-      </div>
+      </div> -->
     </div>
     <div class="vid-hero-shape">
       <svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,40 C360,0 600,60 720,40 C840,20 1080,60 1440,40 L1440,80 L0,80 Z"/></svg>
@@ -69,8 +69,20 @@
 
   <section class="section">
     <div class="section-inner">
-      <div class="shop-filters anim-fade-in" id="shopFilters"></div>
+      <div class="shop-search-container">
+        <div class="shop-search-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input id="shopSearch" type="text" class="shop-search-input" placeholder="Pesquisa produtos...">
+        </div>
+      </div>
       <div id="shopGrid" class="shop-grid"></div>
+      <div id="shopNoResults" class="vid-empty" style="display:none">
+        <div class="vid-empty-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <h3>Nenhum resultado encontrado</h3>
+        <p>Tenta outra pesquisa. Os materiais que procuras podem estar com outro nome.</p>
+      </div>
       <div id="shopEmpty" class="vid-empty" style="display:none">
         <div class="vid-empty-icon">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
@@ -136,13 +148,15 @@ const categoryIcons = {
 };
 
 let allProducts = [];
-let activeFilter = 'all';
+let isSearching = false;
+let searchListenerAdded = false;
 
 async function loadProducts() {
   const grid = document.getElementById('shopGrid');
   const empty = document.getElementById('shopEmpty');
+  const noResults = document.getElementById('shopNoResults');
   const loading = document.getElementById('shopLoading');
-  const filters = document.getElementById('shopFilters');
+  const searchInput = document.getElementById('shopSearch');
 
   const { data, error } = await sb.from('products').select('*').eq('active', true).order('order', { ascending: true });
 
@@ -150,38 +164,73 @@ async function loadProducts() {
 
   if (error || !data.length) {
     grid.style.display = 'none';
+    noResults.style.display = 'none';
     empty.style.display = 'flex';
-    filters.style.display = 'none';
     return;
   }
 
   allProducts = data;
+  console.log('Produtos carregados:', allProducts);
 
   const countEl = document.querySelector('[data-productcount]');
   if (countEl) { countEl.textContent = data.length; countEl.dataset.contar = data.length; }
 
-  const categories = [...new Set(data.map(p => p.category))];
-  filters.innerHTML = `<button class="shop-filter-btn active" data-cat="all">Todos</button>` +
-    categories.map(c => `<button class="shop-filter-btn" data-cat="${c}">${categoryIcons[c] || '📦'} ${categoryLabels[c] || c}</button>`).join('');
-
-  filters.querySelectorAll('.shop-filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      filters.querySelectorAll('.shop-filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeFilter = btn.dataset.cat;
-      renderProducts();
+  grid.style.display = 'grid';
+  empty.style.display = 'none';
+  noResults.style.display = 'none';
+  renderProducts(allProducts, false);
+  
+  // Setup search functionality (apenas uma vez)
+  if (!searchListenerAdded && searchInput) {
+    searchInput.addEventListener('input', function(e) {
+      handleSearch(e);
     });
-  });
-
-  renderProducts();
+    searchListenerAdded = true;
+    console.log('Search listener adicionado');
+  }
 }
 
-function renderProducts() {
-  const grid = document.getElementById('shopGrid');
-  const filtered = activeFilter === 'all' ? allProducts : allProducts.filter(p => p.category === activeFilter);
+function handleSearch(e) {
+  const query = e.target.value.trim().toLowerCase();
+  console.log('Pesquisa input value:', e.target.value, 'Query após trim:', query);
+  isSearching = query.length > 0;
+  
+  let filtered = allProducts;
+  
+  if (query.length > 0) {
+    filtered = allProducts.filter(p => {
+      const name = (p.name || '').toLowerCase();
+      return name.includes(query);
+    });
+  }
+  
+  console.log('Query:', query, '| Resultados encontrados:', filtered.length, '| isSearching:', isSearching);
+  renderProducts(filtered, isSearching);
+}
 
-  grid.innerHTML = filtered.map((p, i) => `
-    <a href="loja-item.html?id=${p.id}" class="shop-card anim-fade-in" style="transition-delay:${(i % 6) * 0.08}s">
+function renderProducts(products, isSearching) {
+  const grid = document.getElementById('shopGrid');
+  const empty = document.getElementById('shopEmpty');
+  const noResults = document.getElementById('shopNoResults');
+
+  console.log('RenderProducts chamado com', products.length, 'produtos');
+
+  if (products.length === 0) {
+    console.log('Sem produtos, mostrando mensagem vazia/sem resultados');
+    grid.innerHTML = '';
+    grid.style.display = 'none';
+    empty.style.display = isSearching ? 'none' : 'flex';
+    noResults.style.display = isSearching ? 'flex' : 'none';
+    return;
+  }
+
+  console.log('Renderizando', products.length, 'produtos');
+  grid.style.display = 'grid';
+  empty.style.display = 'none';
+  noResults.style.display = 'none';
+
+  const html = products.map((p, i) => `
+    <a href="loja-item.html?id=${p.id}" class="shop-card anim-fade-in visible" style="transition-delay:${(i % 6) * 0.08}s">
       <div class="shop-card-image">
         ${p.image_url
           ? `<img src="${esc(p.image_url)}" alt="${esc(p.name)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'shop-card-placeholder\\'>${categoryIcons[p.category] || '📦'}</div>'">`
@@ -192,7 +241,6 @@ function renderProducts() {
       <div class="shop-card-body">
         <span class="shop-card-category">${categoryLabels[p.category] || p.category}</span>
         <h3 class="shop-card-title">${esc(p.name)}</h3>
-        <p class="shop-card-desc">${esc(p.description || '')}</p>
         <div class="shop-card-footer">
           <div class="shop-card-price">
             <span class="shop-card-price-current">${p.price.toFixed(2)}€</span>
@@ -203,6 +251,9 @@ function renderProducts() {
       </div>
     </a>
   `).join('');
+  
+  grid.innerHTML = html;
+  console.log('HTML renderizado no grid');
 }
 
 function esc(str) {
