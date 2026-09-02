@@ -3,7 +3,7 @@ const navItems = [
   { href: '/sobre', label: 'Sobre' },
   { href: '/servicos', label: 'Serviços' },
   { href: '/videoaulas', label: 'Videoaulas' },
-  // { href: '/loja', label: 'Loja' },
+  { href: '/loja', label: 'Loja' },
   { href: '/testemunhos', label: 'Testemunhos' },
   { href: '/contacto', label: 'Contacto' },
 ]
