@@ -76,7 +76,7 @@ const footerHTML = `
       ${socialIcons}
     </div>
   </div>
-  <p class="footer-copy">Copyright © ${new Date().getFullYear()} Math For Teens.<br><span class="footer-dev">Website por <a href="https://makyneta.github.io" target="_blank" rel="noopener">Makyneta Unipessoal, Lda.</a></span></p>
+  <p class="footer-copy">Copyright © ${new Date().getFullYear()} Math For Teens. <span class="footer-dev">Website por <a href="https://www.makyneta.dev" target="_blank" rel="noopener">Makyneta by Tomás Mota.</a></span></p>
 </footer>
 `
 
